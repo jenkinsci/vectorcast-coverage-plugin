@@ -1,12 +1,9 @@
 package com.vectorcast.plugins.vectorcastcoverage;
 
-import com.vectorcast.plugins.vectorcastcoverage.CoverageObject;
-import com.vectorcast.plugins.vectorcastcoverage.Ratio;
-
 /**
  * @author Manuel Carrasco
  */
-public class CoverageObjectTest extends AbstractEmmaTestBase {
+public class CoverageObjectTest extends AbstractVectorCASTTestBase {
 	
     public void testPrintRatioTable() throws Exception {
 

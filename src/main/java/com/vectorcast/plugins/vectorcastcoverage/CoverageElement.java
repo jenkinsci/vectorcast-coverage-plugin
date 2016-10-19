@@ -25,16 +25,20 @@ public final class CoverageElement {
     void addTo(AbstractReport<?,?> report) throws IOException {
 
     	Ratio r = null;
-    	if(type.equals("class, %")) {
-    		r = report.clazz;
-        } else if(type.equals("method, %")) {
-    		r = report.method;
-        } else if(type.equals("block, %")) {
-    		r = report.block;
-        } else if(type.equals("line, %")) {
-    		r = report.line;
-        } else if(type.equals("condition, %")) {
-    		r = report.condition;
+    	if(type.equals("statement, %")) {
+    		r = report.Statement;
+        } else if(type.equals("branch, %")) {
+    		r = report.Branch;
+        } else if(type.equals("basispath, %")) {
+    		r = report.BasisPath;
+        } else if(type.equals("mcdc, %")) {
+    		r = report.MCDC;
+        } else if(type.equals("function, %")) {
+    		r = report.Function;
+        } else if(type.equals("functioncall, %")) {
+    		r = report.FunctionCall;
+        } else if(type.equals("complexity, %")) {
+    		r = report.Complexity;
         } else {
             throw new IllegalArgumentException("Invalid type: "+type);
         }

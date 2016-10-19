@@ -11,7 +11,7 @@ import java.io.Serializable;
  * Such logic is used to mark builds as unstable when certain condition is met.
  *
  * <p>
- * For example, one can define a rule where "line coverage must be better than 50%
+ * For example, one can define a rule where "MCDC coverage must be better than 50%
  * for any class", and if this rule is violated, the build will be marked as
  * unstable.
  *

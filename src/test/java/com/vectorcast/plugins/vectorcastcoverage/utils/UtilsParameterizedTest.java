@@ -10,7 +10,7 @@ import org.junit.runners.Parameterized.Parameters;
 import static junit.framework.Assert.assertEquals;
 
 /**
- * Test {@link hudson.plugins.emma.portlet.utils.Utils}
+ * Test {@link com.vectorcast.plugins.vectorcastcoverage.portlet.utils.Utils}
  * through HudsonTestCase extension.
  *
  * @author Mauro Durante Junior &lt;Mauro.Durantejunior@sonyericsson.com&gt;
@@ -60,8 +60,8 @@ public class UtilsParameterizedTest {
   }
 
   /**
-   * This method tests validateChartAttributes() behavior.
-   * Tests {@link hudson.plugins.emma.portlet.utils.Utils#validateChartAttributes(java.lang.String, int) }.
+   * This method tests validateChartAttributes() behaviour.
+   * Tests {@link com.vectorcast.plugins.vectorcastcoverage.portlet.utils.Utils#validateChartAttributes(java.lang.String, int) }.
    */
   @Test
   public void testValidateCharAttributes() {

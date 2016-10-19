@@ -1,0 +1,77 @@
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form">
+  <f:entry title="${%entry.title}"
+           description="${%includes.description}">
+    <f:textbox name="vectorcastcoverage.includes" value="${instance.includes}"/>
+  </f:entry>
+  <f:entry title="${%useThreshold.title}"
+           description="${%useThreshold.description}">
+    <f:checkbox name="vectorcastcoverage.useThreshold" checked="${instance.useThreshold}"/>
+  </f:entry>
+    <f:entry title="${%Health reporting}"
+             description="${%thresholds.description(rootURL)}">
+        <table>
+            <thead>
+                <tr>
+                    <td width="14%"></td>
+                    <td width="14%">${%Statement}</td>
+                    <td width="14%">${%Branch}</td>
+                    <td width="14%">${%Basis Path}</td>
+                    <td width="14%">${%MC/DC}</td>
+                    <td width="14%">${%Function}</td>
+                    <td width="14%">${%Function Call}</td>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <th>
+                        <img src="${rootURL}/images/16x16/health-80plus.gif" alt="100%"
+                             title="${%health.100.title}"/>
+                    </th>
+                    <td>
+                        <f:textbox name="vectorCASTHealthReports.maxStatement" value="${instance.healthReports.maxStatement}" />
+                    </td>
+                    <td>
+                        <f:textbox name="vectorCASTHealthReports.maxBranch" value="${instance.healthReports.maxBranch}" />
+                    </td>
+                    <td>
+                        <f:textbox name="vectorCASTHealthReports.maxBasisPath" value="${instance.healthReports.maxBasisPath}" />
+                    </td>
+                    <td>
+                        <f:textbox name="vectorCASTHealthReports.maxMCDC" value="${instance.healthReports.maxMCDC}" />
+                    </td>
+                    <td>
+                        <f:textbox name="vectorCASTHealthReports.maxFunction" value="${instance.healthReports.maxFunction}" />
+                    </td>
+                    <td>
+                        <f:textbox name="vectorCASTHealthReports.maxFunctionCall" value="${instance.healthReports.maxFunctionCall}" />
+                    </td>
+                </tr>
+                <tr>
+                    <th>
+                        <img src="${rootURL}/images/16x16/health-00to19.gif" alt="0%"
+                             title="${%health.0.title}"/>
+                    </th>
+                    <td>
+                        <f:textbox name="vectorCASTHealthReports.minStatement" value="${instance.healthReports.minStatement}" />
+                    </td>
+                    <td>
+                        <f:textbox name="vectorCASTHealthReports.minBranch" value="${instance.healthReports.minBranch}" />
+                    </td>
+                    <td>
+                        <f:textbox name="vectorCASTHealthReports.minBasisPath" value="${instance.healthReports.minBasisPath}" />
+                    </td>
+                    <td>
+                        <f:textbox name="vectorCASTHealthReports.minMCDC" value="${instance.healthReports.minMCDC}" />
+                    </td>
+                    <td>
+                        <f:textbox name="vectorCASTHealthReports.minFunction" value="${instance.healthReports.minFunction}" />
+                    </td>
+                    <td>
+                        <f:textbox name="vectorCASTHealthReports.minFunctionCall" value="${instance.healthReports.minFunctionCall}" />
+                    </td>
+                </tr>
+            </tbody>
+
+        </table>
+    </f:entry>
+</j:jelly>

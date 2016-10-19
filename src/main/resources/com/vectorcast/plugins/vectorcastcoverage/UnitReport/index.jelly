@@ -1,0 +1,29 @@
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form">
+  <l:layout xmlns:e="/com/vectorcast/plugins/vectorcastcoverage/tags" norefresh="true" css="/plugin/vectorcastcoverage/css/style.css">
+        <st:include it="${it.build}" page="sidepanel.jelly" />
+        <l:main-panel>
+            <h2>${%Unit }: ${it.name}</h2>
+                <e:floatingTrendGraph/>
+
+                <h3>${%Coverage Summary}</h3>
+                <e:summaryTable title="${it.name}" envORunit="${%Unit }"/>
+
+                <h3>${%Coverage Breakdown by Subprogram}</h3>
+                
+                <table border="1px" class="sortable pane">
+            
+                    <e:captionLine envORunit="${%Subprogram}"/>
+
+                    <j:forEach var="Subprogram" items="${it.children.values()}">
+
+                        <tr>
+                            <td class="nowrap ${h.ifThenElse(Subprogram.failed,' red','')}" >
+                                <st:out value="${Subprogram.getName()}"/>
+                            </td>	      
+                            ${Subprogram.printFourCoverageColumns()}
+                        </tr>
+                    </j:forEach>
+                </table>
+      </l:main-panel>
+  </l:layout>
+</j:jelly>

@@ -14,15 +14,15 @@ import java.io.InputStream;
  * 
  * @author Kohsuke Kawaguchi
  */
-public final class CoverageReport extends AggregatedReport<CoverageReport/*dummy*/,CoverageReport,PackageReport> {
-    private final EmmaBuildAction action;
+public final class CoverageReport extends AggregatedReport<CoverageReport/*dummy*/,CoverageReport,EnvironmentReport> {
+    private final VectorCASTBuildAction action;
 
-    private CoverageReport(EmmaBuildAction action) {
+    private CoverageReport(VectorCASTBuildAction action) {
         this.action = action;
-        setName("Emma");
+        setName("VectorCAST");
     }
 
-    public CoverageReport(EmmaBuildAction action, InputStream... xmlReports) throws IOException {
+    public CoverageReport(VectorCASTBuildAction action, InputStream... xmlReports) throws IOException {
         this(action);
         for (InputStream is: xmlReports) {
           try {
@@ -34,7 +34,7 @@ public final class CoverageReport extends AggregatedReport<CoverageReport/*dummy
         setParent(null);
     }
 
-    public CoverageReport(EmmaBuildAction action, File xmlReport) throws IOException {
+    public CoverageReport(VectorCASTBuildAction action, File xmlReport) throws IOException {
         this(action);
         try {
             createDigester().parse(xmlReport);
@@ -46,7 +46,7 @@ public final class CoverageReport extends AggregatedReport<CoverageReport/*dummy
 
     @Override
     public CoverageReport getPreviousResult() {
-        EmmaBuildAction prev = action.getPreviousResult();
+        VectorCASTBuildAction prev = action.getPreviousResult();
         if(prev!=null)
             return prev.getResult();
         else
@@ -67,36 +67,20 @@ public final class CoverageReport extends AggregatedReport<CoverageReport/*dummy
 
         digester.push(this);
 
-        digester.addObjectCreate( "*/package", PackageReport.class);
-        digester.addSetNext(      "*/package","add");
-        digester.addSetProperties("*/package");
-        digester.addObjectCreate( "*/srcfile", SourceFileReport.class);
-        digester.addSetNext(      "*/srcfile","add");
-        digester.addSetProperties("*/srcfile");
-        digester.addObjectCreate( "*/class", ClassReport.class);
-        digester.addSetNext(      "*/class","add");
-        digester.addSetProperties("*/class");
-        digester.addObjectCreate( "*/method", MethodReport.class);
-        digester.addSetNext(      "*/method","add");
-        digester.addSetProperties("*/method");
+        digester.addObjectCreate( "*/environment", EnvironmentReport.class);
+        digester.addSetNext(      "*/environment","add");
+        digester.addSetProperties("*/environment");
+        digester.addObjectCreate( "*/unit", UnitReport.class);
+        digester.addSetNext(      "*/unit","add");
+        digester.addSetProperties("*/unit");
+        digester.addObjectCreate( "*/subprogram", SubprogramReport.class);
+        digester.addSetNext(      "*/subprogram","add");
+        digester.addSetProperties("*/subprogram");
 
         digester.addObjectCreate("*/coverage", CoverageElement.class);
         digester.addSetProperties("*/coverage");
         digester.addSetNext(      "*/coverage","addCoverage");
 
-        //digester.addObjectCreate("*/testcase",TestCase.class);
-        //digester.addSetNext("*/testsuite","add");
-        //digester.addSetNext("*/test","add");
-        //if(owner.considerTestAsTestObject())
-        //    digester.addCallMethod("*/test", "setconsiderTestAsTestObject");
-        //digester.addSetNext("*/testcase","add");
-        //
-        //// common properties applicable to more than one TestObjects.
-        //digester.addBeanPropertySetter("*/id");
-        //digester.addBeanPropertySetter("*/name");
-        //digester.addBeanPropertySetter("*/description");
-        //digester.addSetProperties("*/status","value","statusString");  // set attributes. in particular @revision
-        //digester.addBeanPropertySetter("*/status","statusMessage");
         return digester;
     }
 }

@@ -1,11 +1,9 @@
 package com.vectorcast.plugins.vectorcastcoverage;
 
-import com.vectorcast.plugins.vectorcastcoverage.Ratio;
-
 /**
  * JUnit test for {@link Ratio}
  */
-public class RatioTest extends AbstractEmmaTestBase {
+public class RatioTest extends AbstractVectorCASTTestBase {
 
     /**
      * Tests that {@link Ratio#parseValue(String)} parses correctly float

@@ -20,7 +20,7 @@ public abstract class AggregatedReport<PARENT extends AggregatedReport<?,PARENT,
 
     public void add(CHILD child) {
         children.put(child.getName(),child);
-        this.hasClassCoverage();
+        this.hasStatementCoverage();
     }
 
     public Map<String,CHILD> getChildren() {
@@ -48,29 +48,54 @@ public abstract class AggregatedReport<PARENT extends AggregatedReport<?,PARENT,
     public boolean hasChildren() {
     	return getChildren().size() > 0;
     }
-
-    public boolean hasChildrenLineCoverage() {
+	
+    public boolean hasChildrenStatementCoverage() {
     	for (CHILD child : getChildren().values()){
-    		if (child.hasLineCoverage()) {
+    		if (child.hasStatementCoverage()) {
     			return true;
     		}
     	}
         return false;
     }
 
-    public boolean hasChildrenClassCoverage() {
+    public boolean hasChildrenBranchCoverage() {
     	for (CHILD child : getChildren().values()){
-    		if (child.hasClassCoverage()) {
+    		if (child.hasBranchCoverage()) {
     			return true;
     		}
     	}
         return false;
     }
 
-
-    public boolean hasChildrenConditionCoverage() {
+    public boolean hasChildrenBasisPathCoverage() {
     	for (CHILD child : getChildren().values()){
-    		if (child.hasConditionCoverage()) {
+    		if (child.hasBasisPathCoverage()) {
+    			return true;
+    		}
+    	}
+        return false;
+    }
+
+    public boolean hasChildrenMCDCCoverage() {
+    	for (CHILD child : getChildren().values()){
+    		if (child.hasMCDCCoverage()) {
+    			return true;
+    		}
+    	}
+        return false;
+    }
+
+    public boolean hasChildrenFunctionCoverage() {
+    	for (CHILD child : getChildren().values()){
+    		if (child.hasFunctionCoverage()) {
+    			return true;
+    		}
+    	}
+        return false;
+    }
+    public boolean hasChildrenFunctionCallCoverage() {
+    	for (CHILD child : getChildren().values()){
+    		if (child.hasFunctionCallCoverage()) {
     			return true;
     		}
     	}

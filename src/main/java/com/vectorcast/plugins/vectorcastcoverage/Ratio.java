@@ -96,7 +96,7 @@ final public class Ratio implements Serializable {
     }
 
     /**
-     * Parses the value attribute format of EMMA "52% (52/100)".
+     * Parses the value attribute format of VectorCAST "52% (52/100)".
      */
     static float[] parse(String v) {
         // if only I could use java.util.Scanner...

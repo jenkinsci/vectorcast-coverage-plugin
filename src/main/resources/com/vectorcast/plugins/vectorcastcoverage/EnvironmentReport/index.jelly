@@ -2,14 +2,14 @@
   <l:layout xmlns:e="/com/vectorcast/plugins/vectorcastcoverage/tags" norefresh="true" css="/plugin/vectorcast-coverage/css/style.css">
     <st:include it="${it.build}" page="sidepanel.jelly" />
     <l:main-panel>
-      <h2>${%VectorCAST Coverage Report}</h2>
+     <h2>${%Environment}: ${it.name}</h2>
       <e:floatingTrendGraph/>
 
-      <h3>${%Overall Coverage Summary}</h3>
-      <e:summaryTable title="${%All Units}" envORunit="Unit"/>
+      <h3>${%Coverage Summary}</h3>
+      <e:summaryTable title="${it.name}" envORunit="${%Environment }"/>
 
-      <h3>${%Coverage Breakdown by Environment}</h3>
-      <e:breakdownTable envORunit="Environment"/>
+      <h3>${%Coverage Breakdown by Unit}</h3>
+      <e:breakdownTable envORunit="${%Unit }" />
     </l:main-panel>
   </l:layout>
 </j:jelly>

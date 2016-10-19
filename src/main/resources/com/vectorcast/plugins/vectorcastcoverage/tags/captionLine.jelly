@@ -1,17 +1,27 @@
 <j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form" xmlns:e="/com/vectorcast/plugins/vectorcastcoverage/tags">
  <j:if test="${it.hasChildren()}">
   <tr>
-    <th>${%name}</th>
-    <j:if test="${it.hasChildrenClassCoverage()}">
-      <th>${%class}</th>
+    <th>${envORunit}</th>
+    <j:if test="${it.hasComplexity()}">
+      <th>${%Complexity}</th>
     </j:if>
-    <th>${%method}</th>
-    <th>${%block}</th>
-    <j:if test="${it.hasChildrenLineCoverage()}">
-      <th>${%line}</th>
+    <j:if test="${it.hasChildrenStatementCoverage()}">
+      <th>${%Statement}</th>
     </j:if>
-    <j:if test="${it.hasChildrenConditionCoverage()}">
-      <th>${%decision/condition}</th>
+    <j:if test="${it.hasChildrenBranchCoverage()}">
+      <th>${%Branch}</th>
+    </j:if>
+    <j:if test="${it.hasChildrenBasisPathCoverage()}">
+      <th>${%Basis Path}</th>
+    </j:if>
+    <j:if test="${it.hasChildrenMCDCCoverage()}">
+      <th>${%MC/DC}</th>
+    </j:if>
+    <j:if test="${it.hasChildrenFunctionCoverage()}">
+      <th>${%Function}</th>
+    </j:if>
+    <j:if test="${it.hasChildrenFunctionCallCoverage()}">
+      <th>${%Function Call}</th>
     </j:if>
   </tr>
  </j:if>  
