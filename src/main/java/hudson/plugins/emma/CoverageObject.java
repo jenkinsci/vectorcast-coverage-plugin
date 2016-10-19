@@ -1,8 +1,8 @@
 package hudson.plugins.emma;
 
 import hudson.Util;
-import hudson.model.AbstractBuild;
 import hudson.model.Api;
+import hudson.model.Run;
 import hudson.util.ChartUtil;
 import hudson.util.ColorPalette;
 import hudson.util.DataSetBuilder;
@@ -96,7 +96,7 @@ public abstract class CoverageObject<SELF extends CoverageObject<SELF>> {
     /**
      * Gets the build object that owns the whole coverage report tree.
      */
-    public abstract AbstractBuild<?,?> getBuild();
+    public abstract Run<?,?> getBuild();
 
     /**
      * Gets the corresponding coverage report object in the previous
@@ -172,7 +172,7 @@ public abstract class CoverageObject<SELF extends CoverageObject<SELF>> {
             return;
         }
 
-        AbstractBuild<?,?> build = getBuild();
+        Run<?,?> build = getBuild();
         Calendar t = build.getTimestamp();
 
         String w = Util.fixEmptyAndTrim(req.getParameter("width"));

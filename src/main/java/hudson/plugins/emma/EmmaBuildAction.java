@@ -236,13 +236,18 @@ public final class EmmaBuildAction extends CoverageObject<EmmaBuildAction> imple
     public static EmmaBuildAction load(AbstractBuild<?,?> owner, Rule rule, EmmaHealthReportThresholds thresholds, FilePath... files) throws IOException {
         Ratio ratios[] = null;
         for (FilePath f: files ) {
-            InputStream in = f.read();
+            InputStream in = null;
             try {
+                in = f.read();
                 ratios = loadRatios(in, ratios);
             } catch (XmlPullParserException e) {
                 throw new IOException2("Failed to parse " + f, e);
+            } catch (InterruptedException e) {
+                Logger.getLogger(EmmaBuildAction.class.getName()).log(Level.SEVERE, null, e);
             } finally {
-                in.close();
+                if (in != null) {
+                    in.close();
+                }
             }
         }
            
