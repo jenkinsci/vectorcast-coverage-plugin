@@ -280,12 +280,20 @@ public final class VectorCASTBuildAction extends CoverageObject<VectorCASTBuildA
         XmlPullParser parser = factory.newPullParser();
 
         parser.setInput(in,null);
+        String versionRead = "undefined";
         while(true) {
             if(parser.nextTag()!=XmlPullParser.START_TAG)
                 continue;
+            if (parser.getName().equals("version")) {
+                versionRead = parser.getAttributeValue("", "value");
+            }
             if(!parser.getName().equals("coverage"))
                 continue;
             break;
+        }
+
+        if (!versionRead.equals("2")) {
+            throw new XmlPullParserException("Unsupported version: '" + versionRead + "', expecting 2");
         }
 
         if (r == null || r.length < 7) 
