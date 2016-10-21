@@ -30,7 +30,7 @@ public final class VectorCASTProjectAction implements Action {
     }
 
     public String getUrlName() {
-        return "vevtorcastcoverage";
+        return "vectorcastcoverage";
     }
 
     /**
