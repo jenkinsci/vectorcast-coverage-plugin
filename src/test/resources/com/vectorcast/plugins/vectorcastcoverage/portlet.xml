@@ -1,0 +1,100 @@
+<!-- VectorCAST/Jenkins Integration, Generated 10/25/2016	03:57 PM -->
+<report>
+<version value="2"/>
+  <stats>
+    <environments   value="4"/>
+    <units    value="3"/>
+    <subprograms value="5"/>
+  </stats>
+  <data>
+    <all name="all environments">
+      <coverage type="statement, %" value="42% (25 / 60)"/>
+      <coverage type="branch, %" value="26% (14 / 54)"/>
+      <coverage type="mcdc, %" value="7% (1 / 14)"/>
+      <coverage type="complexity, %" value="0% (24 / 0)"/>
+
+      <environment name ="VectorCAST_MinGW_C_TestSuite_ORDER">
+        <coverage type="statement, %" value="42% (23 / 55)"/>
+        <coverage type="branch, %" value="26% (13 / 50)"/>
+        <coverage type="mcdc, %" value="8% (1 / 12)"/>
+        <coverage type="complexity, %" value="0% (17 / 0)"/>
+
+        <unit name="manager">
+          <coverage type="statement, %" value="41% (18 / 44)"/>
+          <coverage type="branch, %" value="27% (10 / 37)"/>
+          <coverage type="mcdc, %" value="0% (0 / 9)"/>
+          <coverage type="complexity, %" value="0% (13 / 0)"/>
+          <subprogram name="Add_Tax_Tip">
+            <coverage type="statement, %" value="0% (0 / 11)"/>
+            <coverage type="branch, %" value="0% (0 / 13)"/>
+            <coverage type="mcdc, %" value="0% (0 / 3)"/>
+            <coverage type="complexity, %" value="0% (4 / 0)"/>
+          </subprogram>
+          <subprogram name="Add_Included_Dessert">
+            <coverage type="statement, %" value="50% (4 / 8)"/>
+            <coverage type="branch, %" value="41% (7 / 17)"/>
+            <coverage type="mcdc, %" value="0% (0 / 6)"/>
+            <coverage type="complexity, %" value="0% (3 / 0)"/>
+          </subprogram>
+          <subprogram name="Place_Order">
+            <coverage type="statement, %" value="56% (14 / 25)"/>
+            <coverage type="branch, %" value="42% (3 / 7)"/>
+            <coverage type="mcdc, %" value="0% (0 / 0)"/>
+            <coverage type="complexity, %" value="0% (6 / 0)"/>
+          </subprogram>
+        </unit>
+
+        <unit name="manager2">
+          <coverage type="statement, %" value="45% (5 / 11)"/>
+          <coverage type="branch, %" value="27% (3 / 13)"/>
+          <coverage type="mcdc, %" value="33% (1 /3)"/>
+          <coverage type="complexity, %" value="0% (4 / 0)"/>
+          <subprogram name="Add_Tax_Tip">
+            <coverage type="statement, %" value="45% (5 / 11)"/>
+            <coverage type="branch, %" value="27% (3 / 13)"/>
+            <coverage type="mcdc, %" value="33% (1 / 3)"/>
+            <coverage type="complexity, %" value="0% (4 / 0)"/>
+          </subprogram>
+        </unit>
+      </environment>
+
+      <environment name ="ENV2">
+        <coverage type="statement, %" value="40% (2 / 5)"/>
+        <coverage type="branch, %" value="25% (1 / 4)"/>
+        <coverage type="mcdc, %" value="0% (0 /2)"/>
+        <coverage type="complexity, %" value="0% (7 / 0)"/>
+
+        <unit name="manager3">
+          <coverage type="statement, %" value="40% (2 / 5)"/>
+          <coverage type="branch, %" value="25% (1 / 4)"/>
+          <coverage type="mcdc, %" value="0% (0 /2)"/>
+          <coverage type="complexity, %" value="0% (7 / 0)"/>
+          <subprogram name="Add_Tax_Tip">
+            <coverage type="statement, %" value="40% (2 / 5)"/>
+            <coverage type="branch, %" value="25% (1 / 4)"/>
+            <coverage type="mcdc, %" value="0% (0 / 2)"/>
+            <coverage type="complexity, %" value="0% (7 / 0)"/>
+          </subprogram>
+        </unit>
+
+      </environment>
+
+      <environment name ="EmptyEnvironment">
+        <coverage type="statement, %" value="0% (0 / 0)"/>
+        <coverage type="branch, %" value="0% (0 / 0)"/>
+        <coverage type="mcdc, %" value="0% (0 / 0)"/>
+        <coverage type="complexity, %" value="0% (0 / 0)"/>
+
+      </environment>
+      <environment name ="EnvironmentWithoutStatements">
+        <coverage type="statement, %" value="0% (0 / 0)"/>
+        <coverage type="branch, %" value="0% (0 / 0)"/>
+        <coverage type="mcdc, %" value="0% (0 / 0)"/>
+        <coverage type="complexity, %" value="0% (0 / 0)"/>
+        <unit name="manager">
+        </unit>
+
+      </environment>
+    </all>
+  </data>
+</report>

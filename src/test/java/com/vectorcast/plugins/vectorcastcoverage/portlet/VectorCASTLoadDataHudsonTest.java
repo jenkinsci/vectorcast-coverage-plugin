@@ -33,45 +33,41 @@ public class VectorCASTLoadDataHudsonTest extends HudsonTestCase {
      * @throws Exception if so.
      */
     public void testLoadChartDataWithinRangePositiveNumberOfDays() throws Exception {
-//
-//        final float expectedBlockCoverage = 0.5f;
-//        final float expectedClassCoverage = 13.7f;
-//        final float expectedLineCoverage = 0.6f;
-//        final float expectedMethodCoverage = 2.0f;
-//        final int numberOfDays = 1;
-//        final int summaryMapSize = 1;
-//
-//        //Create the project
-//        FreeStyleProject job1 = createFreeStyleProject("job1");
-//
-//        //Make it do something, in this case it writes a coverage report to the workspace.
-//        job1.getBuildersList().add(
-//          new CopyResourceToWorkspaceBuilder(getClass().getResourceAsStream("/com/vectorcast/plugins/vectorcastcoverage/coveragePortlet.xml"),
-//                        "reports/coverage/coveragePortlet.xml"));
-//        //Add a VectorCAST publisher
-//        VectorCASTPublisher emmaPublisher = new VectorCASTPublisher();
-//        emmaPublisher.includes = "reports/coverage/coveragePortlet.xml";
-//        job1.getPublishersList().add(emmaPublisher);
-//        //Build it
-//        job1.scheduleBuild2(0).get();
-//
-//        //Do the test
-//        List<Job> jobs = new LinkedList<Job>();
-//        jobs.add(job1);
-//        //Verify the result
-//        Map<LocalDate, VectorCASTCoverageResultSummary> summaryMap = VectorCASTLoadData.loadChartDataWithinRange(jobs, numberOfDays);
-//
-//        // Testing the size of the returned map against the exepected value,
-//        // which is a non-zero, therefore tha map must not be empty
-//        assertEquals(summaryMapSize, summaryMap.size());
-//
-//        VectorCASTCoverageResultSummary summary = summaryMap.entrySet().iterator().next().getValue();
-//
-//        // Test evaluated values against expected ones
-//        assertEquals(expectedBlockCoverage, summary.getBlockCoverage(), 0.1f);
-//        assertEquals(expectedClassCoverage, summary.getClassCoverage(), 0.1f);
-//        assertEquals(expectedLineCoverage, summary.getLineCoverage(), 0.1f);
-//        assertEquals(expectedMethodCoverage, summary.getMethodCoverage(), 0.1f);
+
+        final float expectedStatementCoverage = 41.6f;
+        final float expectedMCDCCoverage = 7.1f;
+        final int numberOfDays = 1;
+        final int summaryMapSize = 1;
+
+        //Create the project
+        FreeStyleProject job1 = createFreeStyleProject("job1");
+
+        //Make it do something, in this case it writes a coverage report to the workspace.
+        job1.getBuildersList().add(
+          new CopyResourceToWorkspaceBuilder(getClass().getResourceAsStream("/com/vectorcast/plugins/vectorcastcoverage/portlet.xml"),
+                        "reports/coverage/portlet.xml"));
+        //Add a VectorCAST publisher
+        VectorCASTPublisher vcPublisher = new VectorCASTPublisher();
+        vcPublisher.includes = "reports/coverage/portlet.xml";
+        job1.getPublishersList().add(vcPublisher);
+        //Build it
+        job1.scheduleBuild2(0).get();
+
+        //Do the test
+        List<Job> jobs = new LinkedList<Job>();
+        jobs.add(job1);
+        //Verify the result
+        Map<LocalDate, VectorCASTCoverageResultSummary> summaryMap = VectorCASTLoadData.loadChartDataWithinRange(jobs, numberOfDays);
+
+        // Testing the size of the returned map against the exepected value,
+        // which is a non-zero, therefore tha map must not be empty
+        assertEquals(summaryMapSize, summaryMap.size());
+
+        VectorCASTCoverageResultSummary summary = summaryMap.entrySet().iterator().next().getValue();
+        
+        // Test evaluated values against expected ones
+        assertEquals(expectedStatementCoverage, summary.getStatementCoverage(), 0.1f);
+        assertEquals(expectedMCDCCoverage, summary.getMCDCCoverage(), 0.1f);
     }
 
     /**
@@ -81,89 +77,104 @@ public class VectorCASTLoadDataHudsonTest extends HudsonTestCase {
      * @throws Exception if so.
      */
     public void testLoadChartDataWithinRangeMultJobsSingleBuild() throws Exception {
-//
-//        final float expectedBlockCoverage = 0.5f;
-//        final float expectedClassCoverage = 13.7f;
-//        final float expectedLineCoverage = 0.6f;
-//        final float expectedMethodCoverage = 2.0f;
-//        final int numberOfDays = 1;
-//        final int summaryMapSize = 1;
-//
-//        //Create the project
-//        FreeStyleProject job1 = createFreeStyleProject("job1");
-//
-//        //Make it do something, in this case it writes a coverage report to the workspace.
-//        job1.getBuildersList().add(
-//                new CopyResourceToWorkspaceBuilder(getClass().getResourceAsStream("/com/vectorcast/plugins/vectorcastcoverage/coveragePortlet.xml"),
-//                        "reports/coverage/coveragePortlet.xml"));
-//        //Add a VectorCAST publisher
-//        VectorCASTPublisher emmaPublisher = new VectorCASTPublisher();
-//        emmaPublisher.includes = "reports/coverage/coveragePortlet.xml";
-//        // emmaPublisher.includes = "resources/hudson/plugins/emma/coveragePortlet.xml";
-//        job1.getPublishersList().add(emmaPublisher);
-//        //Build it
-//        job1.scheduleBuild2(0).get();
-//
-//        //Do the test
-//        List<Job> jobs = new LinkedList<Job>();
-//
-//        FreeStyleProject job2 = createFreeStyleProject("job2");
-//        jobs.add(job1);
-//        jobs.add(job2);
-//
-//        //Verify the result
-//        Map<LocalDate, VectorCASTCoverageResultSummary> summaryMap = VectorCASTLoadData.loadChartDataWithinRange(jobs, numberOfDays);
-//
-//        // Testing the size of the returned map against the exepected value,
-//        // which is a non-zero, therefore tha map must not be empty
-//        assertEquals(summaryMapSize, summaryMap.size());
-//
-//        VectorCASTCoverageResultSummary summary = summaryMap.entrySet().iterator().next().getValue();
-//        // Test evaluated values against expected ones
-//        assertEquals(expectedBlockCoverage, summary.getBlockCoverage(), 0.1f);
-//        assertEquals(expectedClassCoverage, summary.getClassCoverage(), 0.1f);
-//        assertEquals(expectedLineCoverage, summary.getLineCoverage(), 0.1f);
-//        assertEquals(expectedMethodCoverage, summary.getMethodCoverage(), 0.1f);
+
+        final float expectedStatementCoverage = 41.6f;
+        final float expectedMCDCCoverage = 7.1f;
+        final int numberOfDays = 1;
+        final int summaryMapSize = 1;
+
+        //Create the project
+        FreeStyleProject job1 = createFreeStyleProject("job1");
+
+        //Make it do something, in this case it writes a coverage report to the workspace.
+        job1.getBuildersList().add(
+                new CopyResourceToWorkspaceBuilder(getClass().getResourceAsStream("/com/vectorcast/plugins/vectorcastcoverage/portlet.xml"),
+                        "reports/coverage/portlet.xml"));
+        //Add a VectorCAST publisher
+        VectorCASTPublisher emmaPublisher = new VectorCASTPublisher();
+        emmaPublisher.includes = "reports/coverage/portlet.xml";
+        job1.getPublishersList().add(emmaPublisher);
+        //Build it
+        job1.scheduleBuild2(0).get();
+
+        //Do the test
+        List<Job> jobs = new LinkedList<Job>();
+
+        FreeStyleProject job2 = createFreeStyleProject("job2");
+        jobs.add(job1);
+        jobs.add(job2);
+
+        //Verify the result
+        Map<LocalDate, VectorCASTCoverageResultSummary> summaryMap = VectorCASTLoadData.loadChartDataWithinRange(jobs, numberOfDays);
+
+        // Testing the size of the returned map against the exepected value,
+        // which is a non-zero, therefore tha map must not be empty
+        assertEquals(summaryMapSize, summaryMap.size());
+
+        VectorCASTCoverageResultSummary summary = summaryMap.entrySet().iterator().next().getValue();
+        // Test evaluated values against expected ones
+        assertEquals(expectedStatementCoverage, summary.getStatementCoverage(), 0.1f);
+        assertEquals(expectedMCDCCoverage, summary.getMCDCCoverage(), 0.1f);
     }
 
     /**
-     * This method tests the getResultSummary() behavior.
+     * This method tests the getResultSummary() behaviour.
      * Tests {@link com.vectorcast.plugins.vectorcastcoverage.portlet.VectorCASTLoadData#getResultSummary(java.util.Collection)}.
      * @throws Exception if any
      */
     public void testGetResultSummary() throws Exception {
-//
-//        float blockCoverage = 12.0f;
-//        float classCoverage = 78.0f;
-//        float lineCoverage = 82.0f;
-//        float methodCoverage = 0.7f;
-//        float conditionCoverage = 0.8f;
-//
-//        float blockCoverage2 = 54.0f;
-//        float classCoverage2 = 86.9f;
-//        float lineCoverage2 = 21.7f;
-//        float methodCoverage2 = 60.0f;
-//        float conditionCoverage2 = 0.9f;
-//
-//        // create a result summary with data from the first emma action
-//        VectorCASTCoverageResultSummary coverageResultSummary = new VectorCASTCoverageResultSummary(null, blockCoverage, lineCoverage, methodCoverage,
-//          classCoverage,conditionCoverage);
-//
-//        // create a result summary with data from the second emma action
-//        VectorCASTCoverageResultSummary coverageResultSummary2 = new VectorCASTCoverageResultSummary(null, blockCoverage2, lineCoverage2, methodCoverage2,
-//          classCoverage2, conditionCoverage2);
-//
-//        // add both coverage result summaries to the emma result summary
-//        VectorCASTCoverageResultSummary summary = new VectorCASTCoverageResultSummary();
-//        summary.addCoverageResult(coverageResultSummary);
-//        summary.addCoverageResult(coverageResultSummary2);
-//
-//        // assert the sum has occurred correctly
-//        assertEquals(blockCoverage + blockCoverage2, summary.getBlockCoverage());
-//        assertEquals(classCoverage + classCoverage2, summary.getClassCoverage());
-//        assertEquals(lineCoverage + lineCoverage2, summary.getLineCoverage());
-//        assertEquals(methodCoverage + methodCoverage2, summary.getMethodCoverage());
-//        assertEquals(conditionCoverage + conditionCoverage2, summary.getConditionCoverage());
+
+        float basisPathCoverage = 12.0f;
+        float MCDCCoverage = 78.0f;
+        float branchCoverage = 82.0f;
+        float statementCoverage = 0.7f;
+        float functionCoverage = 0.8f;
+        float functionCallCoverage = 0.55f;
+        float complexity = 17.0f;
+
+        float basisPathCoverage2 = 29.3f;
+        float MCDCCoverage2 = 3.0f;
+        float branchCoverage2 = 17.0f;
+        float statementCoverage2 = 34.7f;
+        float functionCoverage2 = 28.8f;
+        float functionCallCoverage2 = 9.5f;
+        float complexity2 = 12.5f;
+
+        // create a result summary with data from the first VC action
+        VectorCASTCoverageResultSummary coverageResultSummary = 
+                new VectorCASTCoverageResultSummary(null,
+                                                    basisPathCoverage,
+                                                    MCDCCoverage,
+                                                    branchCoverage,
+                                                    statementCoverage,
+                                                    functionCoverage,
+                                                    functionCallCoverage,
+                                                    complexity);
+
+        // create a result summary with data from the second VC action
+        VectorCASTCoverageResultSummary coverageResultSummary2 =
+                new VectorCASTCoverageResultSummary(null,
+                                                    basisPathCoverage2,
+                                                    MCDCCoverage2,
+                                                    branchCoverage2,
+                                                    statementCoverage2,
+                                                    functionCoverage2,
+                                                    functionCallCoverage2,
+                                                    complexity2);
+
+        // add both coverage result summaries to the VC result summary
+        VectorCASTCoverageResultSummary summary = new VectorCASTCoverageResultSummary();
+        summary.addCoverageResult(coverageResultSummary);
+        summary.addCoverageResult(coverageResultSummary2);
+
+        // assert the sum has occurred correctly
+        assertEquals(basisPathCoverage + basisPathCoverage2, summary.getBasisPathCoverage());
+        assertEquals(MCDCCoverage + MCDCCoverage2, summary.getMCDCCoverage());
+        assertEquals(branchCoverage + branchCoverage2, summary.getBranchCoverage());
+        assertEquals(statementCoverage + statementCoverage2, summary.getStatementCoverage());
+        assertEquals(functionCoverage + functionCoverage2, summary.getFunctionCoverage());
+        assertEquals(functionCallCoverage + functionCallCoverage2, summary.getFunctionCallCoverage());
+        assertEquals(complexity + complexity2, summary.getComplexity());
     }
 
     /**
