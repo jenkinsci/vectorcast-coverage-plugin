@@ -6,65 +6,54 @@ package com.vectorcast.plugins.vectorcastcoverage;
 public class CoverageReportTest extends AbstractVectorCASTTestBase {
 	
     public void testLoad() throws Exception {
-//        CoverageReport r = new CoverageReport(null, getClass().getResourceAsStream("coverage.xml"));
-//        EnvironmentReport env = r.getChildren().get("com.sun.tools.javac.v8.resources");
-//        assertRatio(env.getLineCoverage(),3,12);
-//        assertEquals(8346.3f, r.getLineCoverage().getNumerator());
+        CoverageReport r = new CoverageReport(null, getClass().getResourceAsStream("coverage.xml"));
+        EnvironmentReport env = r.getChildren().get("VectorCAST_MinGW_C_TestSuite_ORDER");
+        assertRatio(env.getStatementCoverage(), 23, 55);
+        assertEquals(25f, r.getStatementCoverage().getNumerator());
     }
 
     public void testLoadMultipleReports() throws Exception {
-//      CoverageReport r = new CoverageReport(null,  
-//          getClass().getResourceAsStream("coverage.xml"), 
-//          getClass().getResourceAsStream("coverageh.xml"));
-//
-//      assertRatio(r.getLineCoverage(), 8355.3f, 14828.0f);
-//      
-//      EnvironmentReport env = r.getChildren().get("com.sun.tools.javac.v8.resources");
-//      assertRatio(env.getLineCoverage(),3,12);
-//      
-//      env = r.getChildren().get("org.apache.hupa.client.validation");
-//      assertRatio(env.getLineCoverage(), 9,27);
-//      
+      CoverageReport r = new CoverageReport(null,  
+          getClass().getResourceAsStream("coverage.xml"), 
+          getClass().getResourceAsStream("coverageh.xml"));
+
+      assertRatio(r.getStatementCoverage(), 45, 100);
+      
+      EnvironmentReport env = r.getChildren().get("VectorCAST_MinGW_C_TestSuite_ORDER");
+      assertRatio(env.getStatementCoverage(), 23, 55);
+      
+      env = r.getChildren().get("AnotherEnv");
+      assertRatio(env.getStatementCoverage(), 20, 40);
+      
     }
     
     public void testTreeReport() throws Exception {
-//        CoverageReport r = new CoverageReport(null,getClass().getResourceAsStream("coverageh.xml"));
-//        assertRatio(r.getLineCoverage(), 9, 1693);
-//        
-//        EnvironmentReport env = r.getChildren().get("org.apache.hupa.client.validation");
-//        assertRatio(env.getLineCoverage(), 9, 27);
-//
-//        UnitReport unit = env.getChildren().get("EmailListValidator.java");
-//        assertRatio(unit.getLineCoverage(), 9, 18);
-//
-//        SubprogramReport sub = unit.getChildren().get("EmailListValidator");
-//        assertRatio(sub.getLineCoverage(), 9, 18);
-//        assertTrue(sub.hasClassCoverage());
-//
-//        DeadEndReport dead = sub.getChildren().get("isValidAddress (String): boolean");
-//        assertRatio(dead.getLineCoverage(), 1, 1);
-//        assertFalse(dead.hasClassCoverage());
-//
-//        mth = clz.getChildren().get("Foo (): void");
-//        assertRatio(mth.getLineCoverage(), 0, 0);
-//        assertFalse(mth.hasClassCoverage());
-//        assertFalse(mth.hasLineCoverage());
+        CoverageReport r = new CoverageReport(null,getClass().getResourceAsStream("coverage.xml"));
+        assertRatio(r.getStatementCoverage(), 25, 60);
+        
+        EnvironmentReport env = r.getChildren().get("VectorCAST_MinGW_C_TestSuite_ORDER");
+        assertRatio(env.getStatementCoverage(),23,55);
+
+        UnitReport unit = env.getChildren().get("manager");
+        assertRatio(unit.getStatementCoverage(), 18, 44);
+
+        SubprogramReport sub = unit.getChildren().get("Add_Included_Dessert");
+        assertRatio(sub.getStatementCoverage(), 4, 8);
     }
     
-    public void testEmptyPackage() throws Exception {
-//        CoverageReport r = new CoverageReport(null,getClass().getResourceAsStream("coverage.xml"));
-//
-//        EnvironmentReport env = r.getChildren().get("an.empty.package");
-//        assertRatio(env.getLineCoverage(), 0, 0);
-//        assertFalse(env.hasChildren());
-//        assertFalse(env.hasChildrenClassCoverage());
-//        assertFalse(env.hasChildrenLineCoverage());
-//
-//        env = r.getChildren().get("an.package.without.lines");
-//        assertRatio(env.getLineCoverage(), 0, 0);
-//        assertTrue(env.hasChildren());
-//        assertFalse(env.hasChildrenClassCoverage());
-//        assertFalse(env.hasChildrenLineCoverage());
+    public void testEmptyEnvironment() throws Exception {
+        CoverageReport r = new CoverageReport(null,getClass().getResourceAsStream("coverage.xml"));
 
+        EnvironmentReport env = r.getChildren().get("EmptyEnvironment");
+        assertTrue(env != null);
+        assertRatio(env.getStatementCoverage(), 0, 0);
+        assertFalse(env.hasChildren());
+        assertFalse(env.hasChildrenStatementCoverage());
+
+        env = r.getChildren().get("EnvironmentWithoutStatements");
+        assertTrue(env != null);
+        assertRatio(env.getStatementCoverage(), 0, 0);
+        assertTrue(env.hasChildren());
+        assertFalse(env.hasChildrenStatementCoverage());
     }
 }

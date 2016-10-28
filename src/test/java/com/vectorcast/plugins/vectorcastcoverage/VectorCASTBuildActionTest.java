@@ -5,98 +5,46 @@ package com.vectorcast.plugins.vectorcastcoverage;
  */
 public class VectorCASTBuildActionTest extends AbstractVectorCASTTestBase {
   
-    public void testLoadCocoReport1() throws Exception {
-//        VectorCASTBuildAction r = VectorCASTBuildAction.load(null,null,
-//                new VectorCASTHealthReportThresholds(30, 90, 25, 80, 20, 70, 15, 60,20,70),
-//                getClass().getResourceAsStream("coco1.xml"));
-//
-//        assertRatio(r.clazz, 75,94);
-//        assertRatio(r.method, 947,2176);
-//        assertRatio(r.block, 2842,7967);
-//        assert(r.line == null);
-//        assertRatio(r.condition, 5917,15253);
-// 
-//        String description = r.getBuildHealth().getDescription() ;
-//        assertEquals("Coverage: Classes 75/94 (80%). Methods 947/2176 (44%). Blocks 2842/7967 (36%). Decisions/Conditions 5917/15253 (39%). ",
-//                     description);
-    }
-
-    public void testLoadCocoReport2() throws Exception {
-//        VectorCASTBuildAction r = VectorCASTBuildAction.load(null,null,
-//                new VectorCASTHealthReportThresholds(30, 90, 25, 80, 20, 70, 15, 60,20,70),
-//                getClass().getResourceAsStream("coco2.xml"));
-//
-//        assertRatio(r.clazz, 1,1);
-//        assertRatio(r.method, 1,1);
-//        assertRatio(r.block, 2,5);
-//        assertRatio(r.line, 8,13);
-//        assertRatio(r.condition, 4,15);
-// 
-//        String description = r.getBuildHealth().getDescription() ;
-//        assertEquals("Coverage: Blocks 2/5 (40%). Decisions/Conditions 4/15 (27%).   ",
-//                     description);
-    }
-    
-    
-    public void testLoadCocoReport3() throws Exception {
-//        VectorCASTBuildAction r = VectorCASTBuildAction.load(null,null,
-//                new VectorCASTHealthReportThresholds(30, 90, 25, 80, 20, 70, 15, 60,20,70),
-//                getClass().getResourceAsStream("coco3.xml"));
-//
-//        assertRatio(r.clazz, 1,1);
-//        assertRatio(r.method, 1,1);
-//        assertRatio(r.block, 2,5);
-//        assert(r.line==null);
-//        assert(r.condition==null);
-// 
-//        String description = r.getBuildHealth().getDescription() ;
-//        assertEquals("Coverage: Blocks 2/5 (40%).    ",
-//                     description);
-    }
-    
     public void testLoadReport1() throws Exception {
-//        VectorCASTBuildAction r = VectorCASTBuildAction.load(null,null,
-//                new VectorCASTHealthReportThresholds(30, 90, 25, 80, 20, 70, 15, 60,20,70),
-//                getClass().getResourceAsStream("coverage.xml"));
-//        assertEquals(100, r.clazz.getPercentage());
-//        assertEquals(64, r.line.getPercentage());
-//        assertRatio(r.clazz, 185,185);
-//        assertRatio(r.method, 1345,2061);
-//        assertRatio(r.block, 44997,74846);
-//        assertRatio(r.line, 8346.3f,13135);
-//        assert(r.condition == null);
-//        assertEquals("Coverage: Methods 1345/2061 (65%). Blocks 44997/74846 (60%).   ",
-//                     r.getBuildHealth().getDescription());
+        VectorCASTBuildAction r = VectorCASTBuildAction.load(null,null,
+                new VectorCASTHealthReportThresholds(30, 90, 25, 80, 20, 70, 15, 60, 20, 70, 80, 90),
+                getClass().getResourceAsStream("coverage.xml"));
+        assertEquals(42, r.Statement.getPercentage());
+        assertEquals(26, r.Branch.getPercentage());
+        assertRatio(r.Statement, 25, 60);
+        assertRatio(r.Branch, 14, 54);
+        assertRatio(r.MCDC, 1, 14);
+        assert(r.Function == null);
+        assertEquals("Coverage: Statement 25/60 (42%). Branch 14/54 (26%). MC/DC 1/14 (7%).   ",
+                     r.getBuildHealth().getDescription());
     }
     
     public void testLoadReport2() throws Exception {
-//        VectorCASTBuildAction r = VectorCASTBuildAction.load(null,null,
-//                new VectorCASTHealthReportThresholds(30, 90, 25, 80, 20, 70, 15, 60,20,70),
-//                getClass().getResourceAsStream("coverageh.xml"));
-//        assertEquals(1, r.clazz.getPercentage());
-//        assertEquals(1, r.line.getPercentage());
-//        assertRatio(r.clazz, 1, 149);
-//        assertRatio(r.method, 2, 678);
-//        assertRatio(r.block, 42, 9659);
-//        assertRatio(r.line, 9, 1693);
-//        assert(r.condition == null);
-//        assertEquals("Coverage: Classes 1/149 (1%). Methods 2/678 (0%). Blocks 42/9659 (0%). Lines 9/1693 (1%). ",
-//                     r.getBuildHealth().getDescription());
+        VectorCASTBuildAction r = VectorCASTBuildAction.load(null,null,
+                new VectorCASTHealthReportThresholds(30, 90, 25, 80, 20, 70, 15, 60, 20, 70, 80, 90),
+                getClass().getResourceAsStream("coverageh.xml"));
+        assertEquals(50, r.Statement.getPercentage());
+        assertEquals(25, r.Branch.getPercentage());
+        assertRatio(r.Statement, 20, 40);
+        assertRatio(r.Branch, 4, 16);
+        assertRatio(r.MCDC, 1, 5);
+        assert(r.Function == null);
+        assertEquals("Coverage: Statement 20/40 (50%). Branch 4/16 (25%). MC/DC 1/5 (20%).   ",
+                     r.getBuildHealth().getDescription());
     }
     
     public void testLoadMultipleReports() throws Exception {
-//      VectorCASTBuildAction r = VectorCASTBuildAction.load(null,null,
-//              new VectorCASTHealthReportThresholds(30, 90, 25, 80, 20, 70, 15, 60,20,70),
-//              getClass().getResourceAsStream("coverage.xml"), 
-//              getClass().getResourceAsStream("coverageh.xml"));
-//      assertEquals(56, r.clazz.getPercentage());
-//      assertEquals(56, r.line.getPercentage());
-//      assertRatio(r.clazz, 186, 334);
-//      assertRatio(r.method, 1347, 2739);
-//      assertRatio(r.block, 45039, 84505);
-//      assertRatio(r.line, 8355.3f,14828);
-//      assert(r.condition == null);
-//      assertEquals("Coverage: Classes 186/334 (56%). Methods 1347/2739 (49%). Blocks 45039/84505 (53%). Lines 8355.3/14828 (56%). ",
-//                   r.getBuildHealth().getDescription());
+      VectorCASTBuildAction r = VectorCASTBuildAction.load(null,null,
+              new VectorCASTHealthReportThresholds(30, 90, 25, 80, 20, 70, 15, 60, 20, 70, 80, 90),
+              getClass().getResourceAsStream("coverage.xml"), 
+              getClass().getResourceAsStream("coverageh.xml"));
+      assertEquals(45, r.Statement.getPercentage());
+      assertEquals(26, r.Branch.getPercentage());
+      assertRatio(r.Statement, 45, 100);
+      assertRatio(r.Branch, 18, 70);
+      assertRatio(r.MCDC, 2, 19);
+      assert(r.Function == null);
+      assertEquals("Coverage: Statement 45/100 (45%). Branch 18/70 (26%). MC/DC 2/19 (11%).   ",
+                   r.getBuildHealth().getDescription());
   }
 }
