@@ -238,7 +238,6 @@ public final class VectorCASTBuildAction extends CoverageObject<VectorCASTBuildA
 
     /**
      * Constructs the object from VectorCAST XML report files.
-     * See <a href="http://emma.sourceforge.net/coverage_sample_c/coverage.xml">an example XML file</a>.
      *
      * @throws IOException
      *      if failed to parse the file.

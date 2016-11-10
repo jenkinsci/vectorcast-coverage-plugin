@@ -91,9 +91,9 @@ public class VectorCASTLoadDataHudsonTest extends HudsonTestCase {
                 new CopyResourceToWorkspaceBuilder(getClass().getResourceAsStream("/com/vectorcast/plugins/vectorcastcoverage/portlet.xml"),
                         "reports/coverage/portlet.xml"));
         //Add a VectorCAST publisher
-        VectorCASTPublisher emmaPublisher = new VectorCASTPublisher();
-        emmaPublisher.includes = "reports/coverage/portlet.xml";
-        job1.getPublishersList().add(emmaPublisher);
+        VectorCASTPublisher vcPublisher = new VectorCASTPublisher();
+        vcPublisher.includes = "reports/coverage/portlet.xml";
+        job1.getPublishersList().add(vcPublisher);
         //Build it
         job1.scheduleBuild2(0).get();
 

@@ -41,7 +41,7 @@ import java.util.Collection;
 import org.kohsuke.stapler.DataBoundConstructor;
 
 /**
- * A portlet for Emma Coverage results - Grid data.
+ * A portlet for VecctorCAST Coverage results - Grid data.
  *
  * @see http://wiki.hudson-ci.org/display/HUDSON/Dashboard+View
  */
@@ -102,7 +102,7 @@ public class VectorCASTBuilderGrid extends DashboardPortlet {
    * Descriptor that will be shown on Dashboard Portlets view.
    */
   @Extension(optional = true)
-  public static class EmmaGridDescriptor extends Descriptor<DashboardPortlet> {
+  public static class VecctorCASTGridDescriptor extends Descriptor<DashboardPortlet> {
 
     @Override
     public String getDisplayName() {

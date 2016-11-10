@@ -65,7 +65,7 @@ import org.jfree.ui.RectangleInsets;
 import org.kohsuke.stapler.DataBoundConstructor;
 
 /**
- * A portlet for Emma coverage results - Trend Chart.
+ * A portlet for VecctorCAST coverage results - Trend Chart.
  */
 public class VectorCASTBuilderTrendChart extends DashboardPortlet {
 
@@ -129,7 +129,7 @@ public class VectorCASTBuilderTrendChart extends DashboardPortlet {
   }
 
   /**
-   * Creates a graph for Emma Coverage results.
+   * Creates a graph for VecctorCAST Coverage results.
    *
    * @param summaries
    *          HashMap(key = run date and value = Instrumentation tests

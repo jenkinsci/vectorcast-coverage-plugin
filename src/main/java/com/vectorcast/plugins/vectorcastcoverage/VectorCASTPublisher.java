@@ -101,17 +101,17 @@ public class VectorCASTPublisher extends Recorder {
     public boolean perform(AbstractBuild<?, ?> build, Launcher launcher, BuildListener listener) throws InterruptedException, IOException {
         final PrintStream logger = listener.getLogger();
         
-        // Make sure Emma actually ran
+        // Make sure VectorCAST actually ran
         if (build instanceof MavenBuild) {
             MavenBuild mavenBuild = (MavenBuild) build;
-            if (!didEmmaRun(mavenBuild)) {
-                listener.getLogger().println("Skipping Emma coverage report as mojo did not run.");
+            if (!didVecctorCASTRun(mavenBuild)) {
+                listener.getLogger().println("Skipping VecctorCAST coverage report as mojo did not run.");
                 return true;
             }
         } else if (build instanceof MavenModuleSetBuild) {
             MavenModuleSetBuild moduleSetBuild = (MavenModuleSetBuild) build;
-            if (!didEmmaRun(moduleSetBuild.getModuleLastBuilds().values())) {
-                listener.getLogger().println("Skipping Emma coverage report as mojo did not run.");
+            if (!didVecctorCASTRun(moduleSetBuild.getModuleLastBuilds().values())) {
+                listener.getLogger().println("Skipping VecctorCAST coverage report as mojo did not run.");
                 return true;
             }
         }
@@ -269,18 +269,18 @@ public class VectorCASTPublisher extends Recorder {
         return DESCRIPTOR;
     }
 
-    private boolean didEmmaRun(Iterable<MavenBuild> mavenBuilds) {
+    private boolean didVecctorCASTRun(Iterable<MavenBuild> mavenBuilds) {
         for (MavenBuild build : mavenBuilds) {
-            if (didEmmaRun(build)) {
+            if (didVecctorCASTRun(build)) {
                 return true;
             }
         }
         return false;
     }
     
-    private boolean didEmmaRun(MavenBuild mavenBuild) {
+    private boolean didVecctorCASTRun(MavenBuild mavenBuild) {
         for (ExecutedMojo mojo : mavenBuild.getExecutedMojos()) {
-            if ("org.codehaus.mojo".equals(mojo.groupId) && "emma-maven-plugin".equals(mojo.artifactId)) {
+            if ("org.codehaus.mojo".equals(mojo.groupId) && "vectorcastexecution-maven-plugin".equals(mojo.artifactId)) {
                 return true;
             }
         }
