@@ -52,6 +52,7 @@ final public class Ratio implements Serializable {
 
     /**
      * Gets the percentage in integer.
+     * @return percentage
      */
     @Exported
     public int getPercentage() {
@@ -60,6 +61,7 @@ final public class Ratio implements Serializable {
 
     /**
      * Gets the percentage in float.
+     * @return percentage
      */
     @Exported
     public float getPercentageFloat() {

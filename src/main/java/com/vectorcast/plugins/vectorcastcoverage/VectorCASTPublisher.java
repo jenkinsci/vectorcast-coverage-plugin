@@ -56,6 +56,11 @@ public class VectorCASTPublisher extends Recorder {
     /**
      * look for VectorCAST reports based in the configured parameter includes. 'includes' is - an Ant-style pattern - a list
      * of files and folders separated by the characters ;:,
+     * @param workspace workspace
+     * @param includes includes
+     * @return filepaths loaded
+     * @throws IOException IO error
+     * @throws InterruptedException interrupted
      */
     protected static FilePath[] locateCoverageReports(FilePath workspace, String includes) throws IOException, InterruptedException {
 
@@ -86,6 +91,10 @@ public class VectorCASTPublisher extends Recorder {
 
     /**
      * save VectorCAST reports from the workspace to build folder
+     * @param folder folder
+     * @param files files
+     * @throws IOException for UI error
+     * @throws InterruptedException if interrupted
      */
     protected static void saveCoverageReports(FilePath folder, FilePath[] files) throws IOException, InterruptedException {
         folder.mkdirs();

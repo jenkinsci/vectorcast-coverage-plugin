@@ -43,7 +43,7 @@ import org.kohsuke.stapler.DataBoundConstructor;
 /**
  * A portlet for VecctorCAST Coverage results - Grid data.
  *
- * @see http://wiki.hudson-ci.org/display/HUDSON/Dashboard+View
+ * See http://wiki.hudson-ci.org/display/HUDSON/Dashboard+View
  */
 public class VectorCASTBuilderGrid extends DashboardPortlet {
 

@@ -35,6 +35,7 @@ public final class VectorCASTProjectAction implements Action {
 
     /**
      * Gets the most recent {@link VectorCASTBuildAction} object.
+     * @return last build result
      */
     public VectorCASTBuildAction getLastResult() {
         for( AbstractBuild<?,?> b = project.getLastBuild(); b!=null; b=b.getPreviousBuild()) {

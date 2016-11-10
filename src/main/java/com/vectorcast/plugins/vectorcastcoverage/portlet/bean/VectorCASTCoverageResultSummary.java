@@ -100,15 +100,14 @@ public class VectorCASTCoverageResultSummary {
   /**
    * Constructor with parameters.
    *
-   * @param job
-   *          the related Job
-     * @param lBasisPathCoverage
-     * @param lMCDCCoverage
-     * @param lBranchCoverage
-     * @param lFunctionCoverage
-     * @param lFunctionCallCoverage
-     * @param lStatementCoverage
-     * @param lComplexity
+   * @param job the related Job
+   * @param lBasisPathCoverage basis path coverage
+   * @param lMCDCCoverage MCDC coverage
+   * @param lBranchCoverage branch coverage
+   * @param lFunctionCoverage function coverage
+   * @param lFunctionCallCoverage function call coverage
+   * @param lStatementCoverage statement coverage
+   * @param lComplexity complexity
    */
   public VectorCASTCoverageResultSummary(Job job, float lBasisPathCoverage, float lMCDCCoverage, float lBranchCoverage,
     float lStatementCoverage, float lFunctionCoverage, float lFunctionCallCoverage, float lComplexity) {
@@ -216,7 +215,6 @@ public class VectorCASTCoverageResultSummary {
     this.hasFunctionCallCoverage = this.hasFunctionCallCoverage || coverageResult.hasFunctionCallCoverage;
     this.hasComplexity = this.hasComplexity || coverageResult.hasComplexity;
     	    
-    
     getCoverageResults().add(coverageResult);
 
     return this;
@@ -245,6 +243,10 @@ public class VectorCASTCoverageResultSummary {
       return totalStatement;
     }
   }
+  /**
+   * Get the total complexity
+   * @return  total complexity
+   */
   public float getTotalComplexity() {
     if (this.getCoverageResults().size() <= 0) {
       return 0.0f;
@@ -254,7 +256,10 @@ public class VectorCASTCoverageResultSummary {
       return totalComplexity;
     }
   }
-  
+  /**
+   * Get the total branch coverage
+   * @return total branch coverage
+   */  
   public float getTotalBranchCoverage() {
     if (this.getCoverageResults().size() <= 0) {
       return 0.0f;

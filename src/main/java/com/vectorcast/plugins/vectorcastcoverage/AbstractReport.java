@@ -38,6 +38,7 @@ public abstract class AbstractReport<
     /**
      * Called at the last stage of the tree construction,
      * to set the back pointer.
+     * @param p parent
      */
     protected void setParent(PARENT p) {
         this.parent = p;
@@ -45,6 +46,7 @@ public abstract class AbstractReport<
 
     /**
      * Gets the back pointer to the parent coverage object.
+     * @return pointer to parent
      */
     public PARENT getParent() {
         return parent;

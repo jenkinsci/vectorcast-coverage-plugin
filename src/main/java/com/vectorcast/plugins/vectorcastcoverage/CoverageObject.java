@@ -96,6 +96,7 @@ public abstract class CoverageObject<SELF extends CoverageObject<SELF>> {
 
     /**
      * MCDC coverage. Can be null if this information is not collected.
+     * @return coverage value (null if not collected)
      */
     @Exported(inline = true)
     public Ratio getMCDCCoverage() {
@@ -104,6 +105,7 @@ public abstract class CoverageObject<SELF extends CoverageObject<SELF>> {
 
     /**
      * MCDC coverage. Can be null if this information is not collected.
+     * @return function coverage (null if not collected)
      */
     @Exported(inline = true)
     public Ratio getFunctionCoverage() {
@@ -117,6 +119,7 @@ public abstract class CoverageObject<SELF extends CoverageObject<SELF>> {
 
     /**
      * Gets the build object that owns the whole coverage report tree.
+     * @return the run instance
      */
     public abstract Run<?,?> getBuild();
 
@@ -132,6 +135,7 @@ public abstract class CoverageObject<SELF extends CoverageObject<SELF>> {
 
     /**
      * Used in the view to print out four table columns with the coverage info.
+     * @return four columns string
      */
     public String printFourCoverageColumns() {
         StringBuilder buf = new StringBuilder();
@@ -209,6 +213,9 @@ public abstract class CoverageObject<SELF extends CoverageObject<SELF>> {
 
     /**
      * Generates the graph that shows the coverage trend up to this report.
+     * @param req web request
+     * @param rsp web response
+     * @throws IOException if unable to read/parse
      */
     public void doGraph(StaplerRequest req, StaplerResponse rsp) throws IOException {
         if(ChartUtil.awtProblemCause != null) {

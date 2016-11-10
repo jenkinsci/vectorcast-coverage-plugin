@@ -175,6 +175,7 @@ public final class VectorCASTBuildAction extends CoverageObject<VectorCASTBuildA
 
     /**
      * Obtains the detailed {@link CoverageReport} instance.
+     * @return coverage report
      */
     public synchronized CoverageReport getResult() {
 
@@ -238,7 +239,11 @@ public final class VectorCASTBuildAction extends CoverageObject<VectorCASTBuildA
 
     /**
      * Constructs the object from VectorCAST XML report files.
-     *
+     * @param owner owner
+     * @param rule rule
+     * @param thresholds thresholds
+     * @param files files
+     * @return build action
      * @throws IOException
      *      if failed to parse the file.
      */
