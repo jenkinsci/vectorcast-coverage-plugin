@@ -21,7 +21,7 @@
                             <td class="nowrap ${h.ifThenElse(Subprogram.failed,' red','')}" >
                                 <st:out value="${Subprogram.getName()}"/>
                             </td>	      
-                            ${Subprogram.printFourCoverageColumns()}
+                            <j:out value="${Subprogram.printFourCoverageColumns()}"/>
                         </tr>
                     </j:forEach>
                 </table>
