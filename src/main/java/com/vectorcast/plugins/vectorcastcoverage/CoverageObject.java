@@ -199,7 +199,6 @@ public abstract class CoverageObject<SELF extends CoverageObject<SELF>> {
     }
 
     protected static void printRatioTable(Ratio ratio, StringBuilder buf) {
-        String data = dataFormat.format(ratio.getPercentageFloat());
         String percent = percentFormat.format(ratio.getPercentageFloat());
         String numerator = intFormat.format(ratio.getNumerator());
         String denominator = intFormat.format(ratio.getDenominator());
@@ -229,8 +228,8 @@ public abstract class CoverageObject<SELF extends CoverageObject<SELF>> {
 
         String w = Util.fixEmptyAndTrim(req.getParameter("width"));
         String h = Util.fixEmptyAndTrim(req.getParameter("height"));
-        int width = (w != null) ? Integer.valueOf(w) : 500;
-        int height = (h != null) ? Integer.valueOf(h) : 200;
+        int width = (w != null) ? Integer.parseInt(w) : 500;
+        int height = (h != null) ? Integer.parseInt(h) : 200;
 
         new GraphImpl(this, t, width, height) {
 

@@ -106,7 +106,7 @@ public class VectorCASTBuilderGrid extends DashboardPortlet {
 
     @Override
     public String getDisplayName() {
-      return Messages.GridTitle();
+      return Messages.Portlet_GridTitle();
     }
   }
 }

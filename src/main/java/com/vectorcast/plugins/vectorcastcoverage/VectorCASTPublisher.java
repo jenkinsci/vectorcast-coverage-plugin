@@ -131,7 +131,10 @@ public class VectorCASTPublisher extends Recorder {
 
         FilePath[] reports;
         if (includes == null || includes.trim().length() == 0) {
-            logger.println("[VectorCASTCoverage] [INFO]: looking for coverage reports in the entire workspace: " + build.getWorkspace().getRemote());
+            FilePath workspace = build.getWorkspace();
+            if (workspace!= null) {
+                logger.println("[VectorCASTCoverage] [INFO]: looking for coverage reports in the entire workspace: " + workspace.getRemote());
+            }
             reports = locateCoverageReports(build.getWorkspace(), "**/coverage.xml");
         } else {
             logger.println("[VectorCASTCoverage] [INFO]: looking for coverage reports in the provided path: " + includes);
@@ -139,7 +142,8 @@ public class VectorCASTPublisher extends Recorder {
         }
 
         if (reports.length == 0) {
-            if (build.getResult().isWorseThan(Result.UNSTABLE)) {
+            Result result = build.getResult();
+            if (result == null || result.isWorseThan(Result.UNSTABLE)) {
                 return true;
             }
 
@@ -147,11 +151,12 @@ public class VectorCASTPublisher extends Recorder {
             build.setResult(Result.FAILURE);
             return true;
         } else {
-            String found = "";
+            StringBuffer buf = new StringBuffer();
             for (FilePath f : reports) {
-                found += "\n          " + f.getRemote();
+                buf.append("\n          ");
+                buf.append(f.getRemote());
             }
-            logger.println("[VectorCASTCoverage] [INFO]: found " + reports.length + " report files: " + found);
+            logger.println("[VectorCASTCoverage] [INFO]: found " + reports.length + " report files: " + buf.toString());
         }
 
         FilePath vcFolder = new FilePath(getVectorCASTReport(build));

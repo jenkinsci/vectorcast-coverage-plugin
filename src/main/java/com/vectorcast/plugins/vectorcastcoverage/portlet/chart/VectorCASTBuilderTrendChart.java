@@ -318,7 +318,7 @@ public class VectorCASTBuilderTrendChart extends DashboardPortlet {
 
     @Override
     public String getDisplayName() {
-      return Messages.ChartTitle();
+      return Messages.Portlet_ChartTitle();
     }
   }
 
