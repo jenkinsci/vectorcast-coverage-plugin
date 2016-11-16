@@ -15,7 +15,7 @@
   <artifactId>vectorcast-coverage</artifactId>
   <version>1.0</version>
   <packaging>hpi</packaging>
-  <url>http://www.vectorcast.com</url>
+  <url>https://wiki.jenkins-ci.org/display/JENKINS/VectorCAST+Coverage+Plugin</url>
 
   <licenses>
     <license>
@@ -25,11 +25,17 @@
     </license>
   </licenses>
   
+  <organization>
+    <name>Vector Software</name>
+    <url>http://www.vectorcast.com/</url>
+  </organization>
+
   <developers>
       <developer>
           <id>rmkeeble</id>
           <name>Richard Keeble</name>
           <email>richard.keeble@vectorcast.com</email>
+          <organization>Vector Software</organization>
       </developer>
   </developers>
 
@@ -42,12 +48,11 @@
     <jenkins-test-harness.version>2.13</jenkins-test-harness.version>
   </properties>
 
-  <!--
   <scm>
-    <connection>scm:git:git://github.com/jenkinsci/emma-plugin.git</connection>
-    <developerConnection>scm:git:git@github.com:jenkinsci/emma-plugin.git</developerConnection>
+    <connection>scm:git:ssh://github.com/jenkinsci/vectorcast-coverage-plugin.git</connection>
+    <developerConnection>scm:git:ssh://git@github.com/jenkinsci/vectorcast-coverage-plugin.git</developerConnection>
+    <url>https://github.com/jenkinsci/vectorcast-coverage-plugin</url>
   </scm>
-  -->
 
   <repositories>
     <repository>
