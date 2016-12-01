@@ -93,6 +93,13 @@ final public class Ratio implements Serializable {
 		initialized = true;
     }
     
+    public void setValue(String v) {
+        float[] f = parse(v);
+        numerator = f[0];
+        denominator = f[1];
+		initialized = true;
+    }
+    
     public boolean isInitialized() {
     	return initialized;
     }

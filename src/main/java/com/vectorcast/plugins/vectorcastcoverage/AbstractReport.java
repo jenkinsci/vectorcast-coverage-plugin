@@ -23,6 +23,10 @@ public abstract class AbstractReport<
         cv.addTo(this);
     }
 
+    public void addCombinedCoverage(CoverageElement cv) throws IOException {
+        cv.setTo(this);
+    }
+
     public String getName() {
         return name;
     }

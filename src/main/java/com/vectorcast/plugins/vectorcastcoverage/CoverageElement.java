@@ -23,7 +23,6 @@ public final class CoverageElement {
     }
 
     void addTo(AbstractReport<?,?> report) throws IOException {
-
     	Ratio r = null;
     	if(type.equals("statement, %")) {
     		r = report.Statement;
@@ -43,6 +42,27 @@ public final class CoverageElement {
             throw new IllegalArgumentException("Invalid type: "+type);
         }
     	r.addValue(value);
+    }
 
+    void setTo(AbstractReport<?,?> report) throws IOException {
+    	Ratio r = null;
+    	if(type.equals("statement, %")) {
+    		r = report.Statement;
+        } else if(type.equals("branch, %")) {
+    		r = report.Branch;
+        } else if(type.equals("basispath, %")) {
+    		r = report.BasisPath;
+        } else if(type.equals("mcdc, %")) {
+    		r = report.MCDC;
+        } else if(type.equals("function, %")) {
+    		r = report.Function;
+        } else if(type.equals("functioncall, %")) {
+    		r = report.FunctionCall;
+        } else if(type.equals("complexity, %")) {
+    		r = report.Complexity;
+        } else {
+            throw new IllegalArgumentException("Invalid type: "+type);
+        }
+    	r.setValue(value);
     }
 }
