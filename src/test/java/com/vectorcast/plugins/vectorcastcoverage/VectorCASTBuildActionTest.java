@@ -11,11 +11,11 @@ public class VectorCASTBuildActionTest extends AbstractVectorCASTTestBase {
                 getClass().getResourceAsStream("coverage.xml"));
         assertEquals(42, r.Statement.getPercentage());
         assertEquals(26, r.Branch.getPercentage());
-        assertRatio(r.Statement, 25, 60);
-        assertRatio(r.Branch, 14, 54);
-        assertRatio(r.MCDC, 1, 14);
+        assertRatio(r.Statement, 23, 55);
+        assertRatio(r.Branch, 13, 50);
+        assertRatio(r.MCDC, 1, 12);
         assert(r.Function == null);
-        assertEquals("Coverage: Statement 25/60 (42%). Branch 14/54 (26%). MC/DC 1/14 (7%).   ",
+        assertEquals("Coverage: Statement 23/55 (42%). Branch 13/50 (26%). MC/DC 1/12 (8%).   ",
                      r.getBuildHealth().getDescription());
     }
     
@@ -40,11 +40,11 @@ public class VectorCASTBuildActionTest extends AbstractVectorCASTTestBase {
               getClass().getResourceAsStream("coverageh.xml"));
       assertEquals(45, r.Statement.getPercentage());
       assertEquals(26, r.Branch.getPercentage());
-      assertRatio(r.Statement, 45, 100);
-      assertRatio(r.Branch, 18, 70);
-      assertRatio(r.MCDC, 2, 19);
+      assertRatio(r.Statement, 43, 95);
+      assertRatio(r.Branch, 17, 66);
+      assertRatio(r.MCDC, 2, 17);
       assert(r.Function == null);
-      assertEquals("Coverage: Statement 45/100 (45%). Branch 18/70 (26%). MC/DC 2/19 (11%).   ",
+      assertEquals("Coverage: Statement 43/95 (45%). Branch 17/66 (26%). MC/DC 2/17 (12%).   ",
                    r.getBuildHealth().getDescription());
   }
 }

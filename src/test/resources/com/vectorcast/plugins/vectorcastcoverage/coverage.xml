@@ -1,6 +1,6 @@
 <!-- VectorCAST/Jenkins Integration, Generated 10/25/2016	03:57 PM -->
 <report>
-<version value="2"/>
+<version value="3"/>
   <stats>
     <environments   value="4"/>
     <units    value="3"/>
@@ -8,10 +8,6 @@
   </stats>
   <data>
     <all name="all environments">
-      <coverage type="statement, %" value="42% (25 / 60)"/>
-      <coverage type="branch, %" value="26% (14 / 54)"/>
-      <coverage type="mcdc, %" value="7% (1 / 14)"/>
-      <coverage type="complexity, %" value="0% (24 / 0)"/>
 
       <environment name ="VectorCAST_MinGW_C_TestSuite_ORDER">
         <coverage type="statement, %" value="42% (23 / 55)"/>

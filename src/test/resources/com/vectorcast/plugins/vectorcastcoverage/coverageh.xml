@@ -1,6 +1,6 @@
 <!-- VectorCAST/Jenkins Integration, Generated 10/25/2016	03:57 PM -->
 <report>
-<version value="2"/>
+<version value="3"/>
   <stats>
     <environments   value="1"/>
     <units    value="1"/>
@@ -8,10 +8,6 @@
   </stats>
   <data>
     <all name="all environments">
-      <coverage type="statement, %" value="50% (20 / 40)"/>
-      <coverage type="branch, %" value="25% (4 / 16)"/>
-      <coverage type="mcdc, %" value="20% (1 / 5)"/>
-      <coverage type="complexity, %" value="0% (19 / 0)"/>
 
       <environment name ="AnotherEnv">
         <coverage type="statement, %" value="50% (20 / 40)"/>
