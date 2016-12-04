@@ -249,11 +249,12 @@ public final class VectorCASTBuildAction extends CoverageObject<VectorCASTBuildA
      */
     public static VectorCASTBuildAction load(AbstractBuild<?,?> owner, Rule rule, VectorCASTHealthReportThresholds thresholds, FilePath... files) throws IOException {
         Ratio ratios[] = null;
+        boolean[] flag = {false};
         for (FilePath f: files ) {
             InputStream in = null;
             try {
                 in = f.read();
-                ratios = loadRatios(in, ratios);
+                ratios = loadRatios(in, ratios, flag);
             } catch (XmlPullParserException e) {
                 throw new IOException2("Failed to parse " + f, e);
             } catch (InterruptedException e) {
@@ -264,23 +265,25 @@ public final class VectorCASTBuildAction extends CoverageObject<VectorCASTBuildA
                 }
             }
         }
-           
+
         return new VectorCASTBuildAction(owner,rule,ratios[0],ratios[1],ratios[2],ratios[3],ratios[4],ratios[5],ratios[6],thresholds);
     }
 
     public static VectorCASTBuildAction load(AbstractBuild<?,?> owner, Rule rule, VectorCASTHealthReportThresholds thresholds, InputStream... streams) throws IOException, XmlPullParserException {
         Ratio ratios[] = null;
+        boolean[] flag = {false};
         for (InputStream in: streams) {
-          ratios = loadRatios(in, ratios);
+          ratios = loadRatios(in, ratios, flag);
         }
         return new VectorCASTBuildAction(owner,rule,ratios[0],ratios[1],ratios[2],ratios[3],ratios[4],ratios[5],ratios[6],thresholds);
     }
 
-    private static Ratio[] loadRatios(InputStream in, Ratio[] r) throws IOException, XmlPullParserException {
-      
+    private static Ratio[] loadRatios(InputStream in, Ratio[] r, boolean[] topLevel) throws IOException, XmlPullParserException {
+
+        System.out.println("RMK: topLevel = " + topLevel[0]);
         XmlPullParserFactory factory = XmlPullParserFactory.newInstance();
         factory.setNamespaceAware(true);
-      
+
         XmlPullParser parser = factory.newPullParser();
 
         parser.setInput(in,null);
@@ -291,7 +294,7 @@ public final class VectorCASTBuildAction extends CoverageObject<VectorCASTBuildA
             if (parser.getName().equals("version")) {
                 versionRead = parser.getAttributeValue("", "value");
             }
-            if(!parser.getName().equals("coverage"))
+            if(!parser.getName().equals("coverage") && !parser.getName().equals("combined-coverage"))
                 continue;
             break;
         }
@@ -302,16 +305,24 @@ public final class VectorCASTBuildAction extends CoverageObject<VectorCASTBuildA
 
         if (r == null || r.length < 7) 
             r = new Ratio[7];
-        
+
         // head for the first <coverage> tag.
         for( int i=0; i<r.length; i++ ) {
-            if(!parser.getName().equals("coverage"))
+            boolean combined = false;
+            if(!parser.getName().equals("coverage") && !parser.getName().equals("combined-coverage"))
                 break;
 
-            parser.require(XmlPullParser.START_TAG,"","coverage");
+            if (parser.getName().equals("coverage")) {
+                parser.require(XmlPullParser.START_TAG,"","coverage");
+                combined = false;
+            } else if (parser.getName().equals("combined-coverage")) {
+                parser.require(XmlPullParser.START_TAG,"","combined-coverage");
+                combined = true;
+                topLevel[0] = true;
+            }
             String v = parser.getAttributeValue("", "value");
             String t = parser.getAttributeValue("", "type");
-            
+
             int index ;
             if ( t.equals("statement, %") )
                 index = 0;
@@ -329,19 +340,24 @@ public final class VectorCASTBuildAction extends CoverageObject<VectorCASTBuildA
                 index = 6;
             else
                 continue;
-                
-            
+
             if (r[index] == null) {
                 r[index] = Ratio.parseValue(v);
             } else {
-                r[index].addValue(v);
+                if (combined) {
+                        r[index].setValue(v);
+                } else {
+                    if (!topLevel[0]) {
+                        r[index].addValue(v);
+                    }
+                }
             }
-            
+
             // move to the next coverage tag.
             parser.nextTag();
             parser.nextTag();
         }
-        
+
         return r;
 
     }
