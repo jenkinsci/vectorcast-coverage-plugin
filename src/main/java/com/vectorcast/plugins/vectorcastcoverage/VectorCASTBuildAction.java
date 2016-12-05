@@ -280,7 +280,6 @@ public final class VectorCASTBuildAction extends CoverageObject<VectorCASTBuildA
 
     private static Ratio[] loadRatios(InputStream in, Ratio[] r, boolean[] topLevel) throws IOException, XmlPullParserException {
 
-        System.out.println("RMK: topLevel = " + topLevel[0]);
         XmlPullParserFactory factory = XmlPullParserFactory.newInstance();
         factory.setNamespaceAware(true);
 
