@@ -161,11 +161,11 @@ public class VectorCASTPublisher extends Recorder {
 
         FilePath vcFolder = new FilePath(getVectorCASTReport(build));
         saveCoverageReports(vcFolder, reports);
-        logger.println("[VectorCASTCoverage] [INFO]: stored " + reports.length + " report files in the build folder: " + vcFolder);
+        logger.println("[VectorCASTCoverage] [INFO]: stored " + reports.length + " report file(s) in the build folder: " + vcFolder);
 
         final VectorCASTBuildAction action = VectorCASTBuildAction.load(build, rule, healthReports, reports);
 
-        logger.println("[VectorCASTCoverage] [INFO] " + action.getBuildHealth().getDescription());
+        logger.println("[VectorCASTCoverage] [INFO]: " + action.getBuildHealth().getDescription());
 
         build.getActions().add(action);
 

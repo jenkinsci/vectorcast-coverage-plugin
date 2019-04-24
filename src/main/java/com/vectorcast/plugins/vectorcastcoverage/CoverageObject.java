@@ -34,6 +34,8 @@ import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.Calendar;
 import org.jfree.chart.renderer.category.BarRenderer;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Base class of all coverage objects.
@@ -43,6 +45,8 @@ import org.jfree.chart.renderer.category.BarRenderer;
 @ExportedBean
 public abstract class CoverageObject<SELF extends CoverageObject<SELF>> {
 
+    private static final Logger logger = Logger.getLogger(CoverageObject.class.getName());
+  
     Ratio Statement = new Ratio();
     Ratio Branch = new Ratio();
     Ratio BasisPath = new Ratio();
@@ -222,7 +226,7 @@ public abstract class CoverageObject<SELF extends CoverageObject<SELF>> {
             rsp.sendRedirect2(req.getContextPath()+"/images/headless.png");
             return;
         }
-
+        
         Run<?,?> build = getBuild();
         Calendar t = build.getTimestamp();
 
@@ -237,48 +241,25 @@ public abstract class CoverageObject<SELF extends CoverageObject<SELF>> {
             protected DataSetBuilder<String, NumberOnlyBuildLabel> createDataSet(CoverageObject<SELF> obj) {
                 DataSetBuilder<String, NumberOnlyBuildLabel> dsb = new DataSetBuilder<String, NumberOnlyBuildLabel>();
 
-                Double[] totals = new Double[6];
-                for (int i = 0; i < 6; i++) {
-                    totals[i] = 0.0;
-                }
-
                 for (CoverageObject<SELF> a = obj; a != null; a = a.getPreviousResult()) {
                     NumberOnlyBuildLabel label = new NumberOnlyBuildLabel(a.getBuild());
                     if (a.Statement != null) {
-                        totals[0] += a.Statement.getPercentageFloat();
-                        if (totals[0] != 0.0) {
-                            dsb.add(a.Statement.getPercentageFloat(), Messages.CoverageObject_Legend_Statement(), label);
-                        }
+                        dsb.add(a.Statement.getPercentageFloat(), Messages.CoverageObject_Legend_Statement(), label);
                     }
                     if (a.Branch != null) {
-                        totals[1] += a.Branch.getPercentageFloat();
-                        if (totals[1] != 0.0) {
-                            dsb.add(a.Branch.getPercentageFloat(), Messages.CoverageObject_Legend_Branch(), label);
-                        }
+                        dsb.add(a.Branch.getPercentageFloat(), Messages.CoverageObject_Legend_Branch(), label);
                     }
                     if (a.BasisPath != null) {
-                        totals[2] += a.BasisPath.getPercentageFloat();
-                        if (totals[2] != 0.0) {
-                            dsb.add(a.BasisPath.getPercentageFloat(), Messages.CoverageObject_Legend_BasisPath(), label);
-                        }
+                        dsb.add(a.BasisPath.getPercentageFloat(), Messages.CoverageObject_Legend_BasisPath(), label);
                     }
                     if (a.MCDC != null) {
-                        totals[3] += a.MCDC.getPercentageFloat();
-                        if (totals[3] != 0.0) {
-                            dsb.add(a.MCDC.getPercentageFloat(), Messages.CoverageObject_Legend_MCDC(), label);
-                        }
+                        dsb.add(a.MCDC.getPercentageFloat(), Messages.CoverageObject_Legend_MCDC(), label);
                     }
                     if (a.Function != null) {
-                        totals[4] += a.Function.getPercentageFloat();
-                        if (totals[4] != 0.0) {
-                            dsb.add(a.Function.getPercentageFloat(), Messages.CoverageObject_Legend_Function(), label);
-                        }
+                        dsb.add(a.Function.getPercentageFloat(), Messages.CoverageObject_Legend_Function(), label);
                     }
                     if (a.FunctionCall != null) {
-                        totals[5] += a.FunctionCall.getPercentageFloat();
-                        if (totals[5] != 0.0) {
-                            dsb.add(a.FunctionCall.getPercentageFloat(), Messages.CoverageObject_Legend_FunctionCall(), label);
-                        }
+                        dsb.add(a.FunctionCall.getPercentageFloat(), Messages.CoverageObject_Legend_FunctionCall(), label);
                     }
                 }
 
