@@ -243,22 +243,22 @@ public abstract class CoverageObject<SELF extends CoverageObject<SELF>> {
 
                 for (CoverageObject<SELF> a = obj; a != null; a = a.getPreviousResult()) {
                     NumberOnlyBuildLabel label = new NumberOnlyBuildLabel(a.getBuild());
-                    if (a.Statement != null) {
+                    if (a.Statement != null && a.Statement.isInitialized()) {
                         dsb.add(a.Statement.getPercentageFloat(), Messages.CoverageObject_Legend_Statement(), label);
                     }
-                    if (a.Branch != null) {
+                    if (a.Branch != null && a.Branch.isInitialized()) {
                         dsb.add(a.Branch.getPercentageFloat(), Messages.CoverageObject_Legend_Branch(), label);
                     }
-                    if (a.BasisPath != null) {
+                    if (a.BasisPath != null && a.BasisPath.isInitialized()) {
                         dsb.add(a.BasisPath.getPercentageFloat(), Messages.CoverageObject_Legend_BasisPath(), label);
                     }
-                    if (a.MCDC != null) {
+                    if (a.MCDC != null && a.MCDC.isInitialized()) {
                         dsb.add(a.MCDC.getPercentageFloat(), Messages.CoverageObject_Legend_MCDC(), label);
                     }
-                    if (a.Function != null) {
+                    if (a.Function != null && a.Function.isInitialized()) {
                         dsb.add(a.Function.getPercentageFloat(), Messages.CoverageObject_Legend_Function(), label);
                     }
-                    if (a.FunctionCall != null) {
+                    if (a.FunctionCall != null && a.FunctionCall.isInitialized()) {
                         dsb.add(a.FunctionCall.getPercentageFloat(), Messages.CoverageObject_Legend_FunctionCall(), label);
                     }
                 }

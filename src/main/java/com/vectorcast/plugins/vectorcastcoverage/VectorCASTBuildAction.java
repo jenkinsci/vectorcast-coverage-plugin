@@ -299,7 +299,7 @@ public final class VectorCASTBuildAction extends CoverageObject<VectorCASTBuildA
         }
 
         if (!versionRead.equals("3")) {
-            throw new XmlPullParserException("Unsupported version: '" + versionRead + "', expecting 2");
+            throw new XmlPullParserException("Unsupported version: '" + versionRead + "', expecting 3");
         }
 
         if (r == null || r.length < 7) 
