@@ -1,6 +1,6 @@
 package com.vectorcast.plugins.vectorcastcoverage;
 
-import hudson.model.AbstractBuild;
+import hudson.model.Run;
 import hudson.model.ModelObject;
 
 import java.io.IOException;
@@ -70,7 +70,7 @@ public abstract class AbstractReport<
     }
 
     @Override
-    public AbstractBuild<?,?> getBuild() {
+    public Run<?,?> getBuild() {
         return parent.getBuild();
     }
 }

@@ -22,6 +22,13 @@ import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import jenkins.model.RunAction2;
+import jenkins.tasks.SimpleBuildStep.LastBuildAction;
+import java.io.Serializable;
+import java.util.Collection;
+import java.util.Collections;
+import hudson.model.Action;
+import hudson.model.Run;
 
 /**
  * Build view extension by VectorCAST plugin.
@@ -30,12 +37,13 @@ import java.util.logging.Logger;
  *
  * @author Kohsuke Kawaguchi
  */
-public final class VectorCASTBuildAction extends CoverageObject<VectorCASTBuildAction> implements HealthReportingAction, StaplerProxy {
+public final class VectorCASTBuildAction extends CoverageObject<VectorCASTBuildAction> implements HealthReportingAction, StaplerProxy, Serializable, RunAction2, LastBuildAction {
 	
-    public final AbstractBuild<?,?> owner;
+    public transient Run<?,?> owner;
 
     private transient WeakReference<CoverageReport> report;
-
+    private transient VectorCASTProjectAction vectorcastProjectAction;
+    
     /**
      * Non-null if the coverage has pass/fail rules.
      */
@@ -43,11 +51,10 @@ public final class VectorCASTBuildAction extends CoverageObject<VectorCASTBuildA
 
     /**
      * The thresholds that applied when this build was built.
-     * @TODO add ability to trend thresholds on the graph
      */
     private final VectorCASTHealthReportThresholds thresholds;
 
-    public VectorCASTBuildAction(AbstractBuild<?,?> owner, Rule rule, Ratio StatementCoverage, Ratio BranchCoverage, Ratio BasisPathCoverage, Ratio MCDCCoverage, Ratio FunctionCoverage,  Ratio FunctionCallCoverage, Ratio Complexity, VectorCASTHealthReportThresholds thresholds) {
+    public VectorCASTBuildAction(Run<?,?> owner, Rule rule, Ratio StatementCoverage, Ratio BranchCoverage, Ratio BasisPathCoverage, Ratio MCDCCoverage, Ratio FunctionCoverage,  Ratio FunctionCallCoverage, Ratio Complexity, VectorCASTHealthReportThresholds thresholds) {
         this.owner = owner;
         this.rule = rule;
         this.Statement = StatementCoverage;
@@ -158,7 +165,7 @@ public final class VectorCASTBuildAction extends CoverageObject<VectorCASTBuildA
     }
 
     @Override
-    public AbstractBuild<?,?> getBuild() {
+    public Run<?,?> getBuild() {
         return owner;
     }
     
@@ -223,8 +230,8 @@ public final class VectorCASTBuildAction extends CoverageObject<VectorCASTBuildA
     /**
      * Gets the previous {@link VectorCASTBuildAction} of the given build.
      */
-    /*package*/ static VectorCASTBuildAction getPreviousResult(AbstractBuild<?,?> start) {
-        AbstractBuild<?,?> b = start;
+    /*package*/ static VectorCASTBuildAction getPreviousResult(Run<?,?> start) {
+        Run<?,?> b = start;
         while(true) {
             b = b.getPreviousBuild();
             if(b==null)
@@ -259,6 +266,24 @@ public final class VectorCASTBuildAction extends CoverageObject<VectorCASTBuildA
                 throw new IOException2("Failed to parse " + f, e);
             } catch (InterruptedException e) {
                 Logger.getLogger(VectorCASTBuildAction.class.getName()).log(Level.SEVERE, null, e);
+            } finally {
+                if (in != null) {
+                    in.close();
+                }
+            }
+        }
+
+        return new VectorCASTBuildAction(owner,rule,ratios[0],ratios[1],ratios[2],ratios[3],ratios[4],ratios[5],ratios[6],thresholds);
+    }
+    
+    public static VectorCASTBuildAction load(Run<?,?> owner, Rule rule, VectorCASTHealthReportThresholds thresholds, InputStream... streams) throws IOException {
+        Ratio ratios[] = null;
+        boolean[] flag = {false};
+        for (InputStream in: streams) {
+            try {
+                ratios = loadRatios(in, ratios, flag);
+            } catch (XmlPullParserException e) {
+                throw new IOException2("Failed to parse " + in, e);
             } finally {
                 if (in != null) {
                     in.close();
@@ -361,5 +386,31 @@ public final class VectorCASTBuildAction extends CoverageObject<VectorCASTBuildA
 
     }
 
+	private void setOwner(Run<?, ?> owner) {
+        logger.log(Level.INFO,"setOwner (create new vectorcastProjectAction)");
+        vectorcastProjectAction = new VectorCASTProjectAction (owner.getParent());
+        
+		this.owner = owner;
+	}
+
+	@Override
+	public void onLoad(Run<?, ?> run) {
+		setOwner(run);
+	}
+
+	@Override
+	public void onAttached(Run<?, ?> run) {
+		setOwner(run);
+	}
+    
+	@Override
+	public Collection<? extends Action> getProjectActions() {
+        if (vectorcastProjectAction == null)
+        {
+            vectorcastProjectAction = new VectorCASTProjectAction (owner.getParent());   
+        }
+        return Collections.singletonList(vectorcastProjectAction);
+	}
+    
     private static final Logger logger = Logger.getLogger(VectorCASTBuildAction.class.getName());
 }

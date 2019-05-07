@@ -1,6 +1,7 @@
 package com.vectorcast.plugins.vectorcastcoverage;
 
 import java.io.Serializable;
+import org.kohsuke.stapler.DataBoundConstructor;
 
 /**
  * Holds the configuration details for {@link hudson.model.HealthReport} generation
@@ -26,6 +27,7 @@ public class VectorCASTHealthReportThresholds implements Serializable {
     public VectorCASTHealthReportThresholds() {
     }
 
+    @DataBoundConstructor
     public VectorCASTHealthReportThresholds(int minStatement, int maxStatement, int minBranch, int maxBranch, int minBasisPath, int maxBasisPath, int minMCDC, int maxMCDC, int minFunction, int maxFunction, int minFunctionCall, int maxFunctionCall) {
         this.minStatement = minStatement;
         this.maxStatement = maxStatement;
