@@ -1,23 +1,23 @@
 package com.vectorcast.plugins.vectorcastcoverage;
 
-import hudson.model.AbstractBuild;
-import hudson.model.AbstractProject;
+import hudson.model.Job;
+import hudson.model.Run;
 import hudson.model.Action;
 import hudson.model.Result;
 import org.kohsuke.stapler.StaplerRequest;
 import org.kohsuke.stapler.StaplerResponse;
 
 import java.io.IOException;
-
+ 
 /**
  * Project view extension by VectorCAST plugin.
  * 
  * @author Kohsuke Kawaguchi
  */
 public final class VectorCASTProjectAction implements Action {
-    public final AbstractProject<?,?> project;
+    public final Job<?,?> project;
 
-    public VectorCASTProjectAction(AbstractProject project) {
+    public VectorCASTProjectAction(Job<?,?> project) {
         this.project = project;
     }
 
@@ -38,7 +38,7 @@ public final class VectorCASTProjectAction implements Action {
      * @return last build result
      */
     public VectorCASTBuildAction getLastResult() {
-        for( AbstractBuild<?,?> b = project.getLastBuild(); b!=null; b=b.getPreviousBuild()) {
+        for( Run<?, ?> b = project.getLastBuild(); b!=null; b=b.getPreviousBuild()) {
             if(b.getResult()== Result.FAILURE)
                 continue;
             VectorCASTBuildAction r = b.getAction(VectorCASTBuildAction.class);
@@ -49,7 +49,7 @@ public final class VectorCASTProjectAction implements Action {
     }
 
     public void doGraph(StaplerRequest req, StaplerResponse rsp) throws IOException {
-       if (getLastResult() != null)
-          getLastResult().doGraph(req,rsp);
+        if (getLastResult() != null)
+            getLastResult().doGraph(req,rsp);
     }
 }

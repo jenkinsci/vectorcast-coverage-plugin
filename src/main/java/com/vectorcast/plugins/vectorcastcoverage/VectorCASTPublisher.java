@@ -10,44 +10,77 @@ import hudson.maven.MavenModuleSetBuild;
 import hudson.model.AbstractBuild;
 import hudson.model.AbstractProject;
 import hudson.model.Action;
-import hudson.model.BuildListener;
+import hudson.model.TaskListener;
 import hudson.model.Result;
 import hudson.tasks.BuildStepDescriptor;
 import hudson.tasks.BuildStepMonitor;
 import hudson.tasks.Publisher;
 import hudson.tasks.Recorder;
+import hudson.model.Run;
+import java.io.InputStream;
 
 import net.sf.json.JSONObject;
 
 import org.kohsuke.stapler.StaplerRequest;
+import javax.annotation.Nonnull;
+import org.kohsuke.stapler.DataBoundConstructor;
 
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+
+import jenkins.tasks.SimpleBuildStep;
+import hudson.model.Job;
 
 /**
  * {@link Publisher} that captures VectorCAST coverage reports.
  *
  * @author Kohsuke Kawaguchi
  */
-public class VectorCASTPublisher extends Recorder {
+public class VectorCASTPublisher extends Recorder implements SimpleBuildStep {
 
     /**
      * Relative path to the VectorCAST XML file inside the workspace.
      */
     public String includes;
-    
     public boolean useThreshold;
+    public VectorCASTHealthReportThresholds healthyTarget;
+    public VectorCASTHealthReportThresholds unhealthyTarget;
 
+    /**
     /**
      * Rule to be enforced. Can be null.
      *
      * TODO: define a configuration mechanism.
      */
     public Rule rule;
-
+    
+    public VectorCASTPublisher() {
+        this.includes = "xml_data/coverage_results*.xml";
+        this.useThreshold = false;
+        this.healthyTarget = new VectorCASTHealthReportThresholds();
+        this.unhealthyTarget = new VectorCASTHealthReportThresholds();
+    }
+    
+    public VectorCASTPublisher(String includes, Boolean useThreshold) {
+        this.includes = includes;
+        this.useThreshold = useThreshold;
+        this.healthyTarget = new VectorCASTHealthReportThresholds();
+        this.unhealthyTarget = new VectorCASTHealthReportThresholds();
+    }
+    
+    @DataBoundConstructor
+    public VectorCASTPublisher(String includes, Boolean useThreshold, VectorCASTHealthReportThresholds healthyTarget, VectorCASTHealthReportThresholds unhealthyTarget) {
+        this.includes = includes;
+        this.useThreshold = useThreshold;
+        this.healthyTarget = healthyTarget;
+        this.unhealthyTarget = unhealthyTarget;
+    }
     /**
      * {@link hudson.model.HealthReport} thresholds to apply.
      */
@@ -107,48 +140,65 @@ public class VectorCASTPublisher extends Recorder {
     }
 
     @Override
-    public boolean perform(AbstractBuild<?, ?> build, Launcher launcher, BuildListener listener) throws InterruptedException, IOException {
+    public void perform(@Nonnull Run<?, ?> run, @Nonnull FilePath workspace, @Nonnull Launcher launcher,
+                        @Nonnull TaskListener listener) throws InterruptedException, IOException {
+        performImpl(run, workspace, listener);
+    }
+
+    
+    public boolean performImpl(Run<?, ?> run, FilePath workspace, TaskListener listener) throws InterruptedException, IOException {
         final PrintStream logger = listener.getLogger();
         
+        
         // Make sure VectorCAST actually ran
-        if (build instanceof MavenBuild) {
-            MavenBuild mavenBuild = (MavenBuild) build;
+        if (run instanceof MavenBuild) {
+            MavenBuild mavenBuild = (MavenBuild) run;
             if (!didVecctorCASTRun(mavenBuild)) {
                 listener.getLogger().println("Skipping VecctorCAST coverage report as mojo did not run.");
                 return true;
             }
-        } else if (build instanceof MavenModuleSetBuild) {
-            MavenModuleSetBuild moduleSetBuild = (MavenModuleSetBuild) build;
+        } else if (run instanceof MavenModuleSetBuild) {
+            MavenModuleSetBuild moduleSetBuild = (MavenModuleSetBuild) run;
             if (!didVecctorCASTRun(moduleSetBuild.getModuleLastBuilds().values())) {
                 listener.getLogger().println("Skipping VecctorCAST coverage report as mojo did not run.");
                 return true;
             }
         }
                 
-        EnvVars env = build.getEnvironment(listener);
-        env.overrideAll(build.getBuildVariables());
+        Map<String, String> envs;
+        if (run instanceof AbstractBuild)
+        {
+            envs = ((AbstractBuild<?,?>) run).getBuildVariables();
+        }
+        else
+        {
+            envs = Collections.emptyMap();
+        }
+        
+        EnvVars env = run.getEnvironment(listener);
+        env.overrideAll(envs);
         includes = env.expand(includes);
 
         FilePath[] reports;
         if (includes == null || includes.trim().length() == 0) {
-            FilePath workspace = build.getWorkspace();
+            //FilePath workspace = build.getWorkspace();
             if (workspace!= null) {
                 logger.println("[VectorCASTCoverage] [INFO]: looking for coverage reports in the entire workspace: " + workspace.getRemote());
             }
-            reports = locateCoverageReports(build.getWorkspace(), "**/coverage.xml");
+            reports = locateCoverageReports(workspace, "**/coverage.xml");
         } else {
             logger.println("[VectorCASTCoverage] [INFO]: looking for coverage reports in the provided path: " + includes);
-            reports = locateCoverageReports(build.getWorkspace(), includes);
+            reports = locateCoverageReports(workspace, includes);
         }
 
         if (reports.length == 0) {
-            Result result = build.getResult();
+            Result result = run.getResult();
             if (result == null || result.isWorseThan(Result.UNSTABLE)) {
                 return true;
             }
 
             logger.println("[VectorCASTCoverage] [INFO]: no coverage files found in workspace. Was any report generated?");
-            build.setResult(Result.FAILURE);
+            run.setResult(Result.FAILURE);
             return true;
         } else {
             StringBuffer buf = new StringBuffer();
@@ -159,31 +209,37 @@ public class VectorCASTPublisher extends Recorder {
             logger.println("[VectorCASTCoverage] [INFO]: found " + reports.length + " report files: " + buf.toString());
         }
 
-        FilePath vcFolder = new FilePath(getVectorCASTReport(build));
+        FilePath vcFolder = new FilePath(getVectorCASTReport(run));
         saveCoverageReports(vcFolder, reports);
-        logger.println("[VectorCASTCoverage] [INFO]: stored " + reports.length + " report file(s) in the build folder: " + vcFolder);
+        logger.println("[VectorCASTCoverage] [INFO]: stored " + reports.length + " report file(s) in the run folder: " + vcFolder);
 
-        final VectorCASTBuildAction action = VectorCASTBuildAction.load(build, rule, healthReports, reports);
+        //convert FilePath to steams
+        InputStream[] streams = new InputStream[reports.length];
+        for (int i=0; i<reports.length; i++) {
+            streams[i] = reports[i].read();
+        }
 
-        logger.println("[VectorCASTCoverage] [INFO]: " + action.getBuildHealth().getDescription());
+        final VectorCASTBuildAction action = VectorCASTBuildAction.load(run, rule, healthReports, streams); //reports);
 
-        build.getActions().add(action);
+        logger.println("**[VectorCASTCoverage] [INFO]: " + action.getBuildHealth().getDescription());
+
+        run.getActions().add(action);
 
         final CoverageReport result = action.getResult();
         if (result == null) {
             logger.println("[VectorCASTCoverage] [INFO]: Could not parse coverage results. Setting Build to failure.");
-            build.setResult(Result.FAILURE);
+            run.setResult(Result.FAILURE);
         } else if (result.isFailed()) {
             logger.println("[VectorCASTCoverage] [INFO]: code coverage enforcement failed. Setting Build to unstable.");
-            build.setResult(Result.UNSTABLE);
+            run.setResult(Result.UNSTABLE);
         }
         
-        checkThreshold(build, logger, env, action);
+        checkThreshold(run, logger, env, action);
 
         return true;
     }
 
-	private void checkThreshold(AbstractBuild<?, ?> build,
+	private void checkThreshold(Run<?, ?> run,
 			final PrintStream logger, EnvVars env, final VectorCASTBuildAction action) {
 			
 		Ratio ratio = null;
@@ -199,7 +255,7 @@ public class VectorCASTPublisher extends Recorder {
 						|| isFunctionCoverageOk(action)
 						|| isFunctionCallCoverageOk(action)){
 					logger.println("[VectorCASTCoverage] [INFO]: Build failed due to coverage percentage threshold exceeds ");
-					build.setResult(Result.FAILURE);
+					run.setResult(Result.FAILURE);
 				} 
 				if (isStatementCoverageOk(action)) {
 					logger.println("[VectorCASTCoverage] [INFO]: Statement coverage "+action.getStatementCoverage().getPercentage()+"% < "+healthReports.getMinStatement()+"%.");
@@ -261,8 +317,8 @@ public class VectorCASTPublisher extends Recorder {
 		return action.getFunctionCallCoverage().getPercentage() < healthReports.getMinFunctionCall();
 	}
 
-    @Override
-    public Action getProjectAction(AbstractProject<?, ?> project) {
+    
+    public Action getProjectAction(Job<?, ?> project) {
         return new VectorCASTProjectAction(project);
     }
 
@@ -274,8 +330,8 @@ public class VectorCASTPublisher extends Recorder {
     /**
      * Gets the directory to store report files
      */
-    static File getVectorCASTReport(AbstractBuild<?, ?> build) {
-        return new File(build.getRootDir(), "vectorcastcoverage");
+    static File getVectorCASTReport(Run<?, ?> run  ) {
+        return new File(run.getRootDir(), "vectorcastcoverage");
     }
 
     @Override
@@ -284,8 +340,8 @@ public class VectorCASTPublisher extends Recorder {
     }
 
     private boolean didVecctorCASTRun(Iterable<MavenBuild> mavenBuilds) {
-        for (MavenBuild build : mavenBuilds) {
-            if (didVecctorCASTRun(build)) {
+        for (MavenBuild run : mavenBuilds) {
+            if (didVecctorCASTRun(run)) {
                 return true;
             }
         }
@@ -315,14 +371,21 @@ public class VectorCASTPublisher extends Recorder {
             return Messages.VcastCoveragePublisher_DisplayName();
         }
 
-        @Override
         public boolean isApplicable(Class<? extends AbstractProject> aClass) {
             return true;
         }
 
         @Override
+        public boolean configure(StaplerRequest req, JSONObject formData) throws FormException {
+            req.bindParameters(this, "vectorcastcoverage.");
+            save();
+            return super.configure(req, formData);
+        }
+
+        @Override
         public Publisher newInstance(StaplerRequest req, JSONObject json) throws FormException {
             VectorCASTPublisher pub = new VectorCASTPublisher();
+            
             req.bindParameters(pub, "vectorcastcoverage.");
             req.bindParameters(pub.healthReports, "vectorCASTHealthReports.");
             // start ugly hack
