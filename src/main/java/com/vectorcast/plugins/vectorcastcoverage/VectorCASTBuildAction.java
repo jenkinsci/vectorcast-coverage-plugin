@@ -39,6 +39,7 @@ import hudson.model.Run;
  */
 public final class VectorCASTBuildAction extends CoverageObject<VectorCASTBuildAction> implements HealthReportingAction, StaplerProxy, Serializable, RunAction2, LastBuildAction {
 	
+    private static final long serialVersionUID = 4691586L;
     public transient Run<?,?> owner;
 
     private transient WeakReference<CoverageReport> report;
