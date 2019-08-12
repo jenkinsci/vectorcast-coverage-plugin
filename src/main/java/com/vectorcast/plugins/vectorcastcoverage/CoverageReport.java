@@ -24,12 +24,15 @@ public final class CoverageReport extends AggregatedReport<CoverageReport/*dummy
 
     public CoverageReport(VectorCASTBuildAction action, InputStream... xmlReports) throws IOException {
         this(action);
+        int idx = 0;
         for (InputStream is: xmlReports) {
           try {
             createDigester().parse(is);
+            idx += 1;
           } catch (SAXException e) {
-              throw new IOException2("Failed to parse XML",e);
+              throw new IOException2("Failed to parse XML:" + idx,e);
           }
+          
         }
         setParent(null);
     }

@@ -193,32 +193,47 @@ public final class VectorCASTBuildAction extends CoverageObject<VectorCASTBuildA
         }
 
         final File reportFolder = VectorCASTPublisher.getVectorCASTReport(owner);
-
+        
         try {
-        	
-        	// Get the list of report files stored for this build
-            FilePath[] reports = getVectorCASTCoverageReports(reportFolder);
-            InputStream[] streams = new InputStream[reports.length];
-            for (int i=0; i<reports.length; i++) {
-            	streams[i] = reports[i].read();
-            }
             
-            // Generate the report
-            CoverageReport r = new CoverageReport(this, streams);
+            FilePath[] reports = getVectorCASTCoverageReports(reportFolder);
+            
+            try {
+                
+                // Get the list of report files stored for this build
+                
+                InputStream[] streams = new InputStream[reports.length];
+                for (int i=0; i<reports.length; i++) {
+                    //logger.log(Level.WARNING, "Processing file: " + reports[i].getRemote());
+                    streams[i] = reports[i].read();
+                }
+                
+                // Generate the report
+                CoverageReport r = new CoverageReport(this, streams);
 
-            if(rule!=null) {
-                // we change the report so that the FAILED flag is set correctly
-                logger.info("calculating failed packages based on " + rule);
-                rule.enforce(r,new StreamTaskListener(new NullStream()));
+                if(rule!=null) {
+                    // we change the report so that the FAILED flag is set correctly
+                    logger.info("calculating failed packages based on " + rule);
+                    rule.enforce(r,new StreamTaskListener(new NullStream()));
+                }
+
+                report = new WeakReference<CoverageReport>(r);
+                return r;
+            } catch (InterruptedException e) {
+                logger.log(Level.WARNING, "Failed to load " + reportFolder, e);
+                return null;
+            } catch (IOException e) {
+                //logger.log(Level.WARNING, "Failed to load " + reportFolder, e);
+                
+                String message = e.getMessage();
+                String [] msgElements = message.split(":");
+                Integer idx = Integer.valueOf(msgElements[1]);
+                logger.log(Level.WARNING, "Error Parsing VectorCAST Coverage file: " + reports[idx.intValue()].getName());
+                logger.log(Level.WARNING, "  >> " +msgElements[0]  + "   " + e.getCause());
+                return null;
             }
-
-            report = new WeakReference<CoverageReport>(r);
-            return r;
-        } catch (InterruptedException e) {
-            logger.log(Level.WARNING, "Failed to load " + reportFolder, e);
-            return null;
-        } catch (IOException e) {
-            logger.log(Level.WARNING, "Failed to load " + reportFolder, e);
+        } catch (Exception e) {
+            logger.log(Level.WARNING, "Failed to load results from: " + reportFolder, e);
             return null;
         }
     }
@@ -388,7 +403,6 @@ public final class VectorCASTBuildAction extends CoverageObject<VectorCASTBuildA
     }
 
 	private void setOwner(Run<?, ?> owner) {
-        logger.log(Level.INFO,"setOwner (create new vectorcastProjectAction)");
         vectorcastProjectAction = new VectorCASTProjectAction (owner.getParent());
         
 		this.owner = owner;

@@ -202,9 +202,16 @@ public class VectorCASTPublisher extends Recorder implements SimpleBuildStep {
             return true;
         } else {
             StringBuffer buf = new StringBuffer();
+            int idx = 0;
             for (FilePath f : reports) {
-                buf.append("\n          ");
+                if (idx == 0) {
+                    buf.append("\n          coverage.xml:  ");
+                }
+                else {
+                    buf.append("\n          coverage"+idx+".xml:  ");
+                }
                 buf.append(f.getRemote());
+                idx += 1;
             }
             logger.println("[VectorCASTCoverage] [INFO]: found " + reports.length + " report files: " + buf.toString());
         }
@@ -227,7 +234,10 @@ public class VectorCASTPublisher extends Recorder implements SimpleBuildStep {
 
         final CoverageReport result = action.getResult();
         if (result == null) {
-            logger.println("[VectorCASTCoverage] [INFO]: Could not parse coverage results. Setting Build to failure.");
+            logger.println("[VectorCASTCoverage] [INFO]: Could not parse a coverage result file:");
+            logger.println("[VectorCASTCoverage] [INFO]:     See Manage Jenkins > System Log > All Jenkins Log and search for 'Error Parsing VectorCAST Coverage'");
+            logger.println("[VectorCASTCoverage] [INFO]:     Use file list above to relate coverage*.xml to xml_data/coverage_results*.xml");
+            logger.println("[VectorCASTCoverage] [INFO]:     Setting Build to failure.");
             run.setResult(Result.FAILURE);
         } else if (result.isFailed()) {
             logger.println("[VectorCASTCoverage] [INFO]: code coverage enforcement failed. Setting Build to unstable.");
