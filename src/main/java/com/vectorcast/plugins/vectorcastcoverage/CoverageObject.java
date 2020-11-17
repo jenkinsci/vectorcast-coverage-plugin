@@ -146,7 +146,7 @@ public abstract class CoverageObject<SELF extends CoverageObject<SELF>> {
         printRatioCell(isFailed(), Complexity, buf);
         printRatioCell(isFailed(), Statement, buf);
         printRatioCell(isFailed(), Branch, buf);
-        printRatioCell(isFailed(), BasisPath, buf);
+        //printRatioCell(isFailed(), BasisPath, buf);
         printRatioCell(isFailed(), MCDC, buf);
         printRatioCell(isFailed(), Function, buf);
         printRatioCell(isFailed(), FunctionCall, buf);
@@ -199,6 +199,9 @@ public abstract class CoverageObject<SELF extends CoverageObject<SELF>> {
                 printRatioTable(ratio, buf);
             }
             buf.append("</td>\n");
+        }
+        else {
+            buf.append("<td></td>\n");
         }
     }
 

@@ -28,7 +28,7 @@ public class CoverageObjectTest extends AbstractVectorCASTTestBase {
     	Ratio r = null;
     	StringBuilder b = new StringBuilder();
     	CoverageObject.printRatioCell(true, null, b);
-    	assertEquals("", b.toString());
+        assertTrue(b.toString().contains("<td></td>"));
 
     	r = new Ratio(0,100);
     	b = new StringBuilder();

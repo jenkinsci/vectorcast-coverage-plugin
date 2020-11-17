@@ -3,27 +3,12 @@
  <j:if test="${it.hasChildren()}">
   <tr>
     <th><j:out value="${envORunit}"/></th>
-    <j:if test="${it.hasComplexity()}">
       <th><j:out value="${%Complexity}"/></th>
-    </j:if>
-    <j:if test="${it.hasChildrenStatementCoverage()}">
       <th><j:out value="${%Statement}"/></th>
-    </j:if>
-    <j:if test="${it.hasChildrenBranchCoverage()}">
       <th><j:out value="${%Branch}"/></th>
-    </j:if>
-    <j:if test="${it.hasChildrenBasisPathCoverage()}">
-      <th><j:out value="${%Basis Path}"/></th>
-    </j:if>
-    <j:if test="${it.hasChildrenMCDCCoverage()}">
       <th><j:out value="${%MC/DC}"/></th>
-    </j:if>
-    <j:if test="${it.hasChildrenFunctionCoverage()}">
       <th><j:out value="${%Function}"/></th>
-    </j:if>
-    <j:if test="${it.hasChildrenFunctionCallCoverage()}">
       <th><j:out value="${%Function Call}"/></th>
-    </j:if>
   </tr>
  </j:if>  
 </j:jelly>
