@@ -26,6 +26,7 @@ import javax.annotation.Nonnull;
 import org.kohsuke.stapler.DataBoundConstructor;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.util.ArrayList;
@@ -220,10 +221,11 @@ public class VectorCASTPublisher extends Recorder implements SimpleBuildStep {
         saveCoverageReports(vcFolder, reports);
         logger.println("[VectorCASTCoverage] [INFO]: stored " + reports.length + " report file(s) in the run folder: " + vcFolder);
 
-        //convert FilePath to steams
+        //convert FilePath to streams
         InputStream[] streams = new InputStream[reports.length];
         for (int i=0; i<reports.length; i++) {
-            streams[i] = reports[i].read();
+            File localXMLFile = new File(vcFolder + "/" + "coverage" + (i > 0 ? i : "") + ".xml");
+            streams[i] = new FileInputStream(localXMLFile);
         }
 
         final VectorCASTBuildAction action = VectorCASTBuildAction.load(run, rule, healthReports, streams); //reports);
