@@ -38,80 +38,35 @@
           <table class="pane sortable" id="warnings-table" style="margin-top: 0px;">
             <tr>
               <td class="pane-header" style="text-align: right;" initialSortDir="down">${%Job}</td>
-              <j:if test="${it.hasComplexity(jobs)}">
                  <td class="pane-header" style="text-align: right;">${%Complexity}</td>
-              </j:if>
-              <j:if test="${it.hasStatementCoverage(jobs)}">
                  <td class="pane-header" style="text-align: right;">${%Statement}</td>
-              </j:if>
-              <j:if test="${it.hasBranchCoverage(jobs)}">
                 <td class="pane-header" style="text-align: right;">${%Branch}</td>
-              </j:if>
-              <j:if test="${it.hasBasisPathCoverage(jobs)}">
-                <td class="pane-header" style="text-align: right;">${%Basis Path}</td>
-              </j:if>
-              <j:if test="${it.hasMCDCCoverage(jobs)}">
                 <td class="pane-header" style="text-align: right;">${%MC/DC}</td>
-              </j:if>
-              <j:if test="${it.hasFunctionCoverage(jobs)}">
                 <td class="pane-header" style="text-align: right;">${%Function}</td>
-              </j:if>
-              <j:if test="${it.hasFunctionCallCoverage(jobs)}">
                 <td class="pane-header" style="text-align: right;">${%Function Call}</td>
-              </j:if>
             </tr>
-            <j:set var="summary" value="${it.getVcastCoverageResultSummary(jobs)}"/>
-            <j:forEach var="tr" items="${summary.VcastCoverageResults}">
+            <j:set var="summary" value="${it.getVectorCASTCoverageResultSummary(jobs)}"/>
+            <j:forEach var="tr" items="${summary.getVectorCASTCoverageResults()}">
             <tr style="border-top: 0px; border: 1px #bbb solid;">
                 <td class="pane">
                     <dp:jobLink job="${tr.job}"/>
                 </td>
-                <j:if test="${it.hasComplexity(jobs)}">
                   <td class="pane" style="text-align: right;" data="${tr.Complexity}">${tr.Complexity}</td>
-                </j:if>
-                <j:if test="${it.hasStatementCoverage(jobs)}">
                   <td class="pane" style="text-align: right;" data="${tr.StatementCoverage}">${tr.StatementCoverage}%</td>
-                </j:if>
-                <j:if test="${it.hasBranchCoverage(jobs)}">
                   <td class="pane" style="text-align: right;" data="${tr.BranchCoverage}">${tr.BranchCoverage}%</td>
-                </j:if>
-                <j:if test="${it.hasBasisPathCoverage(jobs)}">
-                  <td class="pane" style="text-align: right;" data="${tr.BasisPathCoverage}">${tr.BasisPathCoverage}%</td>
-                </j:if>
-                <j:if test="${it.hasMCDCCoverage(jobs)}">
                   <td class="pane" style="text-align: right;" data="${tr.MCDCCoverage}">${tr.MCDCCoverage}%</td>
-                </j:if>
-                <j:if test="${it.hasFunctionCoverage(jobs)}">
                   <td class="pane" style="text-align: right;" data="${tr.FunctionCoverage}">${tr.FunctionCoverage}%</td>
-                </j:if>
-                <j:if test="${it.hasFunctionCallCoverage(jobs)}">
                   <td class="pane" style="text-align: right;" data="${tr.FunctionCoverage}">${tr.FunctionCallCoverage}%</td>
-                </j:if>
             </tr>
             </j:forEach>
             <tr class="sortbottom">
                 <td class="pane-header">${%Total}</td>
-              <j:if test="${it.hasComplexity(jobs)}">
                 <td class="pane-header" style="text-align: right;">${summary.totalComplexity}</td>
-              </j:if>
-              <j:if test="${it.hasStatementCoverage(jobs)}">
                 <td class="pane-header" style="text-align: right;">${summary.totalStatementCoverage}%</td>
-              </j:if>
-              <j:if test="${it.hasBranchCoverage(jobs)}">
                 <td class="pane-header" style="text-align: right;">${summary.totalBranchCoverage}%</td>
-              </j:if>
-              <j:if test="${it.hasBasisPathCoverage(jobs)}">
-                <td class="pane-header" style="text-align: right;">${summary.totalBasisPathCoverage}%</td>
-              </j:if>
-              <j:if test="${it.hasMCDCCoverage(jobs)}">
                 <td class="pane-header" style="text-align: right;">${summary.totalMCDCCoverage}%</td>
-              </j:if>
-              <j:if test="${it.hasFunctionCoverage(jobs)}">
                 <td class="pane-header" style="text-align: right;">${summary.totalFunctionCoverage}%</td>
-              </j:if>
-              <j:if test="${it.hasFunctionCallCoverage(jobs)}">
                 <td class="pane-header" style="text-align: right;">${summary.totalFunctionCallCoverage}%</td>
-              </j:if>
             </tr>
           </table>
         </td>
