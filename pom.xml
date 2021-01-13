@@ -12,9 +12,9 @@
   <name>VectorCAST Coverage</name>
   <description>Display VectorCAST coverage in Jenkins</description>
   <artifactId>vectorcast-coverage</artifactId>
-  <version>0.15-SNAPSHOT</version>
+  <version>0.16-SNAPSHOT</version>
   <packaging>hpi</packaging>
-  <url>https://wiki.jenkins-ci.org/display/JENKINS/VectorCAST+Coverage+Plugin</url>
+  <url>https://github.com/jenkinsci/vectorcast-coverage-plugin</url>
 
   <licenses>
     <license>
@@ -31,10 +31,10 @@
 
   <developers>
       <developer>
-          <id>rmkeeble</id>
-          <name>Richard Keeble</name>
-          <email>richard.keeble@vectorcast.com</email>
-          <organization>Vector Software</organization>
+          <id>TimSVector</id>
+          <name>Tim Schneider</name>
+          <email>Tim.Schneider@vector.com</email>
+          <organization>Vector Informatik, GmbH</organization>
       </developer>
   </developers>
 
@@ -79,6 +79,11 @@
     <plugins>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-release-plugin</artifactId>
+        <version>3.0.0-M1</version>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
         <version>2.3.2</version>
         <configuration>
@@ -103,6 +108,24 @@
                 <source>${project.build.directory}/generated-sources/localizer</source>
               </sources>
             </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>findbugs-maven-plugin</artifactId>
+        <version>3.0.4</version>
+        <configuration>
+          <xmlOutput>true</xmlOutput>
+          <failOnError>${findbugs.failOnError}</failOnError>
+        </configuration>
+        <executions>
+          <execution>
+            <id>run-findbugs</id>
+            <phase>verify</phase> 
+            <goals>
+              <goal>check</goal> 
+            </goals>
           </execution>
         </executions>
       </plugin>
