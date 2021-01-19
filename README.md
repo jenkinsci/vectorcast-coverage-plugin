@@ -37,7 +37,7 @@ None
 ## Change Log
 
 ### Version 0.16 (20 Jan 2021)
-- Fixed misalignment of chards with an environmnent has no coverage
+- Fixed misalignment of charts with an environmnent has no coverage
 
 ### Version 0.15 (8 Dec 2020)
 - Fixed remote read hang up problem
