@@ -190,18 +190,20 @@ public abstract class CoverageObject<SELF extends CoverageObject<SELF>> {
         if (ratio != null && ratio.isInitialized()) {
 
             String className = "nowrap" + (failed ? " red" : "");
-            buf.append("<td class='").append(className).append("'");
+            buf.append("<td align=\"center\" class='").append(className).append("'");
             buf.append(" data='").append(dataFormat.format(ratio.getPercentageFloat()));
             buf.append("'>\n");
             if (ratio.getNumerator() != 0.0 && ratio.getDenominator() == 0.0) {
                 buf.append("<span class='text'>").append(ratio.getNumerator()).append("</span>");
+            } else if (ratio.getNumerator() == 0.0 && ratio.getDenominator() == 0.0) {
+                buf.append("<span class='text'>-</span>");
             } else {
                 printRatioTable(ratio, buf);
             }
             buf.append("</td>\n");
         }
         else {
-            buf.append("<td></td>\n");
+            buf.append("<td align=\"center\" >-</td>\n");
         }
     }
 

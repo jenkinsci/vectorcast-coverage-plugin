@@ -14,7 +14,7 @@
   <artifactId>vectorcast-coverage</artifactId>
   <version>0.16-SNAPSHOT</version>
   <packaging>hpi</packaging>
-  <url>https://wiki.jenkins-ci.org/display/JENKINS/VectorCAST+Coverage+Plugin</url>
+  <url>https://github.com/jenkinsci/vectorcast-coverage-plugin</url>
 
   <licenses>
     <license>
