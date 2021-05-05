@@ -36,6 +36,9 @@ None
 
 ## Change Log
 
+### Version 0.17 (5 May 2021)
+- Upgrade to commons-digester3
+
 ### Version 0.16 (20 Jan 2021)
 - Fixed misalignment of charts with an environmnent has no coverage
 
