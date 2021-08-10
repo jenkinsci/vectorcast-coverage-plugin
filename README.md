@@ -36,6 +36,10 @@ None
 
 ## Change Log
 
+### Version 0.18 (10 Aug 2021)
+- Use HTTPS URLs in pom.xml
+- Bump dashboard-view from 2.1 to 2.16
+
 ### Version 0.17 (5 May 2021)
 - Upgrade to commons-digester3
 
