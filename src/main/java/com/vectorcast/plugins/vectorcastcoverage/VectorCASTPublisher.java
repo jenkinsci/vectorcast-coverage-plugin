@@ -37,6 +37,9 @@ import java.util.Map;
 
 import jenkins.tasks.SimpleBuildStep;
 import hudson.model.Job;
+import java.util.logging.Logger;
+import java.util.logging.Level;
+import org.kohsuke.stapler.DataBoundSetter;
 
 /**
  * {@link Publisher} that captures VectorCAST coverage reports.
@@ -49,10 +52,8 @@ public class VectorCASTPublisher extends Recorder implements SimpleBuildStep {
      * Relative path to the VectorCAST XML file inside the workspace.
      */
     public String includes;
-    public boolean useThreshold;
-    public VectorCASTHealthReportThresholds healthyTarget;
-    public VectorCASTHealthReportThresholds unhealthyTarget;
-
+    public Boolean useThreshold;
+    
     /**
     /**
      * Rule to be enforced. Can be null.
@@ -60,33 +61,57 @@ public class VectorCASTPublisher extends Recorder implements SimpleBuildStep {
      * TODO: define a configuration mechanism.
      */
     public Rule rule;
-    
-    public VectorCASTPublisher() {
-        this.includes = "xml_data/coverage_results*.xml";
-        this.useThreshold = false;
-        this.healthyTarget = new VectorCASTHealthReportThresholds();
-        this.unhealthyTarget = new VectorCASTHealthReportThresholds();
-    }
-    
-    public VectorCASTPublisher(String includes, Boolean useThreshold) {
-        this.includes = includes;
-        this.useThreshold = useThreshold;
-        this.healthyTarget = new VectorCASTHealthReportThresholds();
-        this.unhealthyTarget = new VectorCASTHealthReportThresholds();
-    }
-    
-    @DataBoundConstructor
-    public VectorCASTPublisher(String includes, Boolean useThreshold, VectorCASTHealthReportThresholds healthyTarget, VectorCASTHealthReportThresholds unhealthyTarget) {
-        this.includes = includes;
-        this.useThreshold = useThreshold;
-        this.healthyTarget = healthyTarget;
-        this.unhealthyTarget = unhealthyTarget;
-    }
+
     /**
      * {@link hudson.model.HealthReport} thresholds to apply.
      */
-    public VectorCASTHealthReportThresholds healthReports = new VectorCASTHealthReportThresholds();
+    public VectorCASTHealthReportThresholds healthReports = new VectorCASTHealthReportThresholds(0, 100, 0, 70, 0, 80, 0, 80, 0, 80, 0, 80 );
 
+    public VectorCASTPublisher() {
+        
+        this.includes = "xml_data/coverage_results*.xml";
+        this.useThreshold = false;
+    }
+
+    @DataBoundConstructor
+    public VectorCASTPublisher(String includes, Boolean useThreshold, VectorCASTHealthReportThresholds healthyTarget){
+        this.includes = includes;
+        this.useThreshold = useThreshold;
+        this.healthReports = healthyTarget;
+    }
+
+    @Deprecated
+    public VectorCASTPublisher(String includes, Boolean useThreshold, VectorCASTHealthReportThresholds healthyTarget, VectorCASTHealthReportThresholds unhealthyTarget){
+        this(includes, useThreshold, healthyTarget);
+    }
+    
+    @Nonnull
+    public final String getIncludes() {
+        return includes;
+    }
+    
+    @Nonnull
+    public final Boolean getUseThreshold() {
+        return useThreshold;
+    }
+    
+    @Nonnull
+    public final VectorCASTHealthReportThresholds getHealthReports() {
+        return healthReports;
+    }
+    
+    @DataBoundSetter public final void setIncludes(String includes) {
+        this.includes = includes;
+    }
+    
+    @DataBoundSetter public final void setUseThreshold(Boolean useThreshold) {
+        this.useThreshold = useThreshold;
+    }
+    
+    @DataBoundSetter public final void setHealthReports(VectorCASTHealthReportThresholds healthReports) {
+        this.healthReports = healthReports;
+    }
+    
     /**
      * look for VectorCAST reports based in the configured parameter includes. 'includes' is - an Ant-style pattern - a list
      * of files and folders separated by the characters ;:,
@@ -229,8 +254,12 @@ public class VectorCASTPublisher extends Recorder implements SimpleBuildStep {
         }
 
         final VectorCASTBuildAction action = VectorCASTBuildAction.load(run, rule, healthReports, streams); //reports);
-
-        logger.println("**[VectorCASTCoverage] [INFO]: " + action.getBuildHealth().getDescription());
+        
+        if (action.getBuildHealth() != null) {
+            logger.println("**[VectorCASTCoverage] [INFO]: " + action.getBuildHealth().getDescription());
+        } else {
+            logger.println("**[VectorCASTCoverage] [INFO]: No thresholds set");
+        }
 
         run.getActions().add(action);
 
@@ -396,35 +425,44 @@ public class VectorCASTPublisher extends Recorder implements SimpleBuildStep {
 
         @Override
         public Publisher newInstance(StaplerRequest req, JSONObject json) throws FormException {
-            VectorCASTPublisher pub = new VectorCASTPublisher();
             
+            /*
+             *  Setup for snippet generator
+             */
+            String loc_includes;
+            Boolean loc_useThreshold;
+            int maxStatement,maxBranch,maxBasisPath,maxMCDC,maxFunction,maxFunctionCall;
+            int minStatement,minBranch,minBasisPath,minMCDC,minFunction,minFunctionCall;
+            
+            /* Get the input from the JSON object */
+            loc_includes = json.optString("includes", "xml_data/coverage_results*.xml");
+            if (loc_includes.isEmpty()) {
+                    loc_includes = "xml_data/coverage_results*.xml";
+            }
+            loc_useThreshold = json.optBoolean("useThreshold", false);
+            
+            maxStatement = json.optInt("maxStatement", 100);
+            maxBranch = json.optInt("maxBranch", 70);
+            maxBasisPath = json.optInt("maxBasisPath", 80);
+            maxMCDC = json.optInt("maxMCDC", 80);
+            maxFunction = json.optInt("maxFunction", 80);
+            maxFunctionCall = json.optInt("maxFunctionCall", 80);
+
+            minStatement = json.optInt("minStatement",0);
+            minBranch = json.optInt("minBranch",0);
+            minBasisPath = json.optInt("minBasisPath",0);
+            minMCDC = json.optInt("minMCDC",0);
+            minFunction = json.optInt("minFunction",0);
+            minFunctionCall = json.optInt("minFunctionCall",0);
+            
+            /* Setup the healthReport */
+            VectorCASTHealthReportThresholds loc_healthReports = new VectorCASTHealthReportThresholds( minStatement,  maxStatement,  minBranch,  maxBranch,  minBasisPath,  maxBasisPath,  minMCDC,  maxMCDC,  minFunction,  maxFunction,  minFunctionCall,  maxFunctionCall);
+            
+            VectorCASTPublisher pub = new VectorCASTPublisher(loc_includes,loc_useThreshold,loc_healthReports);
+                                
             req.bindParameters(pub, "vectorcastcoverage.");
             req.bindParameters(pub.healthReports, "vectorCASTHealthReports.");
-            // start ugly hack
-            //@TODO remove ugly hack
-            // the default converter for integer values used by req.bindParameters
-            // defaults an empty value to 0. This happens even if the type is Integer
-            // and not int.  We want to change the default values, so we use this hack.
-            //
-            // If you know a better way, please fix.
-            if ("".equals(req.getParameter("vectorCASTHealthReports.maxStatement"))) {
-                pub.healthReports.setMaxStatement(100);
-            }
-            if ("".equals(req.getParameter("vectorCASTHealthReports.maxBranch"))) {
-                pub.healthReports.setMaxBranch(70);
-            }
-            if ("".equals(req.getParameter("vectorCASTHealthReports.maxBasisPath"))) {
-                pub.healthReports.setMaxBasisPath(80);
-            }
-            if ("".equals(req.getParameter("vectorCASTHealthReports.maxMCDC"))) {
-                pub.healthReports.setMaxMCDC(80);
-            }
-            if ("".equals(req.getParameter("vectorCASTHealthReports.maxFunction"))) {
-                pub.healthReports.setMaxFunction(80);
-            }
-            if ("".equals(req.getParameter("vectorCASTHealthReports.maxFunctionCall"))) {
-                pub.healthReports.setMaxFunctionCall(80);
-            }
+
             // end ugly hack
             return pub;
         }
