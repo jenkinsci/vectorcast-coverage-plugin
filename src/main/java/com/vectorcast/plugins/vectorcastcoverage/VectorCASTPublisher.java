@@ -67,6 +67,9 @@ public class VectorCASTPublisher extends Recorder implements SimpleBuildStep {
      */
     public VectorCASTHealthReportThresholds healthReports = new VectorCASTHealthReportThresholds(0, 100, 0, 70, 0, 80, 0, 80, 0, 80, 0, 80 );
 
+    // should not be used
+    public VectorCASTHealthReportThresholds healthyTarget;
+
     public VectorCASTPublisher() {
         
         this.includes = "xml_data/coverage_results*.xml";
@@ -100,6 +103,11 @@ public class VectorCASTPublisher extends Recorder implements SimpleBuildStep {
         return healthReports;
     }
     
+    @Nonnull
+    public final VectorCASTHealthReportThresholds getHealthyTarget() {
+        return healthReports;
+    }
+    
     @DataBoundSetter public final void setIncludes(String includes) {
         this.includes = includes;
     }
@@ -110,6 +118,10 @@ public class VectorCASTPublisher extends Recorder implements SimpleBuildStep {
     
     @DataBoundSetter public final void setHealthReports(VectorCASTHealthReportThresholds healthReports) {
         this.healthReports = healthReports;
+    }
+    
+    @DataBoundSetter public final void setHealthyTarget(VectorCASTHealthReportThresholds healthyTarget) {
+        this.healthReports = healthyTarget;
     }
     
     /**
@@ -295,26 +307,26 @@ public class VectorCASTPublisher extends Recorder implements SimpleBuildStep {
 						|| isMCDCCoverageOk(action)
 						|| isFunctionCoverageOk(action)
 						|| isFunctionCallCoverageOk(action)){
-					logger.println("[VectorCASTCoverage] [INFO]: Build failed due to coverage percentage threshold exceeds ");
+					logger.println("[VectorCASTCoverage] [FAIL]: Build failed due to a coverage metric fell below the minimum threshold");
 					run.setResult(Result.FAILURE);
 				} 
 				if (isStatementCoverageOk(action)) {
-					logger.println("[VectorCASTCoverage] [INFO]: Statement coverage "+action.getStatementCoverage().getPercentage()+"% < "+healthReports.getMinStatement()+"%.");
+					logger.println("[VectorCASTCoverage] [FAIL]: Statement coverage "+action.getStatementCoverage().getPercentage()+"% < "+healthReports.getMinStatement()+"% threshold.");
 				}
 				if (isBranchCoverageOk(action)) {
-					logger.println("[VectorCASTCoverage] [INFO]: Branch coverage "+action.getBranchCoverage().getPercentage()+"% < "+healthReports.getMinBranch()+"%.");
+					logger.println("[VectorCASTCoverage] [FAIL]: Branch coverage "+action.getBranchCoverage().getPercentage()+"% < "+healthReports.getMinBranch()+"% threshold.");
 				}
 				if (isBasisPathCoverageOk(action)) {
-					logger.println("[VectorCASTCoverage] [INFO]: Basis Path coverage "+action.getBasisPathCoverage().getPercentage()+"% < "+healthReports.getMinBasisPath()+"%.");
+					logger.println("[VectorCASTCoverage] [FAIL]: Basis Path coverage "+action.getBasisPathCoverage().getPercentage()+"% < "+healthReports.getMinBasisPath()+"% threshold.");
 				}
 				if (isMCDCCoverageOk(action)) {
-					logger.println("[VectorCASTCoverage] [INFO]: MC/DC coverage "+action.getMCDCCoverage().getPercentage()+"% < "+healthReports.getMinMCDC()+"%.");
+					logger.println("[VectorCASTCoverage] [FAIL]: MC/DC coverage "+action.getMCDCCoverage().getPercentage()+"% < "+healthReports.getMinMCDC()+"% threshold.");
 				}
 				if (isFunctionCoverageOk(action)) {
-					logger.println("[VectorCASTCoverage] [INFO]: Function Coverage "+action.getFunctionCoverage().getPercentage()+"% < "+healthReports.getMinFunction()+"%.");
+					logger.println("[VectorCASTCoverage] [FAIL]: Function Coverage "+action.getFunctionCoverage().getPercentage()+"% < "+healthReports.getMinFunction()+"% threshold.");
 				}
 				if (isFunctionCallCoverageOk(action)) {
-					logger.println("[VectorCASTCoverage] [INFO]: Function Call coverage "+action.getFunctionCallCoverage().getPercentage()+"% < "+healthReports.getMinFunctionCall()+"%.");
+					logger.println("[VectorCASTCoverage] [FAIL]: Function Call coverage "+action.getFunctionCallCoverage().getPercentage()+"% < "+healthReports.getMinFunctionCall()+"% threshold.");
 				}
 			} catch (NullPointerException e) {logger.println("[VectorCASTCoverage] [INFO]: VectorCASTPublisher::checkThreshold: Still catching NullPointerException...");}
 		}
@@ -462,7 +474,31 @@ public class VectorCASTPublisher extends Recorder implements SimpleBuildStep {
                                 
             req.bindParameters(pub, "vectorcastcoverage.");
             req.bindParameters(pub.healthReports, "vectorCASTHealthReports.");
-
+            // start ugly hack
+            //@TODO remove ugly hack
+            // the default converter for integer values used by req.bindParameters
+            // defaults an empty value to 0. This happens even if the type is Integer
+            // and not int.  We want to change the default values, so we use this hack.
+            //
+            // If you know a better way, please fix.
+            if ("".equals(req.getParameter("vectorCASTHealthReports.maxStatement"))) {
+                pub.healthReports.setMaxStatement(100);
+            }
+            if ("".equals(req.getParameter("vectorCASTHealthReports.maxBranch"))) {
+                pub.healthReports.setMaxBranch(70);
+            }
+            if ("".equals(req.getParameter("vectorCASTHealthReports.maxBasisPath"))) {
+                pub.healthReports.setMaxBasisPath(80);
+            }
+            if ("".equals(req.getParameter("vectorCASTHealthReports.maxMCDC"))) {
+                pub.healthReports.setMaxMCDC(80);
+            }
+            if ("".equals(req.getParameter("vectorCASTHealthReports.maxFunction"))) {
+                pub.healthReports.setMaxFunction(80);
+            }
+            if ("".equals(req.getParameter("vectorCASTHealthReports.maxFunctionCall"))) {
+                pub.healthReports.setMaxFunctionCall(80);
+            }
             // end ugly hack
             return pub;
         }
