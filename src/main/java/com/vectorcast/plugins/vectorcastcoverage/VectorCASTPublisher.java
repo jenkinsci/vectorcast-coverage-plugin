@@ -47,7 +47,7 @@ import org.kohsuke.stapler.DataBoundSetter;
  * @author Kohsuke Kawaguchi
  */
 public class VectorCASTPublisher extends Recorder implements SimpleBuildStep {
-
+    
     /**
      * Relative path to the VectorCAST XML file inside the workspace.
      */
@@ -69,6 +69,7 @@ public class VectorCASTPublisher extends Recorder implements SimpleBuildStep {
 
     // should not be used
     public VectorCASTHealthReportThresholds healthyTarget;
+    public VectorCASTHealthReportThresholds unhealthyTarget = null;
 
     public VectorCASTPublisher() {
         
@@ -77,16 +78,12 @@ public class VectorCASTPublisher extends Recorder implements SimpleBuildStep {
     }
 
     @DataBoundConstructor
-    public VectorCASTPublisher(String includes, Boolean useThreshold, VectorCASTHealthReportThresholds healthyTarget){
+    public VectorCASTPublisher(String includes, Boolean useThreshold, VectorCASTHealthReportThresholds healthyTarget, VectorCASTHealthReportThresholds unhealthyTarget){
+        
         this.includes = includes;
         this.useThreshold = useThreshold;
         this.healthReports = healthyTarget;
-    }
-
-    @Deprecated
-    public VectorCASTPublisher(String includes, Boolean useThreshold, VectorCASTHealthReportThresholds healthyTarget, VectorCASTHealthReportThresholds unhealthyTarget){
-        // since health reports were broken when using healthyTarget & unhealthyTarget, just disable them
-        this(includes, false, healthyTarget);
+        this.unhealthyTarget = unhealthyTarget;
     }
     
     @Nonnull
@@ -105,6 +102,11 @@ public class VectorCASTPublisher extends Recorder implements SimpleBuildStep {
     }
     
     @Nonnull
+    public final VectorCASTHealthReportThresholds getUnhealthReports() {
+        return unhealthyTarget;
+    }
+    
+    @Nonnull
     public final VectorCASTHealthReportThresholds getHealthyTarget() {
         return healthReports;
     }
@@ -115,6 +117,7 @@ public class VectorCASTPublisher extends Recorder implements SimpleBuildStep {
     
     @DataBoundSetter public final void setUseThreshold(Boolean useThreshold) {
         this.useThreshold = useThreshold;
+
     }
     
     @DataBoundSetter public final void setHealthReports(VectorCASTHealthReportThresholds healthReports) {
@@ -123,6 +126,10 @@ public class VectorCASTPublisher extends Recorder implements SimpleBuildStep {
     
     @DataBoundSetter public final void setHealthyTarget(VectorCASTHealthReportThresholds healthyTarget) {
         this.healthReports = healthyTarget;
+    }
+    
+    @DataBoundSetter public final void setUnhealthyTarget(VectorCASTHealthReportThresholds unhealthyTarget) {
+        this.unhealthyTarget = unhealthyTarget;
     }
     
     /**
@@ -298,7 +305,7 @@ public class VectorCASTPublisher extends Recorder implements SimpleBuildStep {
 			
 		Ratio ratio = null;
 
-		if (useThreshold) {
+		if (useThreshold && unhealthyTarget == null) {
 		
 			try {		        
 
@@ -471,7 +478,7 @@ public class VectorCASTPublisher extends Recorder implements SimpleBuildStep {
             /* Setup the healthReport */
             VectorCASTHealthReportThresholds loc_healthReports = new VectorCASTHealthReportThresholds( minStatement,  maxStatement,  minBranch,  maxBranch,  minBasisPath,  maxBasisPath,  minMCDC,  maxMCDC,  minFunction,  maxFunction,  minFunctionCall,  maxFunctionCall);
             
-            VectorCASTPublisher pub = new VectorCASTPublisher(loc_includes,loc_useThreshold,loc_healthReports);
+            VectorCASTPublisher pub = new VectorCASTPublisher(loc_includes,loc_useThreshold,loc_healthReports, null);
                                 
             req.bindParameters(pub, "vectorcastcoverage.");
             req.bindParameters(pub.healthReports, "vectorCASTHealthReports.");
