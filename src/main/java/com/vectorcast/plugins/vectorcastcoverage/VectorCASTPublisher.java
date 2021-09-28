@@ -85,7 +85,8 @@ public class VectorCASTPublisher extends Recorder implements SimpleBuildStep {
 
     @Deprecated
     public VectorCASTPublisher(String includes, Boolean useThreshold, VectorCASTHealthReportThresholds healthyTarget, VectorCASTHealthReportThresholds unhealthyTarget){
-        this(includes, useThreshold, healthyTarget);
+        // since health reports were broken when using healthyTarget & unhealthyTarget, just disable them
+        this(includes, false, healthyTarget);
     }
     
     @Nonnull
