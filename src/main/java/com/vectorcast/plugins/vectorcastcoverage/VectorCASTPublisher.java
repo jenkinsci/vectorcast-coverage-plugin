@@ -300,8 +300,13 @@ public class VectorCASTPublisher extends Recorder implements SimpleBuildStep {
         return true;
     }
 
+	private void printThresholdFailure(final PrintStream logger, String coverageType, int percent, int threshold) {
+        logger.println("[VectorCASTCoverage] [FAIL]: " + coverageType + " coverage " + percent +"% < " + threshold + "% threshold.");
+    }
+    
+    
 	private void checkThreshold(Run<?, ?> run,
-			final PrintStream logger, EnvVars env, final VectorCASTBuildAction action) {
+		final PrintStream logger, EnvVars env, final VectorCASTBuildAction action) {
 			
 		Ratio ratio = null;
 
@@ -319,22 +324,22 @@ public class VectorCASTPublisher extends Recorder implements SimpleBuildStep {
 					run.setResult(Result.FAILURE);
 				} 
 				if (isStatementCoverageOk(action)) {
-					logger.println("[VectorCASTCoverage] [FAIL]: Statement coverage "+action.getStatementCoverage().getPercentage()+"% < "+healthReports.getMinStatement()+"% threshold.");
+                    printThresholdFailure(logger, "Statement", action.getStatementCoverage().getPercentage(), healthReports.getMinStatement());                    
 				}
 				if (isBranchCoverageOk(action)) {
-					logger.println("[VectorCASTCoverage] [FAIL]: Branch coverage "+action.getBranchCoverage().getPercentage()+"% < "+healthReports.getMinBranch()+"% threshold.");
+                    printThresholdFailure(logger, "Branch", action.getBranchCoverage().getPercentage(), healthReports.getMinBranch());
 				}
 				if (isBasisPathCoverageOk(action)) {
-					logger.println("[VectorCASTCoverage] [FAIL]: Basis Path coverage "+action.getBasisPathCoverage().getPercentage()+"% < "+healthReports.getMinBasisPath()+"% threshold.");
+                    printThresholdFailure(logger, "Basis Path", action.getBasisPathCoverage().getPercentage(), healthReports.getMinBasisPath());
 				}
 				if (isMCDCCoverageOk(action)) {
-					logger.println("[VectorCASTCoverage] [FAIL]: MC/DC coverage "+action.getMCDCCoverage().getPercentage()+"% < "+healthReports.getMinMCDC()+"% threshold.");
+                    printThresholdFailure(logger, "MC/DC", action.getMCDCCoverage().getPercentage(), healthReports.getMinMCDC());
 				}
 				if (isFunctionCoverageOk(action)) {
-					logger.println("[VectorCASTCoverage] [FAIL]: Function Coverage "+action.getFunctionCoverage().getPercentage()+"% < "+healthReports.getMinFunction()+"% threshold.");
+                    printThresholdFailure(logger, "Function", action.getFunctionCoverage().getPercentage(), healthReports.getMinFunction());
 				}
 				if (isFunctionCallCoverageOk(action)) {
-					logger.println("[VectorCASTCoverage] [FAIL]: Function Call coverage "+action.getFunctionCallCoverage().getPercentage()+"% < "+healthReports.getMinFunctionCall()+"% threshold.");
+                    printThresholdFailure(logger, "Function Call", action.getFunctionCallCoverage().getPercentage(), healthReports.getMinFunctionCall());
 				}
 			} catch (NullPointerException e) {logger.println("[VectorCASTCoverage] [INFO]: VectorCASTPublisher::checkThreshold: Still catching NullPointerException...");}
 		}
