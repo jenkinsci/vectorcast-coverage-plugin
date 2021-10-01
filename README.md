@@ -36,6 +36,10 @@ None
 
 ## Change Log
 
+### Version 0.19 (26 Aug 2021)
+- Fixed snippet generator 
+- Fixed health reports for pipeline
+
 ### Version 0.18 (10 Aug 2021)
 - Use HTTPS URLs in pom.xml
 - Bump dashboard-view from 2.1 to 2.16
