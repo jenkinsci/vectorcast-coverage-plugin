@@ -41,9 +41,12 @@ import java.util.logging.Logger;
 import java.util.logging.Level;
 import org.kohsuke.stapler.DataBoundSetter;
 
-import java.io.BufferedWriter; 
-import java.io.FileWriter; 
-import java.io.PrintWriter;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.OutputStreamWriter;
+import java.io.FileWriter;
+import java.nio.charset.StandardCharsets;
 
 /**
  * {@link Publisher} that captures VectorCAST coverage reports.
@@ -196,19 +199,17 @@ public class VectorCASTPublisher extends Recorder implements SimpleBuildStep {
     }
 
     public void writeHistory(String coverage_string, FilePath workspace) throws IOException {
-        FileWriter fw = null; 
-        BufferedWriter bw = null; 
-        PrintWriter pw = null; 
+        FileOutputStream fos = null; 
+        OutputStreamWriter osw = null;
         try { 
-            fw = new FileWriter(workspace.toString() + "/current_coverage.txt", false); 
-            bw = new BufferedWriter(fw);
-            pw = new PrintWriter(bw);
-            pw.println(coverage_string);
-            pw.flush();
+            String fname = workspace.toString() + "/current_coverage.txt";
+            fos = new FileOutputStream(fname, false);
+            osw = new OutputStreamWriter(fos, StandardCharsets.UTF_8);
+            osw.write(coverage_string + "\n");
+            osw.flush();
         } finally { 
-            pw.close(); 
-            bw.close(); 
-            fw.close(); 
+            if (fos != null) fos.close(); 
+            if (osw != null) osw.close(); 
         }
     }
     
