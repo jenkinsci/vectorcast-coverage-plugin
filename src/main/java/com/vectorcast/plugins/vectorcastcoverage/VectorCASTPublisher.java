@@ -41,6 +41,10 @@ import java.util.logging.Logger;
 import java.util.logging.Level;
 import org.kohsuke.stapler.DataBoundSetter;
 
+import java.io.BufferedWriter; 
+import java.io.FileWriter; 
+import java.io.PrintWriter;
+
 /**
  * {@link Publisher} that captures VectorCAST coverage reports.
  *
@@ -191,6 +195,22 @@ public class VectorCASTPublisher extends Recorder implements SimpleBuildStep {
         performImpl(run, workspace, listener);
     }
 
+    public void writeHistory(String coverage_string, FilePath workspace) throws IOException {
+        FileWriter fw = null; 
+        BufferedWriter bw = null; 
+        PrintWriter pw = null; 
+        try { 
+            fw = new FileWriter(workspace.toString() + "/current_coverage.txt", false); 
+            bw = new BufferedWriter(fw);
+            pw = new PrintWriter(bw);
+            pw.println(coverage_string);
+            pw.flush();
+        } finally { 
+            pw.close(); 
+            bw.close(); 
+            fw.close(); 
+        }
+    }
     
     public boolean performImpl(Run<?, ?> run, FilePath workspace, TaskListener listener) throws InterruptedException, IOException {
         final PrintStream logger = listener.getLogger();
@@ -280,7 +300,14 @@ public class VectorCASTPublisher extends Recorder implements SimpleBuildStep {
         } else {
             logger.println("**[VectorCASTCoverage] [INFO]: No thresholds set");
         }
-
+        
+        try { 
+            writeHistory(action.getBuildHealth().getDescription(), workspace);
+            logger.println("[VectorCASTCoverage] [INFO]: VectorCASTPublisher::performImpl: writing coverage_history.txt...");
+        } catch (IOException io) {
+            logger.println("[VectorCASTCoverage] [INFO]: VectorCASTPublisher::performImpl: Catching IOException...");
+        } 
+        
         run.getActions().add(action);
 
         final CoverageReport result = action.getResult();
