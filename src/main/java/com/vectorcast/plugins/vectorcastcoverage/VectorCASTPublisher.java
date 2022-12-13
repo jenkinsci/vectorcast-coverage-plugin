@@ -330,9 +330,7 @@ public class VectorCASTPublisher extends Recorder implements SimpleBuildStep {
                 } else {
                     logger.println("**[VectorCASTCoverage] [INFO]: code coverage history enforcement passed.");
                 }
-                
-                run.getBadgeActions().add("error.gif")
-                
+            
                 logger.println("**[VectorCASTCoverage] [INFO] Previous (st/br): " +  String.format(" %.02f /", prevStCov) +   String.format(" %.02f", prevBrCov));
                 logger.println("**[VectorCASTCoverage] [INFO] Current  (st/br): " +  String.format(" %.02f /", currStCov) +   String.format(" %.02f", currBrCov));
             } else {
