@@ -48,6 +48,26 @@ public final class VectorCASTProjectAction implements Action {
         return null;
     }
 
+    /**
+     * Gets the most recent {@link VectorCASTBuildAction} object.
+     * @return last build result
+     */
+    public VectorCASTBuildAction getPreviousNotFailedBuild() {
+        Boolean skipFirst = true;
+        for( Run<?, ?> b = project.getLastBuild(); b!=null; b=b.getPreviousBuild()) {
+            if (skipFirst) {
+                skipFirst = false;
+                continue;
+            }
+            if(b.getResult()== Result.FAILURE)
+                continue;
+            VectorCASTBuildAction r = b.getAction(VectorCASTBuildAction.class);
+            if(r!=null)
+                return r;
+        }
+        return null;
+    }
+
     public void doGraph(StaplerRequest req, StaplerResponse rsp) throws IOException {
         if (getLastResult() != null)
             getLastResult().doGraph(req,rsp);
