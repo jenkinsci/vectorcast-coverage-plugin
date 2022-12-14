@@ -8,7 +8,11 @@
            description="${%useThreshold.description}">
     <f:checkbox name="vectorcastcoverage.useThreshold" checked="${instance.useThreshold}"/>
   </f:entry>
-    <f:entry title="${%Health reporting}"
+  <f:entry title="${%useCoverageHistory.title}"
+           description="${%useCoverageHistory.description}">
+    <f:checkbox name="vectorcastcoverage.useCoverageHistory" checked="${instance.useCoverageHistory}"/>
+  </f:entry>
+  <f:entry title="${%Health reporting}"
              description="${%thresholds.description(rootURL)}">
         <table>
             <thead>
