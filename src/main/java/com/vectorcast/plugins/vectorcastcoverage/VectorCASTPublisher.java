@@ -319,10 +319,20 @@ public class VectorCASTPublisher extends Recorder implements SimpleBuildStep {
             VectorCASTProjectAction vcProjAction = new VectorCASTProjectAction (run.getParent());
             VectorCASTBuildAction historyAction = vcProjAction.getPreviousNotFailedBuild();
             if (historyAction != null) {
-                float prevBrCov = historyAction.getBranchCoverage().getPercentageFloat();
-                float prevStCov = historyAction.getStatementCoverage().getPercentageFloat();
-                float currBrCov = action.getBranchCoverage().getPercentageFloat();
-                float currStCov = action.getStatementCoverage().getPercentageFloat();
+                float prevStCov = 0.0f;
+                float currStCov = 0.0f;
+                float currBrCov = 0.0f;
+                float prevBrCov = 0.0f;
+                
+                try {
+                    prevStCov = historyAction.getStatementCoverage().getPercentageFloat();
+                    currStCov = action.getStatementCoverage().getPercentageFloat();
+                } catch (NullPointerException e) { /* use default */}
+                
+                try {
+                    currBrCov = action.getBranchCoverage().getPercentageFloat();
+                    prevBrCov = historyAction.getBranchCoverage().getPercentageFloat();
+                } catch (NullPointerException e) { /* use default */}
                 
                 if ((currBrCov < prevBrCov) || (currStCov < prevStCov)) {
                     logger.println("**[VectorCASTCoverage] [INFO]: code coverage history enforcement failed. Setting Build to FAILURE.");
