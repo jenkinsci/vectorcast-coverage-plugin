@@ -36,6 +36,11 @@ None
 
 ## Change Log
 
+### Version 0.20 (26 Dec 2022)
+- Added option to control build status based on decreased code coverage
+- Fixed find-bugs and javadoc issues
+- Fix Temporary Directory Hijacking or Information Disclosure Vulnerability #9
+
 ### Version 0.19 (26 Aug 2021)
 - Fixed snippet generator 
 - Fixed health reports for pipeline

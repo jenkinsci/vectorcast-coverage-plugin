@@ -7,7 +7,7 @@ import org.kohsuke.stapler.export.Exported;
 import org.kohsuke.stapler.export.ExportedBean;
 
 /**
- * Represents <tt>x/y</tt> where x={@link #numerator} and y={@link #denominator}.
+ * Represents x/y where x={@link #numerator} and y={@link #denominator}.
  * 
  * @author Kohsuke Kawaguchi
  */
