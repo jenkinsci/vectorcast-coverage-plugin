@@ -296,7 +296,7 @@ public class VectorCASTPublisher extends Recorder implements SimpleBuildStep {
         final VectorCASTBuildAction action = VectorCASTBuildAction.load(run, rule, healthReports, streams); //reports);
         
         if (action.getBuildHealth() != null) {
-            logger.println("**[VectorCASTCoverage] [INFO]: " + action.getBuildHealth().getDescription());
+            logger.println("**[VectorCASTCoverage] [INFO]: Current Coverage : " + action.getBuildHealth().getDescription());
         } else {
             logger.println("**[VectorCASTCoverage] [INFO]: No thresholds set");
         }
@@ -318,7 +318,9 @@ public class VectorCASTPublisher extends Recorder implements SimpleBuildStep {
         if (useCoverageHistory) {
             VectorCASTProjectAction vcProjAction = new VectorCASTProjectAction (run.getParent());
             VectorCASTBuildAction historyAction = vcProjAction.getPreviousNotFailedBuild();
-            if (historyAction != null) {
+            if (historyAction != null) {                         
+                logger.println("**[VectorCASTCoverage] [INFO]: Previous Coverage: " + historyAction.getBuildHealth().getDescription());
+
                 float prevStCov = 0.0f;
                 float currStCov = 0.0f;
                 float currBrCov = 0.0f;
@@ -340,7 +342,6 @@ public class VectorCASTPublisher extends Recorder implements SimpleBuildStep {
                 } else {
                     logger.println("**[VectorCASTCoverage] [INFO]: code coverage history enforcement passed.");
                 }
-            
                 logger.println("**[VectorCASTCoverage] [INFO] Previous (st/br): " +  String.format(" %.02f /", prevStCov) +   String.format(" %.02f", prevBrCov));
                 logger.println("**[VectorCASTCoverage] [INFO] Current  (st/br): " +  String.format(" %.02f /", currStCov) +   String.format(" %.02f", currBrCov));
             } else {
