@@ -12,6 +12,10 @@
            description="${%useCoverageHistory.description}">
     <f:checkbox name="vectorcastcoverage.useCoverageHistory" checked="${instance.useCoverageHistory}"/>
   </f:entry>
+  <f:entry title="${%coverageHistoryDelta.title}"
+           description="${%coverageHistoryDelta.description}">
+    <f:textbox name="vectorcastcoverage.coverageHistoryDelta" checked="${instance.coverageHistoryDelta}" value="0.0"/>
+  </f:entry>
   <f:entry title="${%Health reporting}"
              description="${%thresholds.description(rootURL)}">
         <table>

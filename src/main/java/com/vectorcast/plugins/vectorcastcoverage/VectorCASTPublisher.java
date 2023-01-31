@@ -61,6 +61,7 @@ public class VectorCASTPublisher extends Recorder implements SimpleBuildStep {
     public String includes;
     public Boolean useThreshold;
     public Boolean useCoverageHistory;
+    public Double coverageHistoryDelta; 
     
     /**
     /**
@@ -84,19 +85,27 @@ public class VectorCASTPublisher extends Recorder implements SimpleBuildStep {
         this.includes = "xml_data/coverage_results*.xml";
         this.useThreshold = false;
         this.useCoverageHistory = false;
+        this.coverageHistoryDelta = 0.0;
     }
 
     @DataBoundConstructor
-    public VectorCASTPublisher(String includes, Boolean useThreshold, VectorCASTHealthReportThresholds healthyTarget, VectorCASTHealthReportThresholds unhealthyTarget, Boolean useCoverageHistory){
+    public VectorCASTPublisher(String includes, Boolean useThreshold, VectorCASTHealthReportThresholds healthyTarget, VectorCASTHealthReportThresholds unhealthyTarget, Boolean useCoverageHistory, Double coverageHistoryDelta){
         
         this.includes = includes;
         this.useThreshold = useThreshold;
         this.healthReports = healthyTarget;
         this.unhealthyTarget = unhealthyTarget;
+        
         if (useCoverageHistory == null) {
             this.useCoverageHistory = false;
         } else {
             this.useCoverageHistory = useCoverageHistory;
+        }
+        
+        if (coverageHistoryDelta == null) {
+            this.coverageHistoryDelta = 0.0;
+        } else {
+            this.coverageHistoryDelta = coverageHistoryDelta;
         }
         
     }
@@ -113,6 +122,10 @@ public class VectorCASTPublisher extends Recorder implements SimpleBuildStep {
     @Nonnull
     public final Boolean getUseCoverageHistory() {
         return useCoverageHistory;
+    }
+    @Nonnull
+    public final Double getCoverageHistoryDelta() {
+        return coverageHistoryDelta;
     }
     @Nonnull
     public final VectorCASTHealthReportThresholds getHealthReports() {
@@ -139,6 +152,10 @@ public class VectorCASTPublisher extends Recorder implements SimpleBuildStep {
     
     @DataBoundSetter public final void setUseCoverageHistory(Boolean useCoverageHistory) {
         this.useCoverageHistory = useCoverageHistory;
+    }
+    
+    @DataBoundSetter public final void setCoverageHistoryDelta(Double coverageHistoryDelta) {
+        this.coverageHistoryDelta = coverageHistoryDelta;
     }
     
     @DataBoundSetter public final void setHealthReports(VectorCASTHealthReportThresholds healthReports) {
@@ -320,23 +337,27 @@ public class VectorCASTPublisher extends Recorder implements SimpleBuildStep {
             VectorCASTBuildAction historyAction = vcProjAction.getPreviousNotFailedBuild();
             if (historyAction != null) {                         
                 logger.println("**[VectorCASTCoverage] [INFO]: Previous Coverage: " + historyAction.getBuildHealth().getDescription());
+                logger.println("**[VectorCASTCoverage] [INFO]: Coverage Delta   : " + coverageHistoryDelta);
 
                 float prevStCov = 0.0f;
                 float currStCov = 0.0f;
                 float currBrCov = 0.0f;
                 float prevBrCov = 0.0f;
-                
+                float brDiff = 0.0f;
+                float stDiff = 0.0f;
                 try {
                     prevStCov = historyAction.getStatementCoverage().getPercentageFloat();
                     currStCov = action.getStatementCoverage().getPercentageFloat();
+                    stDiff = currStCov - prevStCov;
                 } catch (NullPointerException e) { /* use default */}
                 
                 try {
                     currBrCov = action.getBranchCoverage().getPercentageFloat();
                     prevBrCov = historyAction.getBranchCoverage().getPercentageFloat();
+                    brDiff = currBrCov - prevBrCov;
                 } catch (NullPointerException e) { /* use default */}
                 
-                if ((currBrCov < prevBrCov) || (currStCov < prevStCov)) {
+                if ((brDiff < -coverageHistoryDelta) || (stDiff < -coverageHistoryDelta)) {
                     logger.println("**[VectorCASTCoverage] [INFO]: code coverage history enforcement failed. Setting Build to FAILURE.");
                     run.setResult(Result.FAILURE);
                 } else {
@@ -514,6 +535,7 @@ public class VectorCASTPublisher extends Recorder implements SimpleBuildStep {
             String loc_includes;
             Boolean loc_useThreshold;
             Boolean loc_useCoverageHistory;
+            Double loc_coverageHistoryDelta;
             int maxStatement,maxBranch,maxBasisPath,maxMCDC,maxFunction,maxFunctionCall;
             int minStatement,minBranch,minBasisPath,minMCDC,minFunction,minFunctionCall;
             
@@ -524,6 +546,7 @@ public class VectorCASTPublisher extends Recorder implements SimpleBuildStep {
             }
             loc_useThreshold = json.optBoolean("useThreshold", false);
             loc_useCoverageHistory = json.optBoolean("useCoverageHistory", false);
+            loc_coverageHistoryDelta = json.optDouble("coverageHistoryDelta", 0.0d);
             
             maxStatement = json.optInt("maxStatement", 100);
             maxBranch = json.optInt("maxBranch", 70);
@@ -542,7 +565,7 @@ public class VectorCASTPublisher extends Recorder implements SimpleBuildStep {
             /* Setup the healthReport */
             VectorCASTHealthReportThresholds loc_healthReports = new VectorCASTHealthReportThresholds( minStatement,  maxStatement,  minBranch,  maxBranch,  minBasisPath,  maxBasisPath,  minMCDC,  maxMCDC,  minFunction,  maxFunction,  minFunctionCall,  maxFunctionCall);
             
-            VectorCASTPublisher pub = new VectorCASTPublisher(loc_includes,loc_useThreshold,loc_healthReports, null, loc_useCoverageHistory);
+            VectorCASTPublisher pub = new VectorCASTPublisher(loc_includes,loc_useThreshold,loc_healthReports, null, loc_useCoverageHistory, loc_coverageHistoryDelta);
                                 
             req.bindParameters(pub, "vectorcastcoverage.");
             req.bindParameters(pub.healthReports, "vectorCASTHealthReports.");
