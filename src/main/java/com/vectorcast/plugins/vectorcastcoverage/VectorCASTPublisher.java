@@ -112,6 +112,9 @@ public class VectorCASTPublisher extends Recorder implements SimpleBuildStep {
     }
     @Nonnull
     public final Boolean getUseCoverageHistory() {
+        if (this.useCoverageHistory == null) {
+            this.useCoverageHistory = false;
+        }
         return useCoverageHistory;
     }
     @Nonnull
@@ -315,7 +318,7 @@ public class VectorCASTPublisher extends Recorder implements SimpleBuildStep {
             run.setResult(Result.UNSTABLE);
         }
         
-        if (useCoverageHistory) {
+        if (getUseCoverageHistory()) {
             VectorCASTProjectAction vcProjAction = new VectorCASTProjectAction (run.getParent());
             VectorCASTBuildAction historyAction = vcProjAction.getPreviousNotFailedBuild();
             if (historyAction != null) {
