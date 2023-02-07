@@ -38,7 +38,6 @@ None
 
 ### Version 0.21 (31 Jan 2023)
 - Fix to support jobs configured with older coverage plugins
-- Bump dashboard-view from 2.16 to 2.18.1 
 
 ### Version 0.20 (26 Dec 2022)
 - Added option to control build status based on decreased code coverage
