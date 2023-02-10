@@ -36,9 +36,15 @@ None
 
 ## Change Log
 
+### Version 0.22 (19 Feb 2023)
+- Bump dashboard-view from 2.16 to 2.18.1 
+- Needed to change Localtime from org.joda.time to java.time
+- Upgraded to Java 11
+- Upgraded from findbugs to spotbugs
+- Cleaned up bugs found with spotbugs
+
 ### Version 0.21 (31 Jan 2023)
 - Fix to support jobs configured with older coverage plugins
-- Bump dashboard-view from 2.16 to 2.18.1 
 
 ### Version 0.20 (26 Dec 2022)
 - Added option to control build status based on decreased code coverage
