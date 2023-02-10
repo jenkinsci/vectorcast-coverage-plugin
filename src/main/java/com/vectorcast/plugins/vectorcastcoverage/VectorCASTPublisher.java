@@ -327,16 +327,19 @@ public class VectorCASTPublisher extends Recorder implements SimpleBuildStep {
                 float currBrCov = 0.0f;
                 float prevBrCov = 0.0f;
                 
-                try {
+                if (historyAction.getStatementCoverage() != null) {
                     prevStCov = historyAction.getStatementCoverage().getPercentageFloat();
+                }
+                if (action.getStatementCoverage() != null) {
                     currStCov = action.getStatementCoverage().getPercentageFloat();
-                } catch (NullPointerException e) { /* use default */}
-                
-                try {
-                    currBrCov = action.getBranchCoverage().getPercentageFloat();
+                }
+                if (historyAction.getBranchCoverage() != null) {
                     prevBrCov = historyAction.getBranchCoverage().getPercentageFloat();
-                } catch (NullPointerException e) { /* use default */}
-                
+                }
+                if (action.getBranchCoverage() != null) {
+                    currStCov = action.getBranchCoverage().getPercentageFloat();
+                }
+                                
                 if ((currBrCov < prevBrCov) || (currStCov < prevStCov)) {
                     logger.println("**[VectorCASTCoverage] [INFO]: code coverage history enforcement failed. Setting Build to FAILURE.");
                     run.setResult(Result.FAILURE);
@@ -370,7 +373,7 @@ public class VectorCASTPublisher extends Recorder implements SimpleBuildStep {
 
 		if (useThreshold && unhealthyTarget == null) {
 		
-			try {		        
+			//try {		        
 
 				if (isBranchCoverageOk(action) 
 						|| isStatementCoverageOk(action) 
@@ -399,7 +402,7 @@ public class VectorCASTPublisher extends Recorder implements SimpleBuildStep {
 				if (isFunctionCallCoverageOk(action)) {
                     printThresholdFailure(logger, "Function Call", action.getFunctionCallCoverage().getPercentage(), healthReports.getMinFunctionCall());
 				}
-			} catch (NullPointerException e) {logger.println("[VectorCASTCoverage] [INFO]: VectorCASTPublisher::checkThreshold: Still catching NullPointerException...");}
+			//} catch (NullPointerException e) {logger.println("[VectorCASTCoverage] [INFO]: VectorCASTPublisher::checkThreshold: Still catching NullPointerException...");}
 		}
 	}
 

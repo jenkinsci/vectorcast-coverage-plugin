@@ -16,7 +16,12 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import org.joda.time.LocalDate;
-import org.jvnet.hudson.test.HudsonTestCase;
+import org.jvnet.hudson.test.JenkinsRule;
+import hudson.util.DescribableList;
+import hudson.tasks.BuildWrapper;
+import hudson.model.Descriptor;
+import java.io.Serializable;
+import static org.junit.Assert.*;
 
 /**
  * Tests {@link com.vectorcast.plugins.vectorcastcoverage.portlet.VectorCASTLoadData} in a Hudson environment.
@@ -24,7 +29,7 @@ import org.jvnet.hudson.test.HudsonTestCase;
  * @author Robert Sandell &lt;robert.sandell@sonyericsson.com&gt;
  * @author Mauro Durante Junior (Mauro.Durantejunior@sonyericsson.com)
  */
-public class VectorCASTLoadDataHudsonTest extends HudsonTestCase {
+public class VectorCASTLoadDataHudsonTest extends JenkinsRule {
 
     /**
      * This method tests loadChartDataWithinRange() when it has positive number of days.
@@ -87,9 +92,16 @@ public class VectorCASTLoadDataHudsonTest extends HudsonTestCase {
         FreeStyleProject job1 = createFreeStyleProject("job1");
 
         //Make it do something, in this case it writes a coverage report to the workspace.
-        job1.getBuildersList().add(
-                new CopyResourceToWorkspaceBuilder(getClass().getResourceAsStream("/com/vectorcast/plugins/vectorcastcoverage/portlet.xml"),
-                        "reports/coverage/portlet.xml"));
+        CopyResourceToWorkspaceBuilder myBuilder = new CopyResourceToWorkspaceBuilder(getClass().getResourceAsStream("/com/vectorcast/plugins/vectorcastcoverage/portlet.xml"),
+                        "reports/coverage/portlet.xml");
+
+        DescribableList<Builder,Descriptor<Builder>> bldrsList = job1.getBuildersList();
+
+        job1.getBuildersList();
+        
+        bldrsList.add(myBuilder);
+        
+        
         //Add a VectorCAST publisher
         VectorCASTPublisher vcPublisher = new VectorCASTPublisher();
         vcPublisher.includes = "reports/coverage/portlet.xml";
@@ -181,10 +193,11 @@ public class VectorCASTLoadDataHudsonTest extends HudsonTestCase {
      * Test utility class.
      * A Builder that writes some data into a file in the workspace.
      */
-    static class CopyResourceToWorkspaceBuilder extends Builder {
+    static class CopyResourceToWorkspaceBuilder extends Builder implements Serializable {
+        private static final long serialVersionUID = 0;
 
-        private final InputStream content;
-        private final String fileName;
+        private InputStream content;
+        private String fileName;
 
         /**
          * Default constructor.

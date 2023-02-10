@@ -7,7 +7,8 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import org.joda.time.LocalDate;
-import org.jvnet.hudson.test.HudsonTestCase;
+import org.jvnet.hudson.test.JenkinsRule;
+import static org.junit.Assert.*;
 
 /**
  * Test {@link com.vectorcast.plugins.vectorcastcoverage.portlet.utils.Utils}
@@ -15,7 +16,7 @@ import org.jvnet.hudson.test.HudsonTestCase;
  *
  * @author Mauro Durante Junior &lt;Mauro.Durantejunior@sonyericsson.com&gt;
  */
-public class UtilsHudsonTest extends HudsonTestCase {
+public class UtilsHudsonTest extends  JenkinsRule {
 
   /**
    * Tests {@link com.vectorcast.plugins.vectorcastcoverage.portlet.utils.Utils#getLastDate(java.util.List) }.
