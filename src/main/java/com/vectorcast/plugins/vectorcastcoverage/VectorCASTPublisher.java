@@ -373,40 +373,37 @@ public class VectorCASTPublisher extends Recorder implements SimpleBuildStep {
 
 		if (useThreshold && unhealthyTarget == null) {
 		
-			//try {		        
-
-				if (isBranchCoverageOk(action) 
-						|| isStatementCoverageOk(action) 
-						|| isBasisPathCoverageOk(action)
-						|| isMCDCCoverageOk(action)
-						|| isFunctionCoverageOk(action)
-						|| isFunctionCallCoverageOk(action)){
-					logger.println("[VectorCASTCoverage] [FAIL]: Build failed due to a coverage metric fell below the minimum threshold");
-					run.setResult(Result.FAILURE);
-				} 
-				if (isStatementCoverageOk(action)) {
-                    printThresholdFailure(logger, "Statement", action.getStatementCoverage().getPercentage(), healthReports.getMinStatement());                    
-				}
-				if (isBranchCoverageOk(action)) {
-                    printThresholdFailure(logger, "Branch", action.getBranchCoverage().getPercentage(), healthReports.getMinBranch());
-				}
-				if (isBasisPathCoverageOk(action)) {
-                    printThresholdFailure(logger, "Basis Path", action.getBasisPathCoverage().getPercentage(), healthReports.getMinBasisPath());
-				}
-				if (isMCDCCoverageOk(action)) {
-                    printThresholdFailure(logger, "MC/DC", action.getMCDCCoverage().getPercentage(), healthReports.getMinMCDC());
-				}
-				if (isFunctionCoverageOk(action)) {
-                    printThresholdFailure(logger, "Function", action.getFunctionCoverage().getPercentage(), healthReports.getMinFunction());
-				}
-				if (isFunctionCallCoverageOk(action)) {
-                    printThresholdFailure(logger, "Function Call", action.getFunctionCallCoverage().getPercentage(), healthReports.getMinFunctionCall());
-				}
-			//} catch (NullPointerException e) {logger.println("[VectorCASTCoverage] [INFO]: VectorCASTPublisher::checkThreshold: Still catching NullPointerException...");}
+            if (isBranchCoverageOk(action) 
+                    || isStatementCoverageOk(action) 
+                    || isBasisPathCoverageOk(action)
+                    || isMCDCCoverageOk(action)
+                    || isFunctionCoverageOk(action)
+                    || isFunctionCallCoverageOk(action)){
+                logger.println("[VectorCASTCoverage] [FAIL]: Build failed due to a coverage metric fell below the minimum threshold");
+                run.setResult(Result.FAILURE);
+            } 
+            if (isStatementCoverageOk(action)) {
+                printThresholdFailure(logger, "Statement", action.getStatementCoverage().getPercentage(), healthReports.getMinStatement());                    
+            }
+            if (isBranchCoverageOk(action)) {
+                printThresholdFailure(logger, "Branch", action.getBranchCoverage().getPercentage(), healthReports.getMinBranch());
+            }
+            if (isBasisPathCoverageOk(action)) {
+                printThresholdFailure(logger, "Basis Path", action.getBasisPathCoverage().getPercentage(), healthReports.getMinBasisPath());
+            }
+            if (isMCDCCoverageOk(action)) {
+                printThresholdFailure(logger, "MC/DC", action.getMCDCCoverage().getPercentage(), healthReports.getMinMCDC());
+            }
+            if (isFunctionCoverageOk(action)) {
+                printThresholdFailure(logger, "Function", action.getFunctionCoverage().getPercentage(), healthReports.getMinFunction());
+            }
+            if (isFunctionCallCoverageOk(action)) {
+                printThresholdFailure(logger, "Function Call", action.getFunctionCallCoverage().getPercentage(), healthReports.getMinFunctionCall());
+            }
 		}
 	}
 
-	private boolean isMCDCCoverageOk(final VectorCASTBuildAction action) throws NullPointerException {
+	private boolean isMCDCCoverageOk(final VectorCASTBuildAction action)  {
 		
 		if (action.getMCDCCoverage() == null)
 			return false;
@@ -414,31 +411,31 @@ public class VectorCASTPublisher extends Recorder implements SimpleBuildStep {
 		return action.getMCDCCoverage().getPercentage() < healthReports.getMinMCDC();
 	}
 
-	private boolean isBasisPathCoverageOk(final VectorCASTBuildAction action) throws NullPointerException{
+	private boolean isBasisPathCoverageOk(final VectorCASTBuildAction action) {
 		if (action.getBasisPathCoverage() == null)
 			return false;
 		return action.getBasisPathCoverage().getPercentage() < healthReports.getMinBasisPath();
 	}
 
-	private boolean isStatementCoverageOk(final VectorCASTBuildAction action) throws NullPointerException{
+	private boolean isStatementCoverageOk(final VectorCASTBuildAction action) {
 		if (action.getStatementCoverage() == null)
 			return false;
 		return action.getStatementCoverage().getPercentage() < healthReports.getMinStatement();
 	}
 
-	private boolean isBranchCoverageOk(final VectorCASTBuildAction action) throws NullPointerException{
+	private boolean isBranchCoverageOk(final VectorCASTBuildAction action) {
 		if (action.getBranchCoverage() == null)
 			return false;
 		return action.getBranchCoverage().getPercentage() < healthReports.getMinBranch();
 	}
 	
-	private boolean isFunctionCoverageOk(final VectorCASTBuildAction action) throws NullPointerException {
+	private boolean isFunctionCoverageOk(final VectorCASTBuildAction action)  {
 		if (action.getFunctionCoverage() == null)
 			return false;
 		return action.getFunctionCoverage().getPercentage() < healthReports.getMinFunction();
 	}
 
-	private boolean isFunctionCallCoverageOk(final VectorCASTBuildAction action) throws NullPointerException {
+	private boolean isFunctionCallCoverageOk(final VectorCASTBuildAction action)  {
 		if (action.getFunctionCallCoverage() == null)
 			return false;
 		return action.getFunctionCallCoverage().getPercentage() < healthReports.getMinFunctionCall();
