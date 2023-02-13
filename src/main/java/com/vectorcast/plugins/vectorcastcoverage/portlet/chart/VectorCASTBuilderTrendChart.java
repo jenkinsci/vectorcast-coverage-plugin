@@ -49,7 +49,7 @@ import org.jfree.chart.plot.CategoryPlot;
 import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.chart.renderer.category.CategoryItemRenderer;
 import org.jfree.data.category.CategoryDataset;
-import org.joda.time.LocalDate;
+import java.time.LocalDate;
 
 import hudson.Extension;
 import hudson.model.Descriptor;

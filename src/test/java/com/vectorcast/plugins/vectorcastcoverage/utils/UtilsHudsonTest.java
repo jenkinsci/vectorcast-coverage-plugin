@@ -6,7 +6,7 @@ import hudson.model.Job;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
-import org.joda.time.LocalDate;
+import java.time.LocalDate;
 import org.jvnet.hudson.test.JenkinsRule;
 import static org.junit.Assert.*;
 

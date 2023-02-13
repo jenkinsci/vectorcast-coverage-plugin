@@ -15,7 +15,7 @@ import java.io.InputStream;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import org.joda.time.LocalDate;
+import java.time.LocalDate;
 import org.jvnet.hudson.test.JenkinsRule;
 import hudson.util.DescribableList;
 import hudson.tasks.BuildWrapper;

@@ -41,8 +41,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
-
-import org.joda.time.LocalDate;
+import java.time.LocalDate;
 
 /**
  * Load data of VectorCAST coverage results used by chart or grid.
@@ -87,7 +86,7 @@ public final class VectorCASTLoadData {
       Run run = job.getLastBuild();
 
       if (null != run) {
-        LocalDate runDate = new LocalDate(run.getTimestamp());
+        LocalDate runDate = Utils.calendarToLocalData(run.getTimestamp());
 
         while (runDate.isAfter(firstDate)) {
 
@@ -99,7 +98,7 @@ public final class VectorCASTLoadData {
             break;
           }
 
-          runDate = new LocalDate(run.getTimestamp());
+          runDate = Utils.calendarToLocalData(run.getTimestamp());
 
         }
       }
