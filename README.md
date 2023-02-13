@@ -38,7 +38,7 @@ None
 
 ### Version 0.22 (19 Feb 2023)
 - Bump dashboard-view from 2.16 to 2.18.1 
-- Needed to change Localtime from org.joda.time to java.time
+- Upgraded TimeLocal from org.joda.time to java.time
 - Upgraded to Java 11
 - Upgraded from findbugs to spotbugs
 - Cleaned up bugs found with spotbugs
