@@ -36,15 +36,12 @@ import java.util.List;
 
 import java.time.LocalDate;
 import java.util.Calendar;
-import java.util.logging.Logger;
 
 /**
  * Defines common methods that are used for the whole project.
  */
 public final class Utils {
     
-  private static final Logger logger = Logger.getLogger(Utils.class.getName());
-
   /**
    * Private constructor: class contains only static methods.
    */
@@ -150,9 +147,6 @@ public final class Utils {
 
         LocalDate date = LocalDate.of(year, month, dayOfMonth);
         
-        logger.info("Calendar: " + calendar.toString());
-        logger.info("Date    : " + date.toString());
-
         return date;
 
   }

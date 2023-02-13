@@ -92,15 +92,9 @@ public class VectorCASTLoadDataHudsonTest extends JenkinsRule {
         FreeStyleProject job1 = createFreeStyleProject("job1");
 
         //Make it do something, in this case it writes a coverage report to the workspace.
-        CopyResourceToWorkspaceBuilder myBuilder = new CopyResourceToWorkspaceBuilder(getClass().getResourceAsStream("/com/vectorcast/plugins/vectorcastcoverage/portlet.xml"),
-                        "reports/coverage/portlet.xml");
-
-        DescribableList<Builder,Descriptor<Builder>> bldrsList = job1.getBuildersList();
-
-        job1.getBuildersList();
-        
-        bldrsList.add(myBuilder);
-        
+        job1.getBuildersList().add(
+                new CopyResourceToWorkspaceBuilder(getClass().getResourceAsStream("/com/vectorcast/plugins/vectorcastcoverage/portlet.xml"),
+                        "reports/coverage/portlet.xml"));        
         
         //Add a VectorCAST publisher
         VectorCASTPublisher vcPublisher = new VectorCASTPublisher();
@@ -193,12 +187,11 @@ public class VectorCASTLoadDataHudsonTest extends JenkinsRule {
      * Test utility class.
      * A Builder that writes some data into a file in the workspace.
      */
-    static class CopyResourceToWorkspaceBuilder extends Builder implements Serializable {
-        private static final long serialVersionUID = 0;
+    static class CopyResourceToWorkspaceBuilder extends Builder {
 
-        private InputStream content;
-        private String fileName;
-
+        private final InputStream content;
+        private final String fileName;
+        
         /**
          * Default constructor.
          *
