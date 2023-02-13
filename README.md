@@ -37,7 +37,7 @@ None
 ## Change Log
 
 ### Version 0.22 (19 Feb 2023)
-- Bump dashboard-view from 2.16 to 2.18.1 
+- Bumped dashboard-view from 2.16 to 2.18.1 
   - Updated minimum Jenkins version to 2.361
   - Upgraded to Java 11
   - Upgraded TimeLocal from org.joda.time to java.time
