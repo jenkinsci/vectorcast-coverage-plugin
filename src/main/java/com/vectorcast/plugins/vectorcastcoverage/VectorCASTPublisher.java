@@ -337,7 +337,7 @@ public class VectorCASTPublisher extends Recorder implements SimpleBuildStep {
                     prevBrCov = historyAction.getBranchCoverage().getPercentageFloat();
                 }
                 if (action.getBranchCoverage() != null) {
-                    currStCov = action.getBranchCoverage().getPercentageFloat();
+                    currBrCov = action.getBranchCoverage().getPercentageFloat();
                 }
                                 
                 if ((currBrCov < prevBrCov) || (currStCov < prevStCov)) {
