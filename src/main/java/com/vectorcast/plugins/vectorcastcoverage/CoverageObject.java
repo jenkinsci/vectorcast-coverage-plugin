@@ -224,7 +224,6 @@ public abstract class CoverageObject<SELF extends CoverageObject<SELF>> {
      * @param req web request
      * @param rsp web response
      * @throws IOException if unable to read/parse
-     * @SuppressWarnings("UC_USELESS_VOID_METHOD")
      */
     public void doGraph(StaplerRequest req, StaplerResponse rsp) throws IOException {
         if(ChartUtil.awtProblemCause != null) {
