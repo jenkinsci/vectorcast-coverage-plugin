@@ -12,7 +12,7 @@
   <name>VectorCAST Coverage</name>
   <description>Display VectorCAST coverage in Jenkins</description>
   <artifactId>vectorcast-coverage</artifactId>
-  <version>0.21-SNAPSHOT</version>
+  <version>0.22-SNAPSHOT</version>
   <packaging>hpi</packaging>
   <url>https://github.com/jenkinsci/vectorcast-coverage-plugin</url>
 
