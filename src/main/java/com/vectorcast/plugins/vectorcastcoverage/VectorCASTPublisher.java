@@ -61,6 +61,7 @@ public class VectorCASTPublisher extends Recorder implements SimpleBuildStep {
     public String includes;
     public Boolean useThreshold;
     public Boolean useCoverageHistory;
+    public Integer maxHistory;
     
     /**
     /**
@@ -84,10 +85,11 @@ public class VectorCASTPublisher extends Recorder implements SimpleBuildStep {
         this.includes = "xml_data/coverage_results*.xml";
         this.useThreshold = false;
         this.useCoverageHistory = false;
+        this.maxHistory = 1000000;
     }
 
     @DataBoundConstructor
-    public VectorCASTPublisher(String includes, Boolean useThreshold, VectorCASTHealthReportThresholds healthyTarget, VectorCASTHealthReportThresholds unhealthyTarget, Boolean useCoverageHistory){
+    public VectorCASTPublisher(String includes, Boolean useThreshold, VectorCASTHealthReportThresholds healthyTarget, VectorCASTHealthReportThresholds unhealthyTarget, Boolean useCoverageHistory, Integer maxHistory){
         
         this.includes = includes;
         this.useThreshold = useThreshold;
@@ -98,7 +100,11 @@ public class VectorCASTPublisher extends Recorder implements SimpleBuildStep {
         } else {
             this.useCoverageHistory = useCoverageHistory;
         }
-        
+        if (maxHistory == null) {
+            this.maxHistory = 1000000;
+        } else {
+            this.maxHistory = maxHistory;
+        }
     }
     
     @Nonnull
@@ -116,6 +122,13 @@ public class VectorCASTPublisher extends Recorder implements SimpleBuildStep {
             this.useCoverageHistory = false;
         }
         return useCoverageHistory;
+    }
+    @Nonnull
+    public final Integer getMaxHistory() {
+        if (this.maxHistory == null) {
+            this.maxHistory = 1000000;
+        }
+        return this.maxHistory;
     }
     @Nonnull
     public final VectorCASTHealthReportThresholds getHealthReports() {
@@ -299,9 +312,9 @@ public class VectorCASTPublisher extends Recorder implements SimpleBuildStep {
         final VectorCASTBuildAction action = VectorCASTBuildAction.load(run, rule, healthReports, streams); //reports);
         
         if (action.getBuildHealth() != null) {
-            logger.println("**[VectorCASTCoverage] [INFO]: " + action.getBuildHealth().getDescription());
+            logger.println("[VectorCASTCoverage] [INFO]: " + action.getBuildHealth().getDescription());
         } else {
-            logger.println("**[VectorCASTCoverage] [INFO]: No thresholds set");
+            logger.println("[VectorCASTCoverage] [INFO]: No thresholds set");
         }
         
         run.getActions().add(action);
@@ -317,49 +330,220 @@ public class VectorCASTPublisher extends Recorder implements SimpleBuildStep {
             logger.println("[VectorCASTCoverage] [INFO]: code coverage enforcement failed. Setting Build to unstable.");
             run.setResult(Result.UNSTABLE);
         }
-        
-        if (getUseCoverageHistory()) {
-            VectorCASTProjectAction vcProjAction = new VectorCASTProjectAction (run.getParent());
-            VectorCASTBuildAction historyAction = vcProjAction.getPreviousNotFailedBuild();
-            if (historyAction != null) {
-                float prevStCov = 0.0f;
-                float currStCov = 0.0f;
-                float currBrCov = 0.0f;
-                float prevBrCov = 0.0f;
-                
-                if (historyAction.getStatementCoverage() != null) {
-                    prevStCov = historyAction.getStatementCoverage().getPercentageFloat();
-                }
-                if (action.getStatementCoverage() != null) {
-                    currStCov = action.getStatementCoverage().getPercentageFloat();
-                }
-                if (historyAction.getBranchCoverage() != null) {
-                    prevBrCov = historyAction.getBranchCoverage().getPercentageFloat();
-                }
-                if (action.getBranchCoverage() != null) {
-                    currBrCov = action.getBranchCoverage().getPercentageFloat();
-                }
-                                
-                if ((currBrCov < prevBrCov) || (currStCov < prevStCov)) {
-                    logger.println("**[VectorCASTCoverage] [INFO]: code coverage history enforcement failed. Setting Build to FAILURE.");
-                    run.setResult(Result.FAILURE);
-                } else {
-                    logger.println("**[VectorCASTCoverage] [INFO]: code coverage history enforcement passed.");
-                }
+
+        float prevStCov       = -1.0f;
+        float currStCov       = -1.0f;
+        float currBrCov       = -1.0f;
+        float prevBrCov       = -1.0f;
+        float currMCDCCov     = -1.0f;
+        float prevMCDCCov     = -1.0f;
+        float currFuncCov     = -1.0f;
+        float prevFuncCov     = -1.0f;
+        float currFuncCallCov = -1.0f;
+        float prevFuncCallCov = -1.0f;
+
+        VectorCASTProjectAction vcProjAction = new VectorCASTProjectAction (run.getParent());
+        VectorCASTBuildAction historyAction = vcProjAction.getPreviousNotFailedBuild();
+        if (historyAction != null) {
             
-                logger.println("**[VectorCASTCoverage] [INFO] Previous (st/br): " +  String.format(" %.02f /", prevStCov) +   String.format(" %.02f", prevBrCov));
-                logger.println("**[VectorCASTCoverage] [INFO] Current  (st/br): " +  String.format(" %.02f /", currStCov) +   String.format(" %.02f", currBrCov));
+            String CurrPrintStr = "Current  Coverage : ";
+            String PrevPrintStr = "Previous Coverage : ";
+            
+            /* Get previous STATEMENT coverage */
+            if (historyAction.getStatementCoverage() != null) {
+                prevStCov = historyAction.getStatementCoverage().getPercentageFloat();
+                PrevPrintStr += String.format("St: %s | ", prevStCov);
+            }
+            /* Get current STATEMENT coverage */
+            if (action.getStatementCoverage() != null) {
+                currStCov = action.getStatementCoverage().getPercentageFloat();
+                CurrPrintStr += String.format("St: %s | ", currStCov);
+            }
+            /* Get previous BRANCH coverage */
+            if (historyAction.getBranchCoverage() != null) {
+                prevBrCov = historyAction.getBranchCoverage().getPercentageFloat();
+                PrevPrintStr += String.format("Br: %s | ", prevBrCov);
+            }
+            /* Get current BRANCH coverage */
+            if (action.getBranchCoverage() != null) {
+                currBrCov = action.getBranchCoverage().getPercentageFloat();
+                CurrPrintStr += String.format("Br: %s | ", currBrCov);
+            }
+
+            /* Get previous MC/DC coverage */
+            if (historyAction.getMCDCCoverage() != null) {
+                prevMCDCCov = historyAction.getMCDCCoverage().getPercentageFloat();
+                PrevPrintStr += String.format("MCDC: %s | ", prevMCDCCov);
+            }
+            /* Get current MC/DC coverage */
+            if (action.getMCDCCoverage() != null) {
+                currMCDCCov = action.getMCDCCoverage().getPercentageFloat();
+                CurrPrintStr += String.format("MCDC: %s | ", currMCDCCov);
+            }
+                                    
+            /* Get previous Function coverage */
+            if (historyAction.getFunctionCoverage() != null) {
+                prevFuncCov = historyAction.getFunctionCoverage().getPercentageFloat();
+                PrevPrintStr += String.format("Func: %s | ", prevFuncCov);
+            }
+            /* Get current Function coverage */
+            if (action.getFunctionCoverage() != null) {
+                currFuncCov = action.getFunctionCoverage().getPercentageFloat();
+                CurrPrintStr += String.format("Func: %s | ", currFuncCov);
+            }
+                                    
+            /* Get previous Function coverage */
+            if (historyAction.getFunctionCallCoverage() != null) {
+                prevFuncCallCov = historyAction.getFunctionCallCoverage().getPercentageFloat();
+                PrevPrintStr += String.format("FuncCall: %s | ", prevFuncCallCov);
+            }
+            /* Get current Function Call coverage */
+            if (action.getFunctionCallCoverage() != null) {
+                currFuncCallCov = action.getFunctionCallCoverage().getPercentageFloat();
+                CurrPrintStr += String.format("FuncCall: %s | ", currFuncCallCov);
+            }
+                                    
+            logger.println("[VectorCASTCoverage] [INFO]: " +  CurrPrintStr);
+            logger.println("[VectorCASTCoverage] [INFO]: " +  PrevPrintStr);
+            
+            if (getUseCoverageHistory()) {
+                if ((currBrCov < prevBrCov) || (currStCov < prevStCov)) {
+                    logger.println("[VectorCASTCoverage] [INFO]: code coverage history enforcement failed. Setting Build to FAILURE.");
+                    run.setResult(Result.FAILURE);
+                }
             } else {
-                logger.println("[VectorCASTCoverage] [INFO]: Could not find previous non-failing build to checking code coverage history.");
+                logger.println("[VectorCASTCoverage] [INFO]: Not checking code coverage history.");
             }
         } else {
-            logger.println("[VectorCASTCoverage] [INFO]: Not checking code coverage history.");
+            logger.println("[VectorCASTCoverage] [INFO]: Could not find previous non-failing build to checking code coverage history.");
         }
         
+        String covDiffHtml = generateCoverageDiffs(logger, prevStCov, currStCov, currBrCov, prevBrCov, currMCDCCov, prevMCDCCov, currFuncCov, prevFuncCov, currFuncCallCov, prevFuncCallCov);
+
+        FilePath CovDiffFilePath = new FilePath(workspace,"coverage_diffs.html_tmp");
+        CovDiffFilePath.write(covDiffHtml, "utf-8");
+
+/*         try {            
+        } catch (IOException e) {
+            logger.println("VectorCASTCoverage] [FAIL] Failed to write coverage_diffs.html_tmp");            
+        } 
+        logger.println(covDiffHtml);
+ */        
         checkThreshold(run, logger, env, action);
 
         return true;
     }
+
+    private String generateCoverageDiffs(final PrintStream logger,
+        float prevStCov, float currStCov, 
+        float currBrCov, float prevBrCov, 
+        float currMCDCCov, float prevMCDCCov, 
+        float currFuncCov, float prevFuncCov, 
+        float currFuncCallCov, float prevFuncCallCov) {
+        
+        String htmlTemplate = "  <table>%n" + 
+        "    <tr>%n" + 
+        "      <td>%n" + 
+        "      <svg class=\"icon-clipboard icon-md\" aria-hidden=\"true\" xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 512 512\">%n" + 
+        "                <title></title>%n" + 
+        "                <path d=\"M336 64h32a48 48 0 0148 48v320a48 48 0 01-48 48H144a48 48 0 01-48-48V112a48 48 0 0148-48h32\" fill=\"none\" stroke=\"currentColor\" stroke-linejoin=\"round\" stroke-width=\"32\"></path>%n" + 
+        "                <rect x=\"176\" y=\"32\" width=\"160\" height=\"64\" rx=\"26.13\" ry=\"26.13\" fill=\"none\" stroke=\"currentColor\" stroke-linejoin=\"round\" stroke-width=\"32\"></rect>%n" + 
+        "                </svg>%n" + 
+        "      </td>%n" + 
+        "      <td> <h3>Coverage Deltas </h3></td>%n" + 
+        "    </tr>%n" + 
+        "    <tr>%n" + 
+        "      <td></td>%n" + 
+        "      <td>%n" + 
+        "        <table >%n" + 
+        "          <tr>%n" + 
+        "            <th style=\"border-bottom:1px solid #e5e5e5;text-align:left;padding:0.25em;padding-right:1em\">Build #</th>%n" + 
+        "            <th style=\"border-bottom:1px solid #e5e5e5;text-align:left;padding:0.25em;padding-right:1em\">Statement</th>%n" + 
+        "            <th style=\"border-bottom:1px solid #e5e5e5;text-align:left;padding:0.25em;padding-right:1em\">Branch</th>%n" + 
+        "            <th style=\"border-bottom:1px solid #e5e5e5;text-align:left;padding:0.25em;padding-right:1em\">MC/DC</th>%n" + 
+        "            <th style=\"border-bottom:1px solid #e5e5e5;text-align:left;padding:0.25em;padding-right:1em\">Function</th>%n" + 
+        "            <th style=\"border-bottom:1px solid #e5e5e5;text-align:left;padding:0.25em;padding-right:1em\">Function Call</th>%n" + 
+        "          </tr>%n" + 
+        "          <tr>%n" + 
+        "            <td style=\"border-bottom:1px solid #e5e5e5;text-align:left;padding:0.25em;padding-right:1em\">Build #13</td>%n" + 
+        "            <td style=\"border-bottom:1px solid #e5e5e5;text-align:left;padding:0.25em;padding-right:1em%s\">%s</td>%n" + 
+        "            <td style=\"border-bottom:1px solid #e5e5e5;text-align:left;padding:0.25em;padding-right:1em%s\">%s</td>%n" + 
+        "            <td style=\"border-bottom:1px solid #e5e5e5;text-align:left;padding:0.25em;padding-right:1em%s\">%s</td>%n" + 
+        "            <td style=\"border-bottom:1px solid #e5e5e5;text-align:left;padding:0.25em;padding-right:1em%s\">%s</td>%n" + 
+        "            <td style=\"border-bottom:1px solid #e5e5e5;text-align:left;padding:0.25em;padding-right:1em%s\">%s</td>%n" + 
+        "          </tr>%n" + 
+        "          <tr>%n" + 
+        "            <td style=\"border-bottom:1px solid #e5e5e5;text-align:left;padding:0.25em;padding-right:1em\">Build #12</td>%n" + 
+        "            <td style=\"border-bottom:1px solid #e5e5e5;text-align:left;padding:0.25em;padding-right:1em\">%s</td>%n" + 
+        "            <td style=\"border-bottom:1px solid #e5e5e5;text-align:left;padding:0.25em;padding-right:1em\">%s</td>%n" + 
+        "            <td style=\"border-bottom:1px solid #e5e5e5;text-align:left;padding:0.25em;padding-right:1em\">%s</td>%n" + 
+        "            <td style=\"border-bottom:1px solid #e5e5e5;text-align:left;padding:0.25em;padding-right:1em\">%s</td>%n" + 
+        "            <td style=\"border-bottom:1px solid #e5e5e5;text-align:left;padding:0.25em;padding-right:1em\">%s</td>%n" + 
+        "          </tr>%n" + 
+        "        </table>%n" + 
+        "      </td>%n" + 
+        "    </tr>%n" + 
+        "  </table>  %n";
+
+        String increase = "; background-color:#c8f0c8";
+        String decrease = "; background-color:#facaca";    
+
+        String S_currStCov              = (currStCov            == -1.0f) ? "-" : String.format("%5.02f%%", currStCov);
+        String S_currBrCov              = (currBrCov            == -1.0f) ? "-" : String.format("%5.02f%%", currBrCov);
+        String S_currMCDCCov            = (currMCDCCov          == -1.0f) ? "-" : String.format("%5.02f%%", currMCDCCov);
+        String S_currFuncCov            = (currFuncCov          == -1.0f) ? "-" : String.format("%5.02f%%", currFuncCov);
+        String S_currFuncCallCov        = (currFuncCallCov      == -1.0f) ? "-" : String.format("%5.02f%%", currFuncCallCov);
+        String S_prevStCov              = (prevStCov            == -1.0f) ? "-" : String.format("%5.02f%%", prevStCov);
+        String S_prevBrCov              = (prevBrCov            == -1.0f) ? "-" : String.format("%5.02f%%", prevBrCov);
+        String S_prevMCDCCov            = (prevMCDCCov          == -1.0f) ? "-" : String.format("%5.02f%%", prevMCDCCov);
+        String S_prevFuncCov            = (prevFuncCov          == -1.0f) ? "-" : String.format("%5.02f%%", prevFuncCov);
+        String S_prevFuncCallCov        = (prevFuncCallCov      == -1.0f) ? "-" : String.format("%5.02f%%", prevFuncCallCov);
+
+        String Color_currStCov       = "";   
+        String Color_currBrCov       = "";         
+        String Color_currMCDCCov     = "";    
+        String Color_currFuncCov     = ""; 
+        String Color_currFuncCallCov = "";  
+
+        if (currStCov > prevStCov){
+            Color_currStCov = increase;
+        } else if (currStCov < prevStCov) {
+            Color_currStCov = decrease;
+        }
+
+        if (currBrCov > prevBrCov){
+            Color_currBrCov = increase;
+        } else if (currBrCov < prevBrCov) {
+            Color_currBrCov = decrease;
+        }
+
+        if (currMCDCCov > prevMCDCCov){
+            Color_currMCDCCov = increase;
+        } else if (currMCDCCov < prevMCDCCov) {
+            Color_currMCDCCov = decrease;
+        }
+
+        if (currFuncCov > prevFuncCov){
+            Color_currFuncCov = increase;
+        } else if (currFuncCov < prevFuncCov) {
+            Color_currFuncCov = decrease;
+        }
+
+        if (currFuncCallCov > prevFuncCallCov){
+            Color_currFuncCallCov = increase;
+        } else if (currFuncCallCov < prevFuncCallCov) {
+            Color_currFuncCallCov = decrease;
+        }
+        
+        return String.format(htmlTemplate,
+            Color_currStCov, S_currStCov,
+            Color_currBrCov, S_currBrCov,
+            Color_currMCDCCov, S_currMCDCCov,
+            Color_currFuncCov, S_currFuncCov,
+            Color_currFuncCallCov, S_currFuncCallCov,
+            S_prevStCov, S_prevBrCov, S_prevMCDCCov, S_prevFuncCov, S_prevFuncCallCov);
+       }
+        
 
 	private void printThresholdFailure(final PrintStream logger, String coverageType, int percent, int threshold) {
         logger.println("[VectorCASTCoverage] [FAIL]: " + coverageType + " coverage " + percent +"% < " + threshold + "% threshold.");
@@ -506,7 +690,7 @@ public class VectorCASTPublisher extends Recorder implements SimpleBuildStep {
             save();
             return super.configure(req, formData);
         }
-
+        
         @Override
         public Publisher newInstance(StaplerRequest req, JSONObject json) throws FormException {
             
@@ -516,6 +700,7 @@ public class VectorCASTPublisher extends Recorder implements SimpleBuildStep {
             String loc_includes;
             Boolean loc_useThreshold;
             Boolean loc_useCoverageHistory;
+            Integer loc_maxHistory;
             int maxStatement,maxBranch,maxBasisPath,maxMCDC,maxFunction,maxFunctionCall;
             int minStatement,minBranch,minBasisPath,minMCDC,minFunction,minFunctionCall;
             
@@ -526,7 +711,8 @@ public class VectorCASTPublisher extends Recorder implements SimpleBuildStep {
             }
             loc_useThreshold = json.optBoolean("useThreshold", false);
             loc_useCoverageHistory = json.optBoolean("useCoverageHistory", false);
-            
+            loc_maxHistory = json.optInt("maxHistory", 1000000);
+
             maxStatement = json.optInt("maxStatement", 100);
             maxBranch = json.optInt("maxBranch", 70);
             maxBasisPath = json.optInt("maxBasisPath", 80);
@@ -544,7 +730,7 @@ public class VectorCASTPublisher extends Recorder implements SimpleBuildStep {
             /* Setup the healthReport */
             VectorCASTHealthReportThresholds loc_healthReports = new VectorCASTHealthReportThresholds( minStatement,  maxStatement,  minBranch,  maxBranch,  minBasisPath,  maxBasisPath,  minMCDC,  maxMCDC,  minFunction,  maxFunction,  minFunctionCall,  maxFunctionCall);
             
-            VectorCASTPublisher pub = new VectorCASTPublisher(loc_includes,loc_useThreshold,loc_healthReports, null, loc_useCoverageHistory);
+            VectorCASTPublisher pub = new VectorCASTPublisher(loc_includes,loc_useThreshold,loc_healthReports, null, loc_useCoverageHistory, loc_maxHistory);
                                 
             req.bindParameters(pub, "vectorcastcoverage.");
             req.bindParameters(pub.healthReports, "vectorCASTHealthReports.");

@@ -63,11 +63,15 @@ import org.jfree.chart.renderer.category.BarRenderer;
 import org.jfree.chart.renderer.category.LineAndShapeRenderer;
 import org.jfree.ui.RectangleInsets;
 import org.kohsuke.stapler.DataBoundConstructor;
+import java.util.logging.Logger;
+import java.util.logging.Level;
 
 /**
  * A portlet for VecctorCAST coverage results - Trend Chart.
  */
 public class VectorCASTBuilderTrendChart extends DashboardPortlet {
+
+  private static final Logger LOGGER = Logger.getLogger(VectorCASTBuilderTrendChart.class.getName());
 
   /**
    * Chart width that can be set by user.
@@ -117,6 +121,8 @@ public class VectorCASTBuilderTrendChart extends DashboardPortlet {
    */
   public Graph getSummaryGraph() {
 
+    LOGGER.log(Level.INFO,"In VectorCASTBuilderTrendChart::getSummaryGraph");
+
     Map<LocalDate, VectorCASTCoverageResultSummary> summaries;
 
     // Retrieve Dashboard View jobs
@@ -147,6 +153,7 @@ public class VectorCASTBuilderTrendChart extends DashboardPortlet {
 
       @Override
       protected JFreeChart createGraph() {
+          
 
         // Show empty chart
         if (summaries == null) {
@@ -155,6 +162,8 @@ public class VectorCASTBuilderTrendChart extends DashboardPortlet {
 
           return chart;
         }
+        LOGGER.log(Level.INFO,"In VectorCASTBuilderTrendChart::createTrendChart::Graph (Override): " + summaries.size());
+
         JFreeChart chart = ChartFactory.createLineChart("", Constants.AXIS_LABEL, Constants.AXIS_LABEL_VALUE,
           buildDataSet(summaries), PlotOrientation.VERTICAL, true, false, false);
         chart.setBackgroundPaint(Color.white);
@@ -212,6 +221,8 @@ public class VectorCASTBuilderTrendChart extends DashboardPortlet {
   private static CategoryDataset buildDataSet(Map<LocalDate, VectorCASTCoverageResultSummary> summaries) {
 
       DataSetBuilder<String, LocalDate> dataSetBuilder = new DataSetBuilder<String, LocalDate>();
+
+      LOGGER.log(Level.INFO,"In VectorCASTBuilderTrendChart::buildDataSet");
 
       for (Map.Entry<LocalDate, VectorCASTCoverageResultSummary> entry : summaries.entrySet()) {
           float BasisPathCoverage = 0;

@@ -34,6 +34,7 @@ import hudson.model.Run;
 import com.vectorcast.plugins.vectorcastcoverage.VectorCASTBuildAction;
 import com.vectorcast.plugins.vectorcastcoverage.portlet.bean.VectorCASTCoverageResultSummary;
 import com.vectorcast.plugins.vectorcastcoverage.portlet.utils.Utils;
+import java.io.IOException;
 
 import java.math.BigDecimal;
 import java.util.Collection;
@@ -42,11 +43,16 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 import java.time.LocalDate;
+import hudson.XmlFile;
+import java.util.logging.Logger;
+import java.util.logging.Level;
 
 /**
  * Load data of VectorCAST coverage results used by chart or grid.
  */
 public final class VectorCASTLoadData {
+
+  private static final Logger LOGGER = Logger.getLogger(VectorCASTLoadData.class.getName());
 
   /**
    * Private constructor avoiding this class to be used in a non-static way.
@@ -66,6 +72,29 @@ public final class VectorCASTLoadData {
    */
   public static Map<LocalDate, VectorCASTCoverageResultSummary> loadChartDataWithinRange(List<Job> jobs, int daysNumber) {
 
+    LOGGER.log(Level.INFO,"In VectorCASTLoadData::loadChartDataWithinRange");
+
+    //Integer historyCount = 0;
+    Integer maxHistory = 20;
+
+    try {
+      XmlFile configFile = jobs.get(0).getConfigFile();
+      String xml = configFile.asString(); //Populated XML String....
+      //LOGGER.log(Level.INFO,"config.xml for job:" + xml);
+      try {
+        maxHistory = Integer.parseInt(xml.split("<maxHistory>")[1].split("</maxHistory>")[0]);
+      } catch (ArrayIndexOutOfBoundsException e) {
+        maxHistory = 20;
+        LOGGER.log(Level.INFO,"error finding maxHistory: ", e);
+      } catch (java.lang.NumberFormatException e) {
+        maxHistory = 20;
+        LOGGER.log(Level.INFO,"error Converting to number:", e);
+      }
+    } catch (IOException e ){
+      maxHistory = 20;
+      LOGGER.log(Level.INFO,"error reading configFile: ", e);
+    }
+
     Map<LocalDate, VectorCASTCoverageResultSummary> summaries = new HashMap<LocalDate, VectorCASTCoverageResultSummary>();
 
     // Get the last build (last date) of the all jobs
@@ -83,8 +112,12 @@ public final class VectorCASTLoadData {
     // date range (last build date minus number of days)
     for (Job job : jobs) {
 
-      Run run = job.getLastBuild();
-
+      // set max history count to 25 for readability
+/*       if (historyCount++ >= maxHistory) break;
+      LOGGER.log(Level.INFO, "historyCount++ >= maxHistory: " + historyCount.toString() + maxHistory.toString());
+ */          
+      Run run = job.getLastBuild();      
+      
       if (null != run) {
         LocalDate runDate = Utils.calendarToLocalData(run.getTimestamp());
 
@@ -99,7 +132,6 @@ public final class VectorCASTLoadData {
           }
 
           runDate = Utils.calendarToLocalData(run.getTimestamp());
-
         }
       }
     }
