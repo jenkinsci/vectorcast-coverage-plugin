@@ -182,7 +182,78 @@ public abstract class CoverageObject<SELF extends CoverageObject<SELF>> {
     public boolean hasBasisPathCoverage() {
         return BasisPath.isInitialized();
     }
+    
+    protected Integer getMaxHistoryFreestyleJob(String xml) {
+      Integer maxHistory;
 
+      // try for a freestyle job <maxHistory>20</maxHistory>
+      try {
+        maxHistory = Integer.parseInt(xml.split("<maxHistory>")[1].split("</maxHistory>")[0]);
+      } catch (ArrayIndexOutOfBoundsException e) {
+        maxHistory = 20;
+        logger.log(Level.INFO,"error finding <maxHistory>: ", e);        
+      } catch (java.lang.NumberFormatException e) {
+        maxHistory = 20;
+        logger.log(Level.INFO,"error Converting to number:", e);
+      }
+      
+      return maxHistory;
+    }
+    
+    protected Integer getMaxHistoryPipelineJob(String xml) {
+      Integer maxHistory = 20;
+      
+      int subIndex = xml.indexOf("maxHistory");
+      
+      if (subIndex == -1) {
+          return maxHistory;
+      } else {
+        String substr = xml.substring(subIndex);
+        int colonIdx = substr.indexOf(":");
+        int commaIdx = substr.indexOf(",");
+        int sqrBktIdx = substr.indexOf("]");
+        int endingIdx;
+        
+        if (commaIdx != -1) {
+          endingIdx = commaIdx;  
+        } else if (sqrBktIdx != -1) {
+          endingIdx = sqrBktIdx;
+        } else {
+          return maxHistory;
+        }
+        substr = substr.substring(colonIdx, endingIdx);
+        maxHistory = Integer.parseInt(substr);
+      }
+      
+      return maxHistory;
+      
+    }
+    
+    protected Integer getMaxHistory() {
+        
+      Run<?,?> build = getBuild();
+      Job<?,?> job  = build.getParent();
+      
+      Integer maxHistory = 20;
+      
+      try {
+        XmlFile configFile = job.getConfigFile();
+        String xml = configFile.asString(); //Populated XML String....
+        
+        if (xml.contains("<maxHistory>")) {
+          maxHistory = getMaxHistoryFreestyleJob(xml);
+        }
+        else if (xml.contains("maxHistory")) {
+          maxHistory = getMaxHistoryFreestyleJob(xml);
+        }
+      } catch (IOException e ){
+        logger.log(Level.INFO,"error reading configFile: ", e);
+      }
+      
+      logger.log(Level.INFO,"CoverageObject::getMaxHistory = " + Integer.toString(maxHistory));
+
+      return maxHistory;
+    }
     
     static NumberFormat dataFormat = new DecimalFormat("000.00");
     static NumberFormat percentFormat = new DecimalFormat("0.0");
@@ -237,33 +308,12 @@ public abstract class CoverageObject<SELF extends CoverageObject<SELF>> {
         Run<?,?> build = getBuild();
         Calendar t = build.getTimestamp();
         
-        Job<?,?> job  = build.getParent();
-        Integer maxHistory;
-        try {
-          XmlFile configFile = job.getConfigFile();
-          String xml = configFile.asString(); //Populated XML String....
-          //logger.log(Level.INFO,"config.xml for job:" + xml);
-          try {
-            maxHistory = Integer.parseInt(xml.split("<maxHistory>")[1].split("</maxHistory>")[0]);
-          } catch (ArrayIndexOutOfBoundsException e) {
-            maxHistory = 20;
-            logger.log(Level.INFO,"error finding maxHistory: ", e);
-          } catch (java.lang.NumberFormatException e) {
-            maxHistory = 20;
-            logger.log(Level.INFO,"error Converting to number:", e);
-          }
-        } catch (IOException e ){
-          maxHistory = 20;
-          logger.log(Level.INFO,"error reading configFile: ", e);
-        }
- 
+        final Integer maxHistory = getMaxHistory();
+
         String w = Util.fixEmptyAndTrim(req.getParameter("width"));
         String h = Util.fixEmptyAndTrim(req.getParameter("height"));
         int width = (w != null) ? Integer.parseInt(w) : 500;
-        int height = (h != null) ? Integer.parseInt(h) : 200;
-        //final int max_hist = maxHistory;
-          
-//        logger.log(Level.INFO,"Max history = " + Integer.toString(max_hist));
+        int height = (h != null) ? Integer.parseInt(h) : 200;          
         
         new GraphImpl(this, t, width, height) {
 
@@ -273,15 +323,14 @@ public abstract class CoverageObject<SELF extends CoverageObject<SELF>> {
                 
                 DataSetBuilder<String, NumberOnlyBuildLabel> dsb = new DataSetBuilder<String, NumberOnlyBuildLabel>();
 
-//                int historyCount = 0;
+                Integer historyCount = 0;
                 
                 for (CoverageObject<SELF> a = obj; a != null; a = a.getPreviousResult()) {
                     
-/*                     if (historyCount++ >= max_hist) {
+                    if (historyCount++ >= maxHistory) {
                         break;
                     }
-                    logger.log(Level.INFO,"Max history = " + Integer.toString(historyCount) + " || " + Integer.toString(max_hist));
- */                    
+                    logger.log(Level.INFO,"CoverageObject::GraphImpl::createDataSet - (H | M) = " + Integer.toString(historyCount) + " | " + Integer.toString(maxHistory));
                     
                     NumberOnlyBuildLabel label = new NumberOnlyBuildLabel(a.getBuild());
                     if (a.Statement != null && a.Statement.isInitialized()) {
@@ -304,7 +353,7 @@ public abstract class CoverageObject<SELF extends CoverageObject<SELF>> {
                     }
                 }
 
-//                logger.log(Level.INFO,"History Count = " + Integer.toString(historyCount));
+                logger.log(Level.INFO,"History Count = " + Integer.toString(historyCount));
                 return dsb;
             }
         }.doPng(req, rsp);
@@ -328,7 +377,7 @@ public abstract class CoverageObject<SELF extends CoverageObject<SELF>> {
         protected JFreeChart createGraph() {
             final CategoryDataset dataset = createDataSet(obj).build();
             
-             logger.log(Level.INFO,"dataset (C | R) = " + Integer.toString(dataset.getColumnCount()) + " | " + Integer.toString(dataset.getRowCount()) );
+            logger.log(Level.INFO,"dataset (C | R) = " + Integer.toString(dataset.getColumnCount()) + " | " + Integer.toString(dataset.getRowCount()) );
 
             final JFreeChart chart = ChartFactory.createLineChart(
                     null, // chart title
@@ -389,12 +438,20 @@ public abstract class CoverageObject<SELF extends CoverageObject<SELF>> {
             return chart;
         }
 
+
         protected DataSetBuilder<String, NumberOnlyBuildLabel> createComplexityDataSet(CoverageObject<SELF> obj) {
             DataSetBuilder<String, NumberOnlyBuildLabel> dsb = new DataSetBuilder<String, NumberOnlyBuildLabel>();
+            
+            Integer maxHistory = getMaxHistory();
+            Integer historyCount = 0;
 
             for (CoverageObject<SELF> a = obj; a != null; a = a.getPreviousResult()) {
                 NumberOnlyBuildLabel label = new NumberOnlyBuildLabel(a.getBuild());
 
+                if (historyCount++ >= maxHistory) {
+                    break;
+                }
+                logger.log(Level.INFO,"CoverageObject::createComplexityDataSet - (H | M) = " + Integer.toString(historyCount) + " | " + Integer.toString(maxHistory));
                 dsb.add(a.Complexity.getNumerator(), "Complexity", label);
             }
             return dsb;

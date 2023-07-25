@@ -170,6 +170,10 @@ public final class VectorCASTBuildAction extends CoverageObject<VectorCASTBuildA
         return owner;
     }
     
+    public int getBuildNumber() {
+        return owner.getNumber();
+    }
+    
 	protected static FilePath[] getVectorCASTCoverageReports(File file) throws IOException, InterruptedException {
 		FilePath path = new FilePath(file);
 		if (path.isDirectory()) {

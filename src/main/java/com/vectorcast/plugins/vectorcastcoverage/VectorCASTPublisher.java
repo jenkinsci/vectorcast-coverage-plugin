@@ -344,8 +344,12 @@ public class VectorCASTPublisher extends Recorder implements SimpleBuildStep {
 
         VectorCASTProjectAction vcProjAction = new VectorCASTProjectAction (run.getParent());
         VectorCASTBuildAction historyAction = vcProjAction.getPreviousNotFailedBuild();
+        
         if (historyAction != null) {
             
+            int histBuildNum = historyAction.getBuildNumber();
+            int currBuildNum = action.getBuildNumber();
+
             String CurrPrintStr = "Current  Coverage : ";
             String PrevPrintStr = "Previous Coverage : ";
             
@@ -414,21 +418,15 @@ public class VectorCASTPublisher extends Recorder implements SimpleBuildStep {
             } else {
                 logger.println("[VectorCASTCoverage] [INFO]: Not checking code coverage history.");
             }
+            String covDiffHtml = generateCoverageDiffs(logger, prevStCov, currStCov, currBrCov, prevBrCov, currMCDCCov, prevMCDCCov, currFuncCov, prevFuncCov, currFuncCallCov, prevFuncCallCov, currBuildNum, histBuildNum);
+
+            FilePath CovDiffFilePath = new FilePath(workspace,"coverage_diffs.html_tmp");
+            CovDiffFilePath.write(covDiffHtml, "utf-8");
+
         } else {
             logger.println("[VectorCASTCoverage] [INFO]: Could not find previous non-failing build to checking code coverage history.");
         }
         
-        String covDiffHtml = generateCoverageDiffs(logger, prevStCov, currStCov, currBrCov, prevBrCov, currMCDCCov, prevMCDCCov, currFuncCov, prevFuncCov, currFuncCallCov, prevFuncCallCov);
-
-        FilePath CovDiffFilePath = new FilePath(workspace,"coverage_diffs.html_tmp");
-        CovDiffFilePath.write(covDiffHtml, "utf-8");
-
-/*         try {            
-        } catch (IOException e) {
-            logger.println("VectorCASTCoverage] [FAIL] Failed to write coverage_diffs.html_tmp");            
-        } 
-        logger.println(covDiffHtml);
- */        
         checkThreshold(run, logger, env, action);
 
         return true;
@@ -439,7 +437,8 @@ public class VectorCASTPublisher extends Recorder implements SimpleBuildStep {
         float currBrCov, float prevBrCov, 
         float currMCDCCov, float prevMCDCCov, 
         float currFuncCov, float prevFuncCov, 
-        float currFuncCallCov, float prevFuncCallCov) {
+        float currFuncCallCov, float prevFuncCallCov,
+        int currBuildNumber, int prevBuildNumber) {
         
         String htmlTemplate = "  <table>%n" + 
         "    <tr>%n" + 
@@ -465,7 +464,7 @@ public class VectorCASTPublisher extends Recorder implements SimpleBuildStep {
         "            <th style=\"border-bottom:1px solid #e5e5e5;text-align:left;padding:0.25em;padding-right:1em\">Function Call</th>%n" + 
         "          </tr>%n" + 
         "          <tr>%n" + 
-        "            <td style=\"border-bottom:1px solid #e5e5e5;text-align:left;padding:0.25em;padding-right:1em\">Build #13</td>%n" + 
+        "            <td style=\"border-bottom:1px solid #e5e5e5;text-align:left;padding:0.25em;padding-right:1em\">Build #%d</td>%n" + 
         "            <td style=\"border-bottom:1px solid #e5e5e5;text-align:left;padding:0.25em;padding-right:1em%s\">%s</td>%n" + 
         "            <td style=\"border-bottom:1px solid #e5e5e5;text-align:left;padding:0.25em;padding-right:1em%s\">%s</td>%n" + 
         "            <td style=\"border-bottom:1px solid #e5e5e5;text-align:left;padding:0.25em;padding-right:1em%s\">%s</td>%n" + 
@@ -473,7 +472,7 @@ public class VectorCASTPublisher extends Recorder implements SimpleBuildStep {
         "            <td style=\"border-bottom:1px solid #e5e5e5;text-align:left;padding:0.25em;padding-right:1em%s\">%s</td>%n" + 
         "          </tr>%n" + 
         "          <tr>%n" + 
-        "            <td style=\"border-bottom:1px solid #e5e5e5;text-align:left;padding:0.25em;padding-right:1em\">Build #12</td>%n" + 
+        "            <td style=\"border-bottom:1px solid #e5e5e5;text-align:left;padding:0.25em;padding-right:1em\">Build #%d</td>%n" + 
         "            <td style=\"border-bottom:1px solid #e5e5e5;text-align:left;padding:0.25em;padding-right:1em\">%s</td>%n" + 
         "            <td style=\"border-bottom:1px solid #e5e5e5;text-align:left;padding:0.25em;padding-right:1em\">%s</td>%n" + 
         "            <td style=\"border-bottom:1px solid #e5e5e5;text-align:left;padding:0.25em;padding-right:1em\">%s</td>%n" + 
@@ -536,11 +535,13 @@ public class VectorCASTPublisher extends Recorder implements SimpleBuildStep {
         }
         
         return String.format(htmlTemplate,
+            currBuildNumber,
             Color_currStCov, S_currStCov,
             Color_currBrCov, S_currBrCov,
             Color_currMCDCCov, S_currMCDCCov,
             Color_currFuncCov, S_currFuncCov,
             Color_currFuncCallCov, S_currFuncCallCov,
+            prevBuildNumber,
             S_prevStCov, S_prevBrCov, S_prevMCDCCov, S_prevFuncCov, S_prevFuncCallCov);
        }
         

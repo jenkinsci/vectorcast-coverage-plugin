@@ -52,14 +52,83 @@ import java.util.logging.Level;
  */
 public final class VectorCASTLoadData {
 
-  private static final Logger LOGGER = Logger.getLogger(VectorCASTLoadData.class.getName());
+  private static final Logger logger = Logger.getLogger(VectorCASTLoadData.class.getName());
 
   /**
    * Private constructor avoiding this class to be used in a non-static way.
    */
   private VectorCASTLoadData() {
   }
+  
+  static protected Integer getMaxHistoryFreestyleJob(String xml) {
+    Integer maxHistory;
 
+    // try for a freestyle job <maxHistory>20</maxHistory>
+    try {
+      maxHistory = Integer.parseInt(xml.split("<maxHistory>")[1].split("</maxHistory>")[0]);
+    } catch (ArrayIndexOutOfBoundsException e) {
+      maxHistory = 20;
+      logger.log(Level.INFO,"error finding <maxHistory>: ", e);        
+    } catch (java.lang.NumberFormatException e) {
+      maxHistory = 20;
+      logger.log(Level.INFO,"error Converting to number:", e);
+    }
+    
+    return maxHistory;
+  }
+  
+  static protected Integer getMaxHistoryPipelineJob(String xml) {
+    Integer maxHistory = 20;
+    
+    int subIndex = xml.indexOf("maxHistory");
+    
+    if (subIndex == -1) {
+        return maxHistory;
+    } else {
+      String substr = xml.substring(subIndex);
+      int colonIdx = substr.indexOf(":");
+      int commaIdx = substr.indexOf(",");
+      int sqrBktIdx = substr.indexOf("]");
+      int endingIdx;
+      
+      if (commaIdx != -1) {
+        endingIdx = commaIdx;  
+      } else if (sqrBktIdx != -1) {
+        endingIdx = sqrBktIdx;
+      } else {
+        return maxHistory;
+      }
+      substr = substr.substring(colonIdx, endingIdx);
+      maxHistory = Integer.parseInt(substr);
+    }
+    
+    return maxHistory;
+    
+  }
+  
+  static protected Integer getMaxHistory(Job<?,?> job) {
+      
+    Integer maxHistory = 20;
+    
+    try {
+      XmlFile configFile = job.getConfigFile();
+      String xml = configFile.asString(); //Populated XML String....
+      
+      if (xml.contains("<maxHistory>")) {
+        maxHistory = getMaxHistoryFreestyleJob(xml);
+      }
+      else if (xml.contains("maxHistory")) {
+        maxHistory = getMaxHistoryFreestyleJob(xml);
+      }
+    } catch (IOException e ){
+      logger.log(Level.INFO,"error reading configFile: ", e);
+    }
+    
+    logger.log(Level.INFO,"CoverageObject::getMaxHistory = " + Integer.toString(maxHistory));
+
+    return maxHistory;
+  }  
+    
   /**
    * Get VcastCoverage coverage results of all jobs and store into a sorted
    * HashMap by date.
@@ -72,28 +141,7 @@ public final class VectorCASTLoadData {
    */
   public static Map<LocalDate, VectorCASTCoverageResultSummary> loadChartDataWithinRange(List<Job> jobs, int daysNumber) {
 
-    LOGGER.log(Level.INFO,"In VectorCASTLoadData::loadChartDataWithinRange");
-
-    //Integer historyCount = 0;
-    Integer maxHistory = 20;
-
-    try {
-      XmlFile configFile = jobs.get(0).getConfigFile();
-      String xml = configFile.asString(); //Populated XML String....
-      //LOGGER.log(Level.INFO,"config.xml for job:" + xml);
-      try {
-        maxHistory = Integer.parseInt(xml.split("<maxHistory>")[1].split("</maxHistory>")[0]);
-      } catch (ArrayIndexOutOfBoundsException e) {
-        maxHistory = 20;
-        LOGGER.log(Level.INFO,"error finding maxHistory: ", e);
-      } catch (java.lang.NumberFormatException e) {
-        maxHistory = 20;
-        LOGGER.log(Level.INFO,"error Converting to number:", e);
-      }
-    } catch (IOException e ){
-      maxHistory = 20;
-      LOGGER.log(Level.INFO,"error reading configFile: ", e);
-    }
+    logger.log(Level.INFO,"In VectorCASTLoadData::loadChartDataWithinRange");
 
     Map<LocalDate, VectorCASTCoverageResultSummary> summaries = new HashMap<LocalDate, VectorCASTCoverageResultSummary>();
 
@@ -111,14 +159,13 @@ public final class VectorCASTLoadData {
     // For each job, get VcastCoverage coverage results according with
     // date range (last build date minus number of days)
     for (Job job : jobs) {
-
-      // set max history count to 25 for readability
-/*       if (historyCount++ >= maxHistory) break;
-      LOGGER.log(Level.INFO, "historyCount++ >= maxHistory: " + historyCount.toString() + maxHistory.toString());
- */          
+      final Integer maxHistory = getMaxHistory(job);
+      Integer historyCount = 0;
+    
       Run run = job.getLastBuild();      
       
       if (null != run) {
+
         LocalDate runDate = Utils.calendarToLocalData(run.getTimestamp());
 
         while (runDate.isAfter(firstDate)) {
@@ -133,6 +180,11 @@ public final class VectorCASTLoadData {
 
           runDate = Utils.calendarToLocalData(run.getTimestamp());
         }
+        // set max history count to 25 for readability
+        if (historyCount++ >= maxHistory) {
+            break;
+        }
+        logger.log(Level.INFO, "VectorCASTLoadData::loadChartDataWithinRange - (H | M) = " + Integer.toString(historyCount) + " | " + Integer.toString(maxHistory));
       }
     }
 
