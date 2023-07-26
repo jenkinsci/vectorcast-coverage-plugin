@@ -191,7 +191,7 @@ public abstract class CoverageObject<SELF extends CoverageObject<SELF>> {
         maxHistory = Integer.parseInt(xml.split("<maxHistory>")[1].split("</maxHistory>")[0]);
       } catch (ArrayIndexOutOfBoundsException e) {
         maxHistory = 20;
-        logger.log(Level.INFO,"error finding <maxHistory>: ", e);        
+        logger.log(Level.INFO,"error finding <maxHistory>###</maxhistory>: ", e);        
       } catch (java.lang.NumberFormatException e) {
         maxHistory = 20;
         logger.log(Level.INFO,"error Converting to number:", e);
@@ -208,21 +208,26 @@ public abstract class CoverageObject<SELF extends CoverageObject<SELF>> {
       if (subIndex == -1) {
           return maxHistory;
       } else {
+        subIndex = xml.indexOf("maxHistory");
         String substr = xml.substring(subIndex);
-        int colonIdx = substr.indexOf(":");
+        int colonIdx = substr.indexOf(":") + 1;
         int commaIdx = substr.indexOf(",");
         int sqrBktIdx = substr.indexOf("]");
-        int endingIdx;
+
+        int endingIdx = 0;
         
-        if (commaIdx != -1) {
-          endingIdx = commaIdx;  
-        } else if (sqrBktIdx != -1) {
-          endingIdx = sqrBktIdx;
+        if ((sqrBktIdx != -1) && (sqrBktIdx < commaIdx))  {
+            endingIdx = sqrBktIdx;
+        } else if (commaIdx != -1) {
+            endingIdx = commaIdx;
         } else {
-          return maxHistory;
+            return maxHistory;
         }
+        
         substr = substr.substring(colonIdx, endingIdx);
-        maxHistory = Integer.parseInt(substr);
+        substr = substr.replace("'","");
+        substr = substr.replace("\"","\"");
+        maxHistory = Integer.parseInt(substr.trim());      
       }
       
       return maxHistory;
@@ -244,7 +249,7 @@ public abstract class CoverageObject<SELF extends CoverageObject<SELF>> {
           maxHistory = getMaxHistoryFreestyleJob(xml);
         }
         else if (xml.contains("maxHistory")) {
-          maxHistory = getMaxHistoryFreestyleJob(xml);
+          maxHistory = getMaxHistoryPipelineJob(xml);
         }
       } catch (IOException e ){
         logger.log(Level.INFO,"error reading configFile: ", e);

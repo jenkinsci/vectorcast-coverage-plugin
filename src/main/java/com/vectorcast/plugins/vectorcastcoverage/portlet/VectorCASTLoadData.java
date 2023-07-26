@@ -85,21 +85,26 @@ public final class VectorCASTLoadData {
     if (subIndex == -1) {
         return maxHistory;
     } else {
+      subIndex = xml.indexOf("maxHistory");
       String substr = xml.substring(subIndex);
-      int colonIdx = substr.indexOf(":");
+      int colonIdx = substr.indexOf(":") + 1;
       int commaIdx = substr.indexOf(",");
       int sqrBktIdx = substr.indexOf("]");
-      int endingIdx;
+
+      int endingIdx = 0;
       
-      if (commaIdx != -1) {
-        endingIdx = commaIdx;  
-      } else if (sqrBktIdx != -1) {
-        endingIdx = sqrBktIdx;
+      if ((sqrBktIdx != -1) && (sqrBktIdx < commaIdx))  {
+          endingIdx = sqrBktIdx;
+      } else if (commaIdx != -1) {
+          endingIdx = commaIdx;
       } else {
-        return maxHistory;
+          return maxHistory;
       }
+      
       substr = substr.substring(colonIdx, endingIdx);
-      maxHistory = Integer.parseInt(substr);
+      substr = substr.replace("'","");
+      substr = substr.replace("\"","");
+      maxHistory = Integer.parseInt(substr.trim());      
     }
     
     return maxHistory;
