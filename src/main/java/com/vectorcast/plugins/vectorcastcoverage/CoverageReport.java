@@ -16,6 +16,9 @@ import java.io.InputStream;
  * @author Kohsuke Kawaguchi
  */
 public final class CoverageReport extends AggregatedReport<CoverageReport/*dummy*/,CoverageReport,EnvironmentReport> {
+    
+    private static final Logger logger = Logger.getLogger(CoverageReport.class.getName());
+
     private final VectorCASTBuildAction action;
 
     private CoverageReport(VectorCASTBuildAction action) {
