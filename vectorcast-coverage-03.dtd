@@ -1,37 +1,30 @@
-<!-- Portions (C) International Organization for Standardization 1986:
-     Permission to copy in any form is granted for use with
-     conforming SGML systems and applications as defined in
-     ISO 8879, provided this notice is included in all copies.
--->
+  <!ELEMENT report (version,stats,data)>
+  
+  <!ELEMENT version EMPTY>
+  <!ATTLIST version value       CDATA #REQUIRED>
+  
+  <!ELEMENT stats (environments,units,subprograms)>
+  <!ELEMENT environments EMPTY>
+  <!ATTLIST environments value      CDATA #REQUIRED>
+  <!ELEMENT units EMPTY>
+  <!ATTLIST units value             CDATA #REQUIRED>
+  <!ELEMENT subprograms EMPTY>
+  <!ATTLIST subprograms value       CDATA #REQUIRED>
+  
+  <!ELEMENT data (all)>
+  
+  <!ELEMENT all (coverage*, environment*)>
+  <!ATTLIST all name          CDATA #REQUIRED>
 
-    <!ELEMENT report (version,stats,data)>
-    <!ELEMENT version>
-    <!ATTLIST value                 CDATA #REQUIRED>
-    <!ELEMENT stats (environments,unit,subprogram)>
-    <!ELEMENT environments>
-    <!ATTLIST value             CDATA #REQUIRED>
-    <!ELEMENT unit>
-    <!ATTLIST value             CDATA #REQUIRED>
-    <!ELEMENT subprogram>
-    <!ATTLIST value             CDATA #REQUIRED>
-    <!ELEMENT data>
-    <!ELEMENT all (coverage*, environment*)>
-    <!ATTLIST name                  CDATA #REQUIRED>
-    <!ELEMENT coverage>
-    <!ATTLIST coverage type     (#PCDATA) #REQUIRED>
-    <!ATTLIST coverage value    (#PCDATA) #REQUIRED>
-    <!ELEMENT environment (coverage*, unit*)>
-    <!ATTLIST name              CDATA #REQUIRED>
-    <!ELEMENT coverage>
-    <!ATTLIST coverage type     (#PCDATA) #REQUIRED>
-    <!ATTLIST coverage value    (#PCDATA) #REQUIRED>
-    <!ELEMENT unit (coverage*, subprogram*)>
-    <!ATTLIST name              CDATA #REQUIRED>
-    <!ELEMENT coverage>
-    <!ATTLIST coverage type     (#PCDATA) #REQUIRED>
-    <!ATTLIST coverage value    (#PCDATA) #REQUIRED>
-    <!ELEMENT subprogram (coverage*)>
-    <!ATTLIST name              CDATA #REQUIRED>
-    <!ELEMENT coverage>
-    <!ATTLIST coverage type     (#PCDATA) #REQUIRED>
-    <!ATTLIST coverage value    (#PCDATA) #REQUIRED>
+  <!ELEMENT environment (coverage*, unit*)>
+  <!ATTLIST environment name              CDATA #REQUIRED>
+  
+  <!ELEMENT unit (coverage*, subprogram*) >
+  <!ATTLIST unit name              CDATA #REQUIRED>
+  
+  <!ELEMENT subprogram (coverage*)>
+  <!ATTLIST subprogram name              CDATA #REQUIRED>
+  
+  <!ELEMENT coverage EMPTY>
+  <!ATTLIST coverage type    CDATA #REQUIRED>
+  <!ATTLIST coverage value    CDATA #REQUIRED>
