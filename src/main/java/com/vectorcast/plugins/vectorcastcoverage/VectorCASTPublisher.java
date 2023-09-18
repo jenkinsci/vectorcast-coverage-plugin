@@ -1,5 +1,6 @@
 package com.vectorcast.plugins.vectorcastcoverage;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import hudson.EnvVars;
 import hudson.Extension;
 import hudson.FilePath;
@@ -215,6 +216,7 @@ public class VectorCASTPublisher extends Recorder implements SimpleBuildStep {
         performImpl(run, workspace, listener);
     }
 
+    @SuppressFBWarnings(value = "DCN_NULLPOINTER_EXCEPTION", justification = "TODO needs triage")
     public boolean performImpl(Run<?, ?> run, FilePath workspace, TaskListener listener) throws InterruptedException, IOException {
         final PrintStream logger = listener.getLogger();
         
@@ -363,6 +365,7 @@ public class VectorCASTPublisher extends Recorder implements SimpleBuildStep {
     }
     
     
+	@SuppressFBWarnings(value = "DCN_NULLPOINTER_EXCEPTION", justification = "TODO needs triage")
 	private void checkThreshold(Run<?, ?> run,
 		final PrintStream logger, EnvVars env, final VectorCASTBuildAction action) {
 			

@@ -183,7 +183,7 @@ public class VectorCASTLoadDataHudsonTest extends HudsonTestCase {
      */
     static class CopyResourceToWorkspaceBuilder extends Builder {
 
-        private final InputStream content;
+        private transient final InputStream content;
         private final String fileName;
 
         /**
