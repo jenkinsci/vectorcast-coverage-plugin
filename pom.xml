@@ -72,6 +72,7 @@
   </dependencyManagement>
 
   <dependencies>
+
     <dependency>
       <groupId>io.github.x-stream</groupId>
       <artifactId>mxparser</artifactId>

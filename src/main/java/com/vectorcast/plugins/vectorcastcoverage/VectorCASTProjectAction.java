@@ -50,18 +50,22 @@ public final class VectorCASTProjectAction implements Action {
 
     /**
      * Gets the most recent {@link VectorCASTBuildAction} object.
-     * @return last build result
+     * @return last SUCCSSS or UNSTABLE build result
      */
     public VectorCASTBuildAction getPreviousNotFailedBuild() {
         Boolean skipFirst = true;
+        VectorCASTBuildAction r;
         for( Run<?, ?> b = project.getLastBuild(); b!=null; b=b.getPreviousBuild()) {
             if (skipFirst) {
                 skipFirst = false;
                 continue;
             }
-            if(b.getResult()== Result.FAILURE)
+            // Return only SUCCSSS or UNSTABLE builds
+            if(b.getResult() == Result.SUCCESS || b.getResult() == Result.UNSTABLE)
+                r = b.getAction(VectorCASTBuildAction.class);
+            else
                 continue;
-            VectorCASTBuildAction r = b.getAction(VectorCASTBuildAction.class);
+
             if(r!=null)
                 return r;
         }

@@ -34,13 +34,14 @@ import hudson.model.Run;
 import java.math.BigDecimal;
 import java.util.List;
 
-import org.joda.time.LocalDate;
+import java.time.LocalDate;
+import java.util.Calendar;
 
 /**
  * Defines common methods that are used for the whole project.
  */
 public final class Utils {
-
+    
   /**
    * Private constructor: class contains only static methods.
    */
@@ -98,7 +99,7 @@ public final class Utils {
     for (Job job : jobs) {
       Run lastRun = job.getLastBuild();
       if (lastRun != null) {
-        LocalDate date = new LocalDate(lastRun.getTimestamp());
+        LocalDate date = calendarToLocalData(lastRun.getTimestamp());
         if (lastDate == null) {
           lastDate = date;
         }
@@ -125,5 +126,28 @@ public final class Utils {
     BigDecimal bigDecimal = new BigDecimal(value);
     bigDecimal = bigDecimal.setScale(scale, roundingMode);
     return bigDecimal.floatValue();
+  }
+  
+  /**
+   * Converts from Calendar type (jenkins job default) to java.time.LocalDat.
+   *
+   * @param calendar
+   *          input from Jenkins job 
+   * @return LocalDate date
+   */
+  public static LocalDate calendarToLocalData(Calendar calendar) {
+
+        int year = calendar.get(Calendar.YEAR);
+        
+        // Add one to Calendar.MONTH because:
+        //    Calendar Jan is 0
+        //    LocalData Jan is 1
+        int month = calendar.get(Calendar.MONTH) + 1;
+        int dayOfMonth = calendar.get(Calendar.DAY_OF_MONTH);
+
+        LocalDate date = LocalDate.of(year, month, dayOfMonth);
+        
+        return date;
+
   }
 }
