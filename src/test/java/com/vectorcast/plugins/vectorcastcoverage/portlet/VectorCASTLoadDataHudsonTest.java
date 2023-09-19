@@ -15,8 +15,13 @@ import java.io.InputStream;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import org.joda.time.LocalDate;
-import org.jvnet.hudson.test.HudsonTestCase;
+import java.time.LocalDate;
+import org.jvnet.hudson.test.JenkinsRule;
+import hudson.util.DescribableList;
+import hudson.tasks.BuildWrapper;
+import hudson.model.Descriptor;
+import java.io.Serializable;
+import static org.junit.Assert.*;
 
 /**
  * Tests {@link com.vectorcast.plugins.vectorcastcoverage.portlet.VectorCASTLoadData} in a Hudson environment.
@@ -24,7 +29,7 @@ import org.jvnet.hudson.test.HudsonTestCase;
  * @author Robert Sandell &lt;robert.sandell@sonyericsson.com&gt;
  * @author Mauro Durante Junior (Mauro.Durantejunior@sonyericsson.com)
  */
-public class VectorCASTLoadDataHudsonTest extends HudsonTestCase {
+public class VectorCASTLoadDataHudsonTest extends JenkinsRule {
 
     /**
      * This method tests loadChartDataWithinRange() when it has positive number of days.
@@ -89,7 +94,8 @@ public class VectorCASTLoadDataHudsonTest extends HudsonTestCase {
         //Make it do something, in this case it writes a coverage report to the workspace.
         job1.getBuildersList().add(
                 new CopyResourceToWorkspaceBuilder(getClass().getResourceAsStream("/com/vectorcast/plugins/vectorcastcoverage/portlet.xml"),
-                        "reports/coverage/portlet.xml"));
+                        "reports/coverage/portlet.xml"));        
+        
         //Add a VectorCAST publisher
         VectorCASTPublisher vcPublisher = new VectorCASTPublisher();
         vcPublisher.includes = "reports/coverage/portlet.xml";
@@ -185,7 +191,7 @@ public class VectorCASTLoadDataHudsonTest extends HudsonTestCase {
 
         private final InputStream content;
         private final String fileName;
-
+        
         /**
          * Default constructor.
          *

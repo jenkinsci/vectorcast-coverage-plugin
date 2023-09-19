@@ -16,6 +16,7 @@ import java.io.InputStream;
  * @author Kohsuke Kawaguchi
  */
 public final class CoverageReport extends AggregatedReport<CoverageReport/*dummy*/,CoverageReport,EnvironmentReport> {
+    
     private final VectorCASTBuildAction action;
 
     private CoverageReport(VectorCASTBuildAction action) {
