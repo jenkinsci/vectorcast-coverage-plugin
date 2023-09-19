@@ -46,7 +46,6 @@ None
 - Cleaned up bugs found with spotbugs
 - Fixed coverage history to look for SUCCESS or UNSTABLE builds.
 - Added coverage difference to the summary page
-- Added documentation for VCC file format 
 
 ### Version 0.21 (31 Jan 2023)
 - Fix to support jobs configured with older coverage plugins
