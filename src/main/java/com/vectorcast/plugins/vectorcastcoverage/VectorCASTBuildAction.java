@@ -360,9 +360,11 @@ public final class VectorCASTBuildAction extends CoverageObject<VectorCASTBuildA
                 parser.require(XmlPullParser.START_TAG,"","coverage");
                 combined = false;
             } else if (parser.getName().equals("combined-coverage")) {
-                parser.require(XmlPullParser.START_TAG,"","combined-coverage");
-                combined = true;
-                topLevel[0] = true;
+                break;
+				// removed combined-coverage processing as its no longer needed
+                // parser.require(XmlPullParser.START_TAG,"","combined-coverage");
+                // combined = true;
+                // topLevel[0] = true;
             }
             String v = parser.getAttributeValue("", "value");
             String t = parser.getAttributeValue("", "type");

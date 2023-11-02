@@ -1,5 +1,6 @@
 package com.vectorcast.plugins.vectorcastcoverage;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import hudson.EnvVars;
 import hudson.Extension;
 import hudson.FilePath;
@@ -79,32 +80,45 @@ public class VectorCASTPublisher extends Recorder implements SimpleBuildStep {
     // should not be used
     public VectorCASTHealthReportThresholds healthyTarget;
     public VectorCASTHealthReportThresholds unhealthyTarget = null;
+    private static final Logger logger = Logger.getLogger(VectorCASTPublisher.class.getName());
 
     public VectorCASTPublisher() {
-        
+                
         this.includes = "xml_data/coverage_results*.xml";
         this.useThreshold = false;
         this.useCoverageHistory = false;
         this.maxHistory = 1000000;
     }
-
+    
     @DataBoundConstructor
     public VectorCASTPublisher(String includes, Boolean useThreshold, VectorCASTHealthReportThresholds healthyTarget, VectorCASTHealthReportThresholds unhealthyTarget, Boolean useCoverageHistory, Integer maxHistory){
-        
-        this.includes = includes;
-        this.useThreshold = useThreshold;
-        this.healthReports = healthyTarget;
+          
+        // convert from null to default 
+		if (includes == null) {
+			this.includes = "xml_data/coverage_results*.xml";
+		} else {
+			this.includes = includes;
+		}
+		if (useThreshold == null) {
+			this.useThreshold = false;
+		} else {
+			this.useThreshold = useThreshold;
+		}        
+		if (useCoverageHistory == null) {
+			this.useCoverageHistory = false;
+		} else {
+			this.useCoverageHistory = useCoverageHistory;
+		}        
+		if (maxHistory == null) {
+			this.maxHistory = 1000000;
+		} else {
+			this.maxHistory = maxHistory;
+		}        
+
+        // null check later
         this.unhealthyTarget = unhealthyTarget;
-        if (useCoverageHistory == null) {
-            this.useCoverageHistory = false;
-        } else {
-            this.useCoverageHistory = useCoverageHistory;
-        }
-        if (maxHistory == null) {
-            this.maxHistory = 1000000;
-        } else {
-            this.maxHistory = maxHistory;
-        }
+        this.healthReports = healthyTarget;
+        
     }
     
     @Nonnull
@@ -228,6 +242,7 @@ public class VectorCASTPublisher extends Recorder implements SimpleBuildStep {
         performImpl(run, workspace, listener);
     }
 
+    @SuppressFBWarnings(value = "DCN_NULLPOINTER_EXCEPTION", justification = "TODO needs triage")
     public boolean performImpl(Run<?, ?> run, FilePath workspace, TaskListener listener) throws InterruptedException, IOException {
         final PrintStream logger = listener.getLogger();
         
@@ -551,6 +566,7 @@ public class VectorCASTPublisher extends Recorder implements SimpleBuildStep {
     }
     
     
+	@SuppressFBWarnings(value = "DCN_NULLPOINTER_EXCEPTION", justification = "TODO needs triage")
 	private void checkThreshold(Run<?, ?> run,
 		final PrintStream logger, EnvVars env, final VectorCASTBuildAction action) {
 			

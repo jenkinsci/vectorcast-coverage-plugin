@@ -1,9 +1,0 @@
-<!-- VectorCAST/Jenkins Integration, Generated 10/25/2016	03:57 PM -->
-<report>
-  <version value="3"/>
-  <combined-coverage type="statement, %" value="75% (45 / 60)"/>
-  <combined-coverage type="branch, %" value="33% (18 / 54)"/>
-  <combined-coverage type="mcdc, %" value="50% (7 / 14)"/>
-  <combined-coverage type="complexity, %" value="0% (74 / 0)"/>
-</report>
-

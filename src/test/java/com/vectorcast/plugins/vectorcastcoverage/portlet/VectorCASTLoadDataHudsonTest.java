@@ -189,7 +189,7 @@ public class VectorCASTLoadDataHudsonTest extends JenkinsRule {
      */
     static class CopyResourceToWorkspaceBuilder extends Builder {
 
-        private final InputStream content;
+        private transient final InputStream content;
         private final String fileName;
         
         /**

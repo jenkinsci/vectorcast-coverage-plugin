@@ -129,8 +129,6 @@ public final class VectorCASTLoadData {
       logger.log(Level.INFO,"error reading configFile: ", e);
     }
     
-    logger.log(Level.INFO,"CoverageObject::getMaxHistory = " + Integer.toString(maxHistory));
-
     return maxHistory;
   }  
     
@@ -189,7 +187,6 @@ public final class VectorCASTLoadData {
         if (historyCount++ >= maxHistory) {
             break;
         }
-        logger.log(Level.INFO, "VectorCASTLoadData::loadChartDataWithinRange - (H | M) = " + Integer.toString(historyCount) + " | " + Integer.toString(maxHistory));
       }
     }
 

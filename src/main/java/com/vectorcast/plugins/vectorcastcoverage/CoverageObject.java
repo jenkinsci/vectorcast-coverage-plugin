@@ -254,8 +254,6 @@ public abstract class CoverageObject<SELF extends CoverageObject<SELF>> {
       } catch (IOException e ){
         logger.log(Level.INFO,"error reading configFile: ", e);
       }
-      
-      logger.log(Level.INFO,"CoverageObject::getMaxHistory = " + Integer.toString(maxHistory));
 
       return maxHistory;
     }
@@ -335,8 +333,8 @@ public abstract class CoverageObject<SELF extends CoverageObject<SELF>> {
                     if (historyCount++ >= maxHistory) {
                         break;
                     }
-                    logger.log(Level.INFO,"CoverageObject::GraphImpl::createDataSet - (H | M) = " + Integer.toString(historyCount) + " | " + Integer.toString(maxHistory));
-                    
+
+
                     NumberOnlyBuildLabel label = new NumberOnlyBuildLabel(a.getBuild());
                     if (a.Statement != null && a.Statement.isInitialized()) {
                         dsb.add(a.Statement.getPercentageFloat(), Messages.CoverageObject_Legend_Statement(), label);
@@ -456,7 +454,6 @@ public abstract class CoverageObject<SELF extends CoverageObject<SELF>> {
                 if (historyCount++ >= maxHistory) {
                     break;
                 }
-                logger.log(Level.INFO,"CoverageObject::createComplexityDataSet - (H | M) = " + Integer.toString(historyCount) + " | " + Integer.toString(maxHistory));
                 dsb.add(a.Complexity.getNumerator(), "Complexity", label);
             }
             return dsb;

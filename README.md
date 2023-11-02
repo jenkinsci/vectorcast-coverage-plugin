@@ -36,6 +36,10 @@ None
 
 ## Change Log
 
+### Version 0.23 (31 Oct 2023)
+- Removed support for combined-coverage XML files 
+- Upgraded for forward compatibility with jenkinsci/jenkins#8503
+- Updated constructor to handle null parameters better
 ### Version 0.22 (21 Aug 2023)
 - Bumped dashboard-view from 2.16 to 2.18.1 
   - Updated minimum Jenkins version to 2.361
@@ -46,6 +50,7 @@ None
 - Cleaned up bugs found with spotbugs
 - Fixed coverage history to look for SUCCESS or UNSTABLE builds.
 - Added coverage difference to the summary page
+- Added configuration element to limit the trend chart to a max history specified by the jobs
 
 ### Version 0.21 (31 Jan 2023)
 - Fix to support jobs configured with older coverage plugins
