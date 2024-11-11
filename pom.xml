@@ -8,7 +8,12 @@
         <relativePath/>
     </parent>
     <name>VectorCAST Coverage</name>
-    <description>Display VectorCAST coverage in Jenkins</description>
+    <description>Display VectorCAST coverage in Jenkins
+        <strong>Deprecated:</strong> This plugin is deprecated and will be removed in future releases.
+        Please use the 'Jenkins Coverage Plugin' instead. You will need to reconfigure the existing Jenkins Job.
+        Email support@vector.com for assistance.
+    
+    </description>
     <artifactId>vectorcast-coverage</artifactId>
     <version>${revision}${changelist}</version>
     <packaging>hpi</packaging>
