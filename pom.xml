@@ -57,8 +57,12 @@
   <repositories>
     <repository>
       <id>repo.jenkins-ci.org</id>
-      <url>https://repo.jenkins-ci.org/public/</url>
+      <url>https://repo.jenkins-ci.org/releases/</url>
     </repository>
+        <repository>
+            <id>incremental.jenkins-ci.org</id>
+            <url>https://repo.jenkins-ci.org/incrementals/</url>
+        </repository>
   </repositories>
 
   <dependencies>
@@ -82,6 +86,11 @@
 
   <build>
     <plugins>
+        <plugin>
+            <groupId>org.jenkins-ci.tools</groupId>
+            <artifactId>maven-hpi-plugin</artifactId>
+            <version>3.10</version>  <!-- This version is compatible with Jenkins 2.264 -->
+        </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-release-plugin</artifactId>
@@ -92,8 +101,18 @@
         <artifactId>maven-compiler-plugin</artifactId>
         <version>2.3.2</version>
         <configuration>
-          <source>1.7</source>
-          <target>1.7</target>
+            <compilerArgs>
+                <arg>-Djavax.net.debug=ssl</arg>
+                <arg>-Dcom.sun.net.ssl.checkRevocation=false</arg>
+                <arg>-Djava.security.egd=file:/dev/./urandom</arg>
+            </compilerArgs>
+        </configuration>
+      </plugin>
+        <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-surefire-plugin</artifactId>
+            <configuration>
+                <argLine>-Djavax.net.debug=ssl -Dcom.sun.net.ssl.checkRevocation=false -Djava.security.egd=file:/dev/./urandom</argLine>
         </configuration>
       </plugin>
       <plugin>
@@ -135,10 +154,19 @@
         </executions>
       </plugin>
     </plugins>
-  <pluginManagement>
-    <plugins>
-    </plugins>
-  </pluginManagement>
+    <pluginManagement>
+        <plugins>
+            <plugin>
+                <groupId>org.jenkins-ci.tools</groupId>
+                <artifactId>maven-hpi-plugin</artifactId>
+                <version>3.10</version> <!-- Force a compatible version -->
+                <configuration>
+                    <minimumJavaVersion>1.8</minimumJavaVersion> <!-- Set to your required Java version -->
+                </configuration>
+            </plugin>
+        </plugins>
+    </pluginManagement>
+
   </build>
 
   <pluginRepositories>

@@ -93,9 +93,9 @@ public final class CoverageReport extends AggregatedReport<CoverageReport/*dummy
         digester.addSetProperties("*/subprogram");
 
         // Top-level (combined) coverage values
-        digester.addObjectCreate( "report/combined-coverage", CoverageElement.class);
-        digester.addSetProperties("report/combined-coverage");
-        digester.addSetNext(      "report/combined-coverage", "addCombinedCoverage");
+        // digester.addObjectCreate( "report/combined-coverage", CoverageElement.class);
+        // digester.addSetProperties("report/combined-coverage");
+        // digester.addSetNext(      "report/combined-coverage", "addCombinedCoverage");
 
         digester.addObjectCreate( "*/coverage", CoverageElement.class);
         digester.addSetProperties("*/coverage");

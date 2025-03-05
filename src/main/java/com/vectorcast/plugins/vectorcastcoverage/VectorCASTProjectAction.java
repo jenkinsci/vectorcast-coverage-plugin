@@ -54,14 +54,17 @@ public final class VectorCASTProjectAction implements Action {
      */
     public VectorCASTBuildAction getPreviousNotFailedBuild() {
         Boolean skipFirst = true;
+        VectorCASTBuildAction r;
         for( Run<?, ?> b = project.getLastBuild(); b!=null; b=b.getPreviousBuild()) {
             if (skipFirst) {
                 skipFirst = false;
                 continue;
             }
-            if(b.getResult()== Result.FAILURE)
+            if(b.getResult() == Result.SUCCESS || b.getResult() == Result.UNSTABLE)
+                r = b.getAction(VectorCASTBuildAction.class);
+            else
                 continue;
-            VectorCASTBuildAction r = b.getAction(VectorCASTBuildAction.class);
+
             if(r!=null)
                 return r;
         }

@@ -4,13 +4,16 @@
            description="${%includes.description}">
     <f:textbox name="vectorcastcoverage.includes" value="${instance.includes}"/>
   </f:entry>
-  <f:entry title="${%useThreshold.title}"
-           description="${%useThreshold.description}">
-    <f:checkbox name="vectorcastcoverage.useThreshold" checked="${instance.useThreshold}"/>
-  </f:entry>
   <f:entry title="${%useCoverageHistory.title}"
            description="${%useCoverageHistory.description}">
     <f:checkbox name="vectorcastcoverage.useCoverageHistory" checked="${instance.useCoverageHistory}"/>
+  </f:entry>
+  <f:entry title="${%maxHistory.title}" description="${%maxHistory.description}">
+    <f:textbox name="vectorcastcoverage.maxHistory" value="${instance.maxHistory}"/>
+  </f:entry>
+  <f:entry title="${%useThreshold.title}"
+           description="${%useThreshold.description}">
+    <f:checkbox name="vectorcastcoverage.useThreshold" checked="${instance.useThreshold}"/>
   </f:entry>
   <f:entry title="${%Health reporting}"
              description="${%thresholds.description(rootURL)}">

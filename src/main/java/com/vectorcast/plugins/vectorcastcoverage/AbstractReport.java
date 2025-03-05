@@ -24,7 +24,8 @@ public abstract class AbstractReport<
     }
 
     public void addCombinedCoverage(CoverageElement cv) throws IOException {
-        cv.setTo(this);
+        // Removed as we no longer process combined-coverage reports
+        // cv.setTo(this);
     }
 
     public String getName() {

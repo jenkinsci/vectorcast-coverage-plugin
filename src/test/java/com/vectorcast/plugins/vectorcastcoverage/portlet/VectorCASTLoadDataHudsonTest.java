@@ -16,7 +16,12 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import org.joda.time.LocalDate;
-import org.jvnet.hudson.test.HudsonTestCase;
+import org.jvnet.hudson.test.JenkinsRule;
+import hudson.util.DescribableList;
+import hudson.tasks.BuildWrapper;
+import hudson.model.Descriptor;
+import java.io.Serializable;
+import static org.junit.Assert.*;
 
 /**
  * Tests {@link com.vectorcast.plugins.vectorcastcoverage.portlet.VectorCASTLoadData} in a Hudson environment.
@@ -24,7 +29,7 @@ import org.jvnet.hudson.test.HudsonTestCase;
  * @author Robert Sandell &lt;robert.sandell@sonyericsson.com&gt;
  * @author Mauro Durante Junior (Mauro.Durantejunior@sonyericsson.com)
  */
-public class VectorCASTLoadDataHudsonTest extends HudsonTestCase {
+public class VectorCASTLoadDataHudsonTest extends JenkinsRule {
 
     /**
      * This method tests loadChartDataWithinRange() when it has positive number of days.
@@ -183,7 +188,7 @@ public class VectorCASTLoadDataHudsonTest extends HudsonTestCase {
      */
     static class CopyResourceToWorkspaceBuilder extends Builder {
 
-        private final InputStream content;
+        private transient final InputStream content;
         private final String fileName;
 
         /**
