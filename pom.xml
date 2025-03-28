@@ -5,7 +5,7 @@
   <parent>
     <groupId>org.jenkins-ci.plugins</groupId>
     <artifactId>plugin</artifactId>
-    <version>4.54</version>
+    <version>4.88</version>
     <relativePath />
   </parent>
 
@@ -29,23 +29,15 @@
     <url>http://www.vectorcast.com/</url>
   </organization>
 
-  <developers>
-      <developer>
-          <id>TimSVector</id>
-          <name>Tim Schneider</name>
-          <email>Tim.Schneider@vector.com</email>
-          <organization>Vector Informatik, GmbH</organization>
-      </developer>
-  </developers>
-
   <properties>
     <hpi-plugin.version>3.38</hpi-plugin.version>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     <project.build.outputEncoding>UTF-8</project.build.outputEncoding>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <jenkins.version>2.361</jenkins.version>
-    <jenkins-test-harness.version>1934.v90a_c07cf5b_21</jenkins-test-harness.version>
-    <java.level>11</java.level>
+    <!-- https://www.jenkins.io/doc/developer/plugin-development/choosing-jenkins-baseline/ -->
+    <jenkins.baseline>2.462</jenkins.baseline>
+    <jenkins.version>${jenkins.baseline}.3</jenkins.version>
+    <jenkins-test-harness.version>2225.v04fa_3929c9b_5</jenkins-test-harness.version>
   </properties>
 
   <scm>
@@ -54,6 +46,17 @@
     <url>https://github.com/jenkinsci/vectorcast-coverage-plugin</url>
     <tag>HEAD</tag>
   </scm>
+  <dependencyManagement>
+    <dependencies>
+      <dependency>
+        <groupId>io.jenkins.tools.bom</groupId>
+        <artifactId>bom-${jenkins.baseline}.x</artifactId>
+        <version>4228.v0a_71308d905b_</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
 
   <repositories>
     <repository>
@@ -72,13 +75,11 @@
     <dependency>
       <groupId>org.jenkins-ci.plugins</groupId>
       <artifactId>dashboard-view</artifactId>
-      <version>2.18.1</version>
       <optional>true</optional>
     </dependency>
     <dependency>
       <groupId>org.jenkins-ci.main</groupId>
       <artifactId>maven-plugin</artifactId>
-      <version>3.20</version>
     </dependency>
 <dependency>
     <groupId>javax.annotation</groupId>
@@ -88,23 +89,19 @@
 <dependency>
     <groupId>org.jenkins-ci.plugins</groupId>
     <artifactId>credentials</artifactId>
-    <version>2.6.2</version>
 </dependency>
 
 <dependency>
     <groupId>org.jenkins-ci.plugins</groupId>
     <artifactId>junit</artifactId>
-    <version>1166.va_436e268e972</version>
 </dependency>
 <dependency>
     <groupId>org.jenkins-ci.plugins</groupId>
     <artifactId>structs</artifactId>
-    <version>324.va_f5d6774f3a_d</version>
 </dependency>
 <dependency>
     <groupId>io.jenkins.plugins</groupId>
     <artifactId>caffeine-api</artifactId>
-    <version>2.9.3-65.v6a_47d0f4d1fe</version>
 </dependency>
 <dependency>
     <groupId>org.apache.groovy</groupId>
@@ -119,12 +116,10 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-release-plugin</artifactId>
-        <version>3.0.1</version>
       </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
-        <version>2.3.2</version>
         <configuration>
           <source>1.7</source>
           <target>1.7</target>
@@ -153,7 +148,6 @@
       <plugin>
         <groupId>com.github.spotbugs</groupId>
         <artifactId>spotbugs-maven-plugin</artifactId>
-        <version>4.7.3.0</version>
       </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
@@ -168,10 +162,6 @@
         </executions>
       </plugin>
     </plugins>
-  <pluginManagement>
-    <plugins>
-    </plugins>
-  </pluginManagement>
   </build>
 
   <pluginRepositories>
