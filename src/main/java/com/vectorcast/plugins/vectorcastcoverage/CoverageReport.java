@@ -1,7 +1,6 @@
 package com.vectorcast.plugins.vectorcastcoverage;
 
 import hudson.model.Run;
-import hudson.util.IOException2;
 import org.apache.commons.digester3.Digester;
 import org.xml.sax.SAXException;
 
@@ -12,11 +11,11 @@ import java.io.InputStream;
 
 /**
  * Root object of the coverage report.
- * 
+ *
  * @author Kohsuke Kawaguchi
  */
 public final class CoverageReport extends AggregatedReport<CoverageReport/*dummy*/,CoverageReport,EnvironmentReport> {
-    
+
     private final VectorCASTBuildAction action;
 
     private CoverageReport(VectorCASTBuildAction action) {
@@ -32,9 +31,9 @@ public final class CoverageReport extends AggregatedReport<CoverageReport/*dummy
             createDigester(!Boolean.getBoolean(this.getClass().getName() + ".UNSAFE")).parse(is);
             idx += 1;
           } catch (SAXException e) {
-              throw new IOException2("Failed to parse XML:" + idx,e);
+              throw new IOException("Failed to parse XML:" + idx,e);
           }
-          
+
         }
         setParent(null);
     }
@@ -44,7 +43,7 @@ public final class CoverageReport extends AggregatedReport<CoverageReport/*dummy
         try {
             createDigester(!Boolean.getBoolean(this.getClass().getName() + ".UNSAFE")).parse(xmlReport);
         } catch (SAXException e) {
-            throw new IOException2("Failed to parse "+xmlReport,e);
+            throw new IOException("Failed to parse "+xmlReport,e);
         }
         setParent(null);
     }

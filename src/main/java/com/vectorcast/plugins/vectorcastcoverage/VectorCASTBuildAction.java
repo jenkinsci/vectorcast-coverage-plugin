@@ -5,7 +5,6 @@ import hudson.model.AbstractBuild;
 import hudson.model.HealthReport;
 import hudson.model.HealthReportingAction;
 import hudson.model.Result;
-import hudson.util.IOException2;
 import hudson.util.NullStream;
 import hudson.util.StreamTaskListener;
 
@@ -38,13 +37,13 @@ import hudson.model.Run;
  * @author Kohsuke Kawaguchi
  */
 public final class VectorCASTBuildAction extends CoverageObject<VectorCASTBuildAction> implements HealthReportingAction, StaplerProxy, Serializable, RunAction2, LastBuildAction {
-	
+
     private static final long serialVersionUID = 4691586L;
     public transient Run<?,?> owner;
 
     private transient WeakReference<CoverageReport> report;
     private transient VectorCASTProjectAction vectorcastProjectAction;
-    
+
     /**
      * Non-null if the coverage has pass/fail rules.
      */
@@ -169,17 +168,17 @@ public final class VectorCASTBuildAction extends CoverageObject<VectorCASTBuildA
     public Run<?,?> getBuild() {
         return owner;
     }
-    
+
     public int getBuildNumber() {
         return owner.getNumber();
     }
-    
+
 	protected static FilePath[] getVectorCASTCoverageReports(File file) throws IOException, InterruptedException {
 		FilePath path = new FilePath(file);
 		if (path.isDirectory()) {
 			return path.list("*xml");
 		} else {
-			// Read old builds (before 1.11) 
+			// Read old builds (before 1.11)
 			FilePath report = new FilePath(new File(path.getName() + ".xml"));
 			return report.exists() ? new FilePath[]{report} : new FilePath[0];
 		}
@@ -197,21 +196,21 @@ public final class VectorCASTBuildAction extends CoverageObject<VectorCASTBuildA
         }
 
         final File reportFolder = VectorCASTPublisher.getVectorCASTReport(owner);
-        
+
         try {
-            
+
             FilePath[] reports = getVectorCASTCoverageReports(reportFolder);
-            
+
             try {
-                
+
                 // Get the list of report files stored for this build
-                
+
                 InputStream[] streams = new InputStream[reports.length];
                 for (int i=0; i<reports.length; i++) {
                     //logger.log(Level.WARNING, "Processing file: " + reports[i].getRemote());
                     streams[i] = reports[i].read();
                 }
-                
+
                 // Generate the report
                 CoverageReport r = new CoverageReport(this, streams);
 
@@ -228,7 +227,7 @@ public final class VectorCASTBuildAction extends CoverageObject<VectorCASTBuildA
                 return null;
             } catch (IOException e) {
                 //logger.log(Level.WARNING, "Failed to load " + reportFolder, e);
-                
+
                 String message = e.getMessage();
                 String [] msgElements = message.split(":");
                 Integer idx = Integer.valueOf(msgElements[1]);
@@ -283,7 +282,7 @@ public final class VectorCASTBuildAction extends CoverageObject<VectorCASTBuildA
                 in = f.read();
                 ratios = loadRatios(in, ratios, flag);
             } catch (XmlPullParserException e) {
-                throw new IOException2("Failed to parse " + f, e);
+                throw new IOException("Failed to parse " + f, e);
             } catch (InterruptedException e) {
                 Logger.getLogger(VectorCASTBuildAction.class.getName()).log(Level.SEVERE, null, e);
             } finally {
@@ -295,7 +294,7 @@ public final class VectorCASTBuildAction extends CoverageObject<VectorCASTBuildA
 
         return new VectorCASTBuildAction(owner,rule,ratios[0],ratios[1],ratios[2],ratios[3],ratios[4],ratios[5],ratios[6],thresholds);
     }
-    
+
     public static VectorCASTBuildAction load(Run<?,?> owner, Rule rule, VectorCASTHealthReportThresholds thresholds, InputStream... streams) throws IOException {
         Ratio ratios[] = null;
         boolean[] flag = {false};
@@ -303,7 +302,7 @@ public final class VectorCASTBuildAction extends CoverageObject<VectorCASTBuildA
             try {
                 ratios = loadRatios(in, ratios, flag);
             } catch (XmlPullParserException e) {
-                throw new IOException2("Failed to parse " + in, e);
+                throw new IOException("Failed to parse " + in, e);
             } finally {
                 if (in != null) {
                     in.close();
@@ -347,7 +346,7 @@ public final class VectorCASTBuildAction extends CoverageObject<VectorCASTBuildA
             throw new XmlPullParserException("Unsupported version: '" + versionRead + "', expecting 3");
         }
 
-        if (r == null || r.length < 7) 
+        if (r == null || r.length < 7)
             r = new Ratio[7];
 
         // head for the first <coverage> tag.
@@ -408,7 +407,7 @@ public final class VectorCASTBuildAction extends CoverageObject<VectorCASTBuildA
 
 	private void setOwner(Run<?, ?> owner) {
         vectorcastProjectAction = new VectorCASTProjectAction (owner.getParent());
-        
+
 		this.owner = owner;
 	}
 
@@ -421,15 +420,15 @@ public final class VectorCASTBuildAction extends CoverageObject<VectorCASTBuildA
 	public void onAttached(Run<?, ?> run) {
 		setOwner(run);
 	}
-    
+
 	@Override
 	public Collection<? extends Action> getProjectActions() {
         if (vectorcastProjectAction == null)
         {
-            vectorcastProjectAction = new VectorCASTProjectAction (owner.getParent());   
+            vectorcastProjectAction = new VectorCASTProjectAction (owner.getParent());
         }
         return Collections.singletonList(vectorcastProjectAction);
 	}
-    
+
     private static final Logger logger = Logger.getLogger(VectorCASTBuildAction.class.getName());
 }
