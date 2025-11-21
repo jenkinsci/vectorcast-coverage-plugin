@@ -5,7 +5,6 @@ import hudson.model.AbstractBuild;
 import hudson.model.HealthReport;
 import hudson.model.HealthReportingAction;
 import hudson.model.Result;
-import hudson.util.IOException2;
 import hudson.util.NullStream;
 import hudson.util.StreamTaskListener;
 
@@ -283,7 +282,7 @@ public final class VectorCASTBuildAction extends CoverageObject<VectorCASTBuildA
                 in = f.read();
                 ratios = loadRatios(in, ratios, flag);
             } catch (XmlPullParserException e) {
-                throw new IOException2("Failed to parse " + f, e);
+                throw new IOException("Failed to parse " + f, e);
             } catch (InterruptedException e) {
                 Logger.getLogger(VectorCASTBuildAction.class.getName()).log(Level.SEVERE, null, e);
             } finally {
@@ -303,7 +302,7 @@ public final class VectorCASTBuildAction extends CoverageObject<VectorCASTBuildA
             try {
                 ratios = loadRatios(in, ratios, flag);
             } catch (XmlPullParserException e) {
-                throw new IOException2("Failed to parse " + in, e);
+                throw new IOException("Failed to parse " + in, e);
             } finally {
                 if (in != null) {
                     in.close();
