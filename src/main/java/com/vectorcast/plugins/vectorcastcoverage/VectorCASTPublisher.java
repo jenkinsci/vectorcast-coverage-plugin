@@ -37,7 +37,8 @@ import java.util.Map;
 
 import jenkins.tasks.SimpleBuildStep;
 import hudson.model.Job;
-//import java.util.logging.Logger;
+import java.util.logging.Logger;
+import java.util.logging.Level;
 import org.kohsuke.stapler.DataBoundSetter;
 
 /**
@@ -71,7 +72,7 @@ public class VectorCASTPublisher extends Recorder implements SimpleBuildStep {
     // should not be used
     public VectorCASTHealthReportThresholds healthyTarget;
     public VectorCASTHealthReportThresholds unhealthyTarget = null;
-    // private static final Logger logger = Logger.getLogger(VectorCASTPublisher.class.getName());
+    private static final Logger logger = Logger.getLogger(VectorCASTPublisher.class.getName());
 
     public VectorCASTPublisher() {
                 

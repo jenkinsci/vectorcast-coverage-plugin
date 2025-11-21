@@ -38,13 +38,13 @@ public class UtilsHudsonTest extends  JenkinsRule {
   }
 
   /**
-   * Tests {@link com.vectorcast.plugins.vectorcastcoverage.portlet.utils.Utils#roundFLoat(int scale, int roundingMode, float value) }.
+   * Tests {@link com.vectorcast.plugins.vectorcastcoverage.portlet.utils.Utils#roundFLoat(int scale, int roundingMode, Float value) }.
    */
   public void testRoundFloat() {
     int scale = 1;
     int roundingMode = BigDecimal.ROUND_HALF_EVEN;
-    final float value = 9.987f;
-    final float roundedAs = 10f;
+    final Float value = 9.987f;
+    final Float roundedAs = 10f;
 
     assertEquals(roundedAs, Utils.roundFLoat(scale, roundingMode, value));
   }

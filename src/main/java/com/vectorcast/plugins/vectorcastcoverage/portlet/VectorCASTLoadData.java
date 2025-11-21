@@ -46,6 +46,7 @@ import java.time.LocalDate;
 import hudson.XmlFile;
 import java.util.logging.Logger;
 import java.util.logging.Level;
+import java.util.Objects;
 
 /**
  * Load data of VectorCAST coverage results used by chart or grid.
@@ -267,13 +268,13 @@ public final class VectorCASTLoadData {
   private static VectorCASTCoverageResultSummary getResult(Run run) {
     VectorCASTBuildAction vectorCASTAction = run.getAction(VectorCASTBuildAction.class);
 
-    float BasisPathCoverage = -1.0f;
-    float StatementCoverage = -1.0f;
-    float MCDCCoverage = -1.0f;
-    float BranchCoverage = -1.0f;
-    float FunctionCoverage = -1.0f;
-    float FunctionCallCoverage = -1.0f;
-    float Complexity = -1.0f;
+    Float BasisPathCoverage = -1.0f;
+    Float StatementCoverage = -1.0f;
+    Float MCDCCoverage = -1.0f;
+    Float BranchCoverage = -1.0f;
+    Float FunctionCoverage = -1.0f;
+    Float FunctionCallCoverage = -1.0f;
+    Float Complexity = -1.0f;
 
     if (vectorCASTAction != null) {
       if (null != vectorCASTAction.getBasisPathCoverage()) {
@@ -313,13 +314,13 @@ public final class VectorCASTLoadData {
 
     for (Job job : jobs) {
 
-      float BasisPathCoverage    = -1.0f;
-      float StatementCoverage    = -1.0f;
-      float MCDCCoverage         = -1.0f;
-      float BranchCoverage       = -1.0f;
-      float FunctionCoverage     = -1.0f;
-      float FunctionCallCoverage = -1.0f;
-      float Complexity           = -1.0f;
+      Float BasisPathCoverage    = -1.0f;
+      Float StatementCoverage    = -1.0f;
+      Float MCDCCoverage         = -1.0f;
+      Float BranchCoverage       = -1.0f;
+      Float FunctionCoverage     = -1.0f;
+      Float FunctionCallCoverage = -1.0f;
+      Float Complexity           = -1.0f;
 
       Run run = job.getLastSuccessfulBuild();
 
