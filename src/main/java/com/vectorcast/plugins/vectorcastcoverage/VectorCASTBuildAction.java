@@ -331,7 +331,8 @@ public final class VectorCASTBuildAction extends CoverageObject<VectorCASTBuildA
 
         parser.setInput(in,null);
         String versionRead = "undefined";
-        while(true) {
+        Boolean continueParsing = true;
+        while(continueParsing) {
             if(parser.nextTag()!=XmlPullParser.START_TAG)
                 continue;
             if (parser.getName().equals("version")) {
@@ -339,7 +340,8 @@ public final class VectorCASTBuildAction extends CoverageObject<VectorCASTBuildA
             }
             if(!parser.getName().equals("coverage") && !parser.getName().equals("combined-coverage"))
                 continue;
-            break;
+            
+            continueParsing = false;
         }
 
         if (!versionRead.equals("3")) {

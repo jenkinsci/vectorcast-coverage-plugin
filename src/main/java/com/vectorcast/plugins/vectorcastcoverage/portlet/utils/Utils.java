@@ -123,7 +123,7 @@ public final class Utils {
    * @return the rounded value
    */
   public static float roundFLoat(int scale, int roundingMode, float value) {
-    BigDecimal bigDecimal = new BigDecimal(value);
+    BigDecimal bigDecimal = new BigDecimal(value.toString());
     bigDecimal = bigDecimal.setScale(scale, roundingMode);
     return bigDecimal.floatValue();
   }

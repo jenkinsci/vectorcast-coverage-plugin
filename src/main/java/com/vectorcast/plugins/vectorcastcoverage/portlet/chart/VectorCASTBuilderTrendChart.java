@@ -47,7 +47,6 @@ import org.jfree.chart.axis.CategoryLabelPositions;
 import org.jfree.chart.axis.NumberAxis;
 import org.jfree.chart.plot.CategoryPlot;
 import org.jfree.chart.plot.PlotOrientation;
-import org.jfree.chart.renderer.category.CategoryItemRenderer;
 import org.jfree.data.category.CategoryDataset;
 import java.time.LocalDate;
 
@@ -273,22 +272,22 @@ public class VectorCASTBuilderTrendChart extends DashboardPortlet {
           }
 
           if (hasStatementCoverage) {
-              dataSetBuilder.add((StatementCoverage / count), "Statement", entry.getKey());
+              dataSetBuilder.add(StatementCoverage / count, "Statement", entry.getKey());
           }
           if (hasBranchCoverage) {
-              dataSetBuilder.add((BranchCoverage / count), "Branch", entry.getKey());
+              dataSetBuilder.add(BranchCoverage / count, "Branch", entry.getKey());
           }
           if (hasBasisPathCoverage) {
-              dataSetBuilder.add((BasisPathCoverage / count), "Basis Path", entry.getKey());
+              dataSetBuilder.add(BasisPathCoverage / count, "Basis Path", entry.getKey());
           }
           if (hasMCDCCoverage) {
-              dataSetBuilder.add((MCDCCoverage / count), "MC/DC", entry.getKey());
+              dataSetBuilder.add(MCDCCoverage / count, "MC/DC", entry.getKey());
           }
           if (hasFunctionCoverage) {
-              dataSetBuilder.add((FunctionCoverage / count), "Function", entry.getKey());
+              dataSetBuilder.add(FunctionCoverage / count, "Function", entry.getKey());
           }
           if (hasFunctionCallCoverage) {
-              dataSetBuilder.add((FunctionCallCoverage / count), "Function Call", entry.getKey());
+              dataSetBuilder.add(FunctionCallCoverage / count, "Function Call", entry.getKey());
           }
       }
 

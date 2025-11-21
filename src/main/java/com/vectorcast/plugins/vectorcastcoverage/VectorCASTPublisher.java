@@ -33,21 +33,12 @@ import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.List;
 import java.util.Map;
 
 import jenkins.tasks.SimpleBuildStep;
 import hudson.model.Job;
-import java.util.logging.Logger;
-import java.util.logging.Level;
+//import java.util.logging.Logger;
 import org.kohsuke.stapler.DataBoundSetter;
-
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.OutputStreamWriter;
-import java.io.FileWriter;
-import java.nio.charset.StandardCharsets;
 
 /**
  * {@link Publisher} that captures VectorCAST coverage reports.
@@ -80,7 +71,7 @@ public class VectorCASTPublisher extends Recorder implements SimpleBuildStep {
     // should not be used
     public VectorCASTHealthReportThresholds healthyTarget;
     public VectorCASTHealthReportThresholds unhealthyTarget = null;
-    private static final Logger logger = Logger.getLogger(VectorCASTPublisher.class.getName());
+    // private static final Logger logger = Logger.getLogger(VectorCASTPublisher.class.getName());
 
     public VectorCASTPublisher() {
                 
@@ -201,6 +192,7 @@ public class VectorCASTPublisher extends Recorder implements SimpleBuildStep {
                 return ret;
             }
         } catch (Exception e) {
+            logger.log(Level.WARNING, "Failed to find includes: " + includes, e);
         }
 
         // If it fails, do a legacy search
@@ -433,7 +425,7 @@ public class VectorCASTPublisher extends Recorder implements SimpleBuildStep {
             } else {
                 logger.println("[VectorCASTCoverage] [INFO]: Not checking code coverage history.");
             }
-            String covDiffHtml = generateCoverageDiffs(logger, prevStCov, currStCov, currBrCov, prevBrCov, currMCDCCov, prevMCDCCov, currFuncCov, prevFuncCov, currFuncCallCov, prevFuncCallCov, currBuildNum, histBuildNum);
+            String covDiffHtml = generateCoverageDiffs(prevStCov, currStCov, currBrCov, prevBrCov, currMCDCCov, prevMCDCCov, currFuncCov, prevFuncCov, currFuncCallCov, prevFuncCallCov, currBuildNum, histBuildNum);
 
             FilePath CovDiffFilePath = new FilePath(workspace,"coverage_diffs.html_tmp");
             CovDiffFilePath.write(covDiffHtml, "utf-8");
@@ -442,12 +434,12 @@ public class VectorCASTPublisher extends Recorder implements SimpleBuildStep {
             logger.println("[VectorCASTCoverage] [INFO]: Could not find previous non-failing build to checking code coverage history.");
         }
         
-        checkThreshold(run, logger, env, action);
+        checkThreshold(run, logger, action);
 
         return true;
     }
 
-    private String generateCoverageDiffs(final PrintStream logger,
+    private String generateCoverageDiffs(
         float prevStCov, float currStCov, 
         float currBrCov, float prevBrCov, 
         float currMCDCCov, float prevMCDCCov, 
@@ -568,10 +560,8 @@ public class VectorCASTPublisher extends Recorder implements SimpleBuildStep {
     
 	@SuppressFBWarnings(value = "DCN_NULLPOINTER_EXCEPTION", justification = "TODO needs triage")
 	private void checkThreshold(Run<?, ?> run,
-		final PrintStream logger, EnvVars env, final VectorCASTBuildAction action) {
+		final PrintStream logger, final VectorCASTBuildAction action) {
 			
-		Ratio ratio = null;
-
 		if (useThreshold && unhealthyTarget == null) {
 		
             if (isBranchCoverageOk(action) 

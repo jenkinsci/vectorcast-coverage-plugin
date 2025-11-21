@@ -69,7 +69,7 @@ public final class VectorCASTLoadData {
     } catch (ArrayIndexOutOfBoundsException e) {
       maxHistory = 20;
       logger.log(Level.INFO,"error finding <maxHistory>: ", e);        
-    } catch (java.lang.NumberFormatException e) {
+    } catch (NumberFormatException e) {
       maxHistory = 20;
       logger.log(Level.INFO,"error Converting to number:", e);
     }
@@ -232,13 +232,19 @@ public final class VectorCASTLoadData {
       // Check if exists VectorCASTCoverage data for same date and job
       List<VectorCASTCoverageResultSummary> listResults = vectorCASTCoverageResultSummary.getVectorCASTCoverageResults();
       boolean found = false;
+      String jobName  = (job != null) ? job.getName() : null;
 
       for (VectorCASTCoverageResultSummary item : listResults) {
-        if ((null != item.getJob()) && (null != item.getJob().getName()) && (null != job)) {
-          if (item.getJob().getName().equals(job.getName())) {
-            found = true;
-            break;
-          }
+        if (item == null){
+          continue;
+        }
+
+        Job itemJob = item.getJob();
+        String itemName = (itemJob != null) ? itemJob.getName() : null;
+
+        if (Objects.equals(itemName, jobName)) {
+          found = true;
+          break;
         }
       }
 
@@ -307,13 +313,13 @@ public final class VectorCASTLoadData {
 
     for (Job job : jobs) {
 
-      float BasisPathCoverage = -1.0f;
-      float StatementCoverage = -1.0f;
-      float MCDCCoverage = -1.0f;
-      float BranchCoverage = -1.0f;
-      float FunctionCoverage = -1.0f;
+      float BasisPathCoverage    = -1.0f;
+      float StatementCoverage    = -1.0f;
+      float MCDCCoverage         = -1.0f;
+      float BranchCoverage       = -1.0f;
+      float FunctionCoverage     = -1.0f;
       float FunctionCallCoverage = -1.0f;
-      float Complexity = -1.0f;
+      float Complexity           = -1.0f;
 
       Run run = job.getLastSuccessfulBuild();
 
@@ -326,46 +332,46 @@ public final class VectorCASTLoadData {
         } else {
           if (null != vectorCASTAction.getBasisPathCoverage()) {
             BasisPathCoverage = vectorCASTAction.getBasisPathCoverage().getPercentageFloat();
-            BigDecimal bigBasisPathCoverage = new BigDecimal(BasisPathCoverage);
+            BigDecimal bigBasisPathCoverage = new BigDecimal(BasisPathCoverage.toString());
             bigBasisPathCoverage = bigBasisPathCoverage.setScale(1, BigDecimal.ROUND_HALF_EVEN);
             BasisPathCoverage = bigBasisPathCoverage.floatValue();
           }
 
           if (null != vectorCASTAction.getStatementCoverage()) {
             StatementCoverage = vectorCASTAction.getStatementCoverage().getPercentageFloat();
-            BigDecimal bigStatementCoverage = new BigDecimal(StatementCoverage);
+            BigDecimal bigStatementCoverage = new BigDecimal(StatementCoverage.toString());
             bigStatementCoverage = bigStatementCoverage.setScale(1, BigDecimal.ROUND_HALF_EVEN);
             StatementCoverage = bigStatementCoverage.floatValue();
           }
           if (null != vectorCASTAction.getMCDCCoverage()) {
             MCDCCoverage = vectorCASTAction.getMCDCCoverage().getPercentageFloat();
-            BigDecimal bigMCDCCoverage = new BigDecimal(MCDCCoverage);
+            BigDecimal bigMCDCCoverage = new BigDecimal(MCDCCoverage.toString());
             bigMCDCCoverage = bigMCDCCoverage.setScale(1, BigDecimal.ROUND_HALF_EVEN);
             MCDCCoverage = bigMCDCCoverage.floatValue();
           }
 
           if (null != vectorCASTAction.getBranchCoverage()) {
             BranchCoverage = vectorCASTAction.getBranchCoverage().getPercentageFloat();
-            BigDecimal bigBranchCoverage = new BigDecimal(BranchCoverage);
+            BigDecimal bigBranchCoverage = new BigDecimal(BranchCoverage.toString());
             bigBranchCoverage = bigBranchCoverage.setScale(1, BigDecimal.ROUND_HALF_EVEN);
             BranchCoverage = bigBranchCoverage.floatValue();
           }
           
           if (null != vectorCASTAction.getFunctionCoverage()) {
             FunctionCoverage = vectorCASTAction.getFunctionCoverage().getPercentageFloat();
-            BigDecimal bigFunctionCoverage = new BigDecimal(FunctionCoverage);
+            BigDecimal bigFunctionCoverage = new BigDecimal(FunctionCoverage.toString());
             bigFunctionCoverage = bigFunctionCoverage.setScale(1, BigDecimal.ROUND_HALF_EVEN);
             FunctionCoverage = bigFunctionCoverage.floatValue();
           }
           if (null != vectorCASTAction.getFunctionCallCoverage()) {
             FunctionCallCoverage = vectorCASTAction.getFunctionCallCoverage().getPercentageFloat();
-            BigDecimal bigFunctionCallCoverage = new BigDecimal(FunctionCallCoverage);
+            BigDecimal bigFunctionCallCoverage = new BigDecimal(FunctionCallCoverage.toString());
             bigFunctionCallCoverage = bigFunctionCallCoverage.setScale(1, BigDecimal.ROUND_HALF_EVEN);
             FunctionCallCoverage = bigFunctionCallCoverage.floatValue();
           }
           if (null != vectorCASTAction.getComplexity()) {
             Complexity = vectorCASTAction.getComplexity().getNumerator();
-            BigDecimal bigComplexity = new BigDecimal(Complexity);
+            BigDecimal bigComplexity = new BigDecimal(Complexity.toString());
             bigComplexity = bigComplexity.setScale(1, BigDecimal.ROUND_HALF_EVEN);
             Complexity = bigComplexity.floatValue();
           }
