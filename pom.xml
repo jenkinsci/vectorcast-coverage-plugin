@@ -4,12 +4,12 @@
     <parent>
         <groupId>org.jenkins-ci.plugins</groupId>
         <artifactId>plugin</artifactId>
-        <version>4.73</version>
+        <version>5.9</version>
         <relativePath/>
     </parent>
     <name>VectorCAST Coverage</name>
     <description>Display VectorCAST coverage in Jenkins
-        <strong>Deprecated:</strong> This plugin is deprecated and will be removed in future releases.
+        Deprecated: This plugin is deprecated and will be removed in future releases.
         Please use the 'Jenkins Coverage Plugin' instead. You will need to reconfigure the existing Jenkins Job.
         Email support@vector.com for assistance.
     
@@ -38,9 +38,9 @@
         </developer>
     </developers>
     <properties>
-        <revision>0.22</revision>
+        <revision>0.23</revision>
         <changelist>-SNAPSHOT</changelist>
-        <jenkins.version>2.414.3</jenkins.version>
+        <jenkins.version>2.492.3</jenkins.version>
         <gitHubRepo>jenkinsci/${project.artifactId}-plugin</gitHubRepo>
     </properties>
     <scm>
@@ -59,8 +59,8 @@
         <dependencies>
             <dependency>
                 <groupId>io.jenkins.tools.bom</groupId>
-                <artifactId>bom-2.414.x</artifactId>
-                <version>2531.vc95ca_e7471c1</version>
+                <artifactId>bom-2.492.x</artifactId>
+                <version>5473.vb_9533d9e5d88</version>
                 <scope>import</scope>
                 <type>pom</type>
             </dependency>
@@ -71,11 +71,6 @@
             <groupId>io.github.x-stream</groupId>
             <artifactId>mxparser</artifactId>
             <version>1.2.2</version>
-        </dependency>
-        <dependency>
-            <groupId>joda-time</groupId>
-            <artifactId>joda-time</artifactId>
-            <version>2.12.5</version>
         </dependency>
         
         <dependency>
