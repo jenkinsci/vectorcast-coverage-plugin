@@ -1,4 +1,3 @@
-@@ -0,0 +1,12 @@
 /*
 See the documentation for more options:
 https://github.com/jenkins-infra/pipeline-library/
