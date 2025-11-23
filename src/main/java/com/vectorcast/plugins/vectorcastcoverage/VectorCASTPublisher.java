@@ -151,8 +151,8 @@ public class VectorCASTPublisher extends Recorder implements SimpleBuildStep {
         return healthReports;
     }
     
-    @DataBoundSetter public final void setIncludes(String includes) {
-        this.includes = includes;
+    @DataBoundSetter public final void setIncludes(String inputIncludes) {
+        this.includes = inputIncludes;
     }
     
     @DataBoundSetter public final void setUseThreshold(Boolean useThreshold) {

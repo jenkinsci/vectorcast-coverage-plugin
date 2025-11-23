@@ -53,7 +53,7 @@ public class VectorCASTLoadDataHudsonTest extends JenkinsRule {
                         "reports/coverage/portlet.xml"));
         //Add a VectorCAST publisher
         VectorCASTPublisher vcPublisher = new VectorCASTPublisher();
-        vcPublisher.includes = "reports/coverage/portlet.xml";
+        vcPublisher.setIncludes("reports/coverage/portlet.xml");
         job1.getPublishersList().add(vcPublisher);
         //Build it
         job1.scheduleBuild2(0).get();
@@ -98,7 +98,7 @@ public class VectorCASTLoadDataHudsonTest extends JenkinsRule {
         
         //Add a VectorCAST publisher
         VectorCASTPublisher vcPublisher = new VectorCASTPublisher();
-        vcPublisher.includes = "reports/coverage/portlet.xml";
+        vcPublisher.setIncludes("reports/coverage/portlet.xml");
         job1.getPublishersList().add(vcPublisher);
         //Build it
         job1.scheduleBuild2(0).get();
