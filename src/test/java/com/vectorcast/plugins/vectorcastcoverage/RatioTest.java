@@ -1,5 +1,7 @@
 package com.vectorcast.plugins.vectorcastcoverage;
 
+import junit.framework.TestCase;
+
 /**
  * JUnit test for {@link Ratio}
  */
@@ -21,7 +23,7 @@ public class RatioTest extends AbstractVectorCASTTestBase {
         assertRatio(Ratio.parseValue("X% (1,/2)"), 1.0f, 2.0f);
         try {
             Ratio.parseValue("X% (1.a/2)");
-            fail("Ratio.parseValue() should have raised NumberFormatException.");
+            TestCase.fail("Ratio.parseValue() should have raised NumberFormatException.");
         } catch (NumberFormatException e) {
             // OK, we are expecting this.
         }

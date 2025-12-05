@@ -137,12 +137,12 @@ public class VectorCASTPublisher extends Recorder implements SimpleBuildStep {
         return this.maxHistory;
     }
     @Nonnull
-    public final VectorCASTHealthReportThresholds getHealthReports() {
+    public final VectorCASTHealthReportThresholds getHealthyTarget() {
         return healthReports;
     }
     
     @Nonnull
-    public final VectorCASTHealthReportThresholds getUnhealthReports() {
+    public final VectorCASTHealthReportThresholds getUnhealthyTarget() {
         return unhealthyTarget;
     }
     
