@@ -70,7 +70,7 @@ public class VectorCASTPublisher extends Recorder implements SimpleBuildStep {
     private VectorCASTHealthReportThresholds healthReports = new VectorCASTHealthReportThresholds(0, 100, 0, 70, 0, 80, 0, 80, 0, 80, 0, 80 );
 
     // should not be used
-    private VectorCASTHealthReportThresholds healthyTarget;
+    private VectorCASTHealthReportThresholds healthyTarget = null;
     private VectorCASTHealthReportThresholds unhealthyTarget = null;
     private static final Logger logger = Logger.getLogger(VectorCASTPublisher.class.getName());
 
@@ -109,8 +109,7 @@ public class VectorCASTPublisher extends Recorder implements SimpleBuildStep {
 
         // null check later
         this.unhealthyTarget = unhealthyTarget;
-        this.healthReports = healthyTarget;
-        
+        this.healthyTarget = healthyTarget;
     }
     
     @Nonnull
@@ -122,6 +121,8 @@ public class VectorCASTPublisher extends Recorder implements SimpleBuildStep {
     public final Boolean getUseThreshold() {
         return useThreshold;
     }
+
+
     @Nonnull
     public final Boolean getUseCoverageHistory() {
         if (this.useCoverageHistory == null) {
@@ -138,18 +139,14 @@ public class VectorCASTPublisher extends Recorder implements SimpleBuildStep {
     }
     @Nonnull
     public final VectorCASTHealthReportThresholds getHealthyTarget() {
-        return healthReports;
+        return healthyTarget;
     }
     
     @Nonnull
     public final VectorCASTHealthReportThresholds getUnhealthyTarget() {
         return unhealthyTarget;
     }
-    
-    @Nonnull
-    public final VectorCASTHealthReportThresholds getHealthyTarget() {
-        return healthReports;
-    }
+
     
     @DataBoundSetter public final void setIncludes(String inputIncludes) {
         this.includes = inputIncludes;
