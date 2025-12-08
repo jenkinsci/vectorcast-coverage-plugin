@@ -79,7 +79,7 @@ public class VectorCASTPublisher extends Recorder implements SimpleBuildStep {
         this.includes = "xml_data/coverage_results*.xml";
         this.useThreshold = false;
         this.useCoverageHistory = false;
-        this.maxHistory = 1000000;
+        this.maxHistory = Integer.MAX_VALUE;
     }
     
     @DataBoundConstructor
@@ -102,7 +102,7 @@ public class VectorCASTPublisher extends Recorder implements SimpleBuildStep {
 			this.useCoverageHistory = useCoverageHistory;
 		}        
 		if (maxHistory == null) {
-			this.maxHistory = 1000000;
+			this.maxHistory = Integer.MAX_VALUE;
 		} else {
 			this.maxHistory = maxHistory;
 		}        
@@ -116,12 +116,17 @@ public class VectorCASTPublisher extends Recorder implements SimpleBuildStep {
     public final String getIncludes() {
         return includes;
     }
-    
+    @DataBoundSetter public final void setIncludes(String inputIncludes) {
+        this.includes = inputIncludes;
+    }
     @Nonnull
     public final Boolean getUseThreshold() {
         return useThreshold;
     }
 
+    @DataBoundSetter public final void setUseThreshold(Boolean useThreshold) {
+        this.useThreshold = useThreshold;
+    }
 
     @Nonnull
     public final Boolean getUseCoverageHistory() {
@@ -130,48 +135,54 @@ public class VectorCASTPublisher extends Recorder implements SimpleBuildStep {
         }
         return useCoverageHistory;
     }
+    @DataBoundSetter public final void setUseCoverageHistory(Boolean useCoverageHistory) {
+        this.useCoverageHistory = useCoverageHistory;
+    }
+
     @Nonnull
     public final Integer getMaxHistory() {
         if (this.maxHistory == null) {
-            this.maxHistory = 1000000;
+            this.maxHistory = Integer.MAX_VALUE;
         }
         return this.maxHistory;
     }
     @Nonnull
+    public final void setMaxHistory(Integer inMaxHistory) {
+        if (this.maxHistory == null) {
+            this.maxHistory = Integer.MAX_VALUE;
+        }
+        this.maxHistory = inMaxHistory;
+    }
+
+    @DataBoundSetter public final VectorCASTHealthReportThresholds getHealthReports() {
+        return this.healthReports;
+    }
+    @DataBoundSetter public final void setHealthReports(VectorCASTHealthReportThresholds healthReports) {
+        this.healthReports = healthReports;
+    }
+
+    @Nonnull
     public final VectorCASTHealthReportThresholds getHealthyTarget() {
         return healthyTarget;
     }
-    
+    @DataBoundSetter public final void setHealthyTarget(VectorCASTHealthReportThresholds healthyTarget) {
+        this.healthReports = healthyTarget;
+    }
+
     @Nonnull
     public final VectorCASTHealthReportThresholds getUnhealthyTarget() {
         return unhealthyTarget;
     }
 
-    
-    @DataBoundSetter public final void setIncludes(String inputIncludes) {
-        this.includes = inputIncludes;
-    }
-    
-    @DataBoundSetter public final void setUseThreshold(Boolean useThreshold) {
-        this.useThreshold = useThreshold;
-    }
-    
-    @DataBoundSetter public final void setUseCoverageHistory(Boolean useCoverageHistory) {
-        this.useCoverageHistory = useCoverageHistory;
-    }
-    
-    @DataBoundSetter public final void setHealthReports(VectorCASTHealthReportThresholds healthReports) {
-        this.healthReports = healthReports;
-    }
-    
-    @DataBoundSetter public final void setHealthyTarget(VectorCASTHealthReportThresholds healthyTarget) {
-        this.healthReports = healthyTarget;
-    }
-    
     @DataBoundSetter public final void setUnhealthyTarget(VectorCASTHealthReportThresholds unhealthyTarget) {
         this.unhealthyTarget = unhealthyTarget;
     }
-    
+
+
+
+
+
+
     /**
      * look for VectorCAST reports based in the configured parameter includes. 'includes' is - an Ant-style pattern - a list
      * of files and folders separated by the characters ;:,
@@ -713,7 +724,7 @@ public class VectorCASTPublisher extends Recorder implements SimpleBuildStep {
             }
             loc_useThreshold = json.optBoolean("useThreshold", false);
             loc_useCoverageHistory = json.optBoolean("useCoverageHistory", false);
-            loc_maxHistory = json.optInt("maxHistory", 1000000);
+            loc_maxHistory = json.optInt("maxHistory", Integer.MAX_VALUE);
 
             maxStatement = json.optInt("maxStatement", 100);
             maxBranch = json.optInt("maxBranch", 70);
