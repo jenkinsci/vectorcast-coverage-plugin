@@ -146,15 +146,16 @@ public class VectorCASTPublisher extends Recorder implements SimpleBuildStep {
         }
         return this.maxHistory;
     }
-    @Nonnull
-    public final void setMaxHistory(Integer inMaxHistory) {
+    
+    @DataBoundSetter public final void setMaxHistory(Integer inMaxHistory) {
         if (this.maxHistory == null) {
             this.maxHistory = Integer.MAX_VALUE;
         }
         this.maxHistory = inMaxHistory;
     }
 
-    @DataBoundSetter public final VectorCASTHealthReportThresholds getHealthReports() {
+    @Nonnull
+    public final VectorCASTHealthReportThresholds getHealthReports() {
         return this.healthReports;
     }
     @DataBoundSetter public final void setHealthReports(VectorCASTHealthReportThresholds healthReports) {
