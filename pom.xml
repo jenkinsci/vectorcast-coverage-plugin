@@ -39,7 +39,7 @@
     </developers>
     <properties>
         <revision>0.23</revision>
-        <changelist></changelist>
+        <changelist>-SNAPSHOT</changelist>
         <jenkins.version>2.555.1</jenkins.version>
         <gitHubRepo>jenkinsci/${project.artifactId}-plugin</gitHubRepo>
     </properties>
