@@ -6,8 +6,8 @@ Processes code coverage metrics from for
 
 This is a fork of the Emma-plugin; all existing components maintain the existing license. New files are licensed under MIT. Moved or renamed files maintain their old license, and their history can be seen by looking at the source control revision logs.
 
-This plugin allows you to capture code coverage reports from VectorCAST Projects. Jenkins will generate the trend report of coverage. This plugin is used automatically with the 
-[VectorCAST Execution Plugin](https://plugins.jenkins.io/vectorcast-execution)
+This plugin allows you to capture code coverage reports from VectorCAST Projects. Jenkins will generate the trend report of coverage. This plugin can be used with the 
+[VectorCAST Execution Plugin](https://plugins.jenkins.io/vectorcast-execution), but the new default plugin for the VectorCAST Execution Plugin is [Jenkins Coverage](https://plugins.jenkins.io/coverage)
 
 Coverage information from tests runs that has been converted to XML files is read and displayed by this plugin. It shows coverage trends and allows drilling down to more detailed coverage informantion
 
@@ -36,10 +36,13 @@ None
 
 ## Change Log
 
-### Version 0.23 (31 Oct 2023)
+### Version 0.23_2.492.3 (19 Jun 2026)
 - Removed support for combined-coverage XML files 
 - Upgraded for forward compatibility with jenkinsci/jenkins#8503
 - Updated constructor to handle null parameters better
+- Made compatible with Jenkins 2.492.3_LTS
+- Made compatible with Java21
+
 ### Version 0.22 (21 Aug 2023)
 - Bumped dashboard-view from 2.16 to 2.18.1 
   - Updated minimum Jenkins version to 2.361

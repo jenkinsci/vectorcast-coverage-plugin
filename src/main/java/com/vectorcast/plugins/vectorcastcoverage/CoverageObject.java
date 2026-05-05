@@ -192,7 +192,7 @@ public abstract class CoverageObject<SELF extends CoverageObject<SELF>> {
       } catch (ArrayIndexOutOfBoundsException e) {
         maxHistory = 20;
         logger.log(Level.INFO,"error finding <maxHistory>###</maxhistory>: ", e);        
-      } catch (java.lang.NumberFormatException e) {
+      } catch (NumberFormatException e) {
         maxHistory = 20;
         logger.log(Level.INFO,"error Converting to number:", e);
       }

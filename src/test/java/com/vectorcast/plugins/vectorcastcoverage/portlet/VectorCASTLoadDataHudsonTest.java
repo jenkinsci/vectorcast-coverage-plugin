@@ -16,6 +16,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.time.LocalDate;
+
+import org.junit.Test;
 import org.jvnet.hudson.test.JenkinsRule;
 import hudson.util.DescribableList;
 import hudson.tasks.BuildWrapper;
@@ -23,13 +25,19 @@ import hudson.model.Descriptor;
 import java.io.Serializable;
 import static org.junit.Assert.*;
 
+import org.junit.Rule;
+
+
 /**
  * Tests {@link com.vectorcast.plugins.vectorcastcoverage.portlet.VectorCASTLoadData} in a Hudson environment.
  *
  * @author Robert Sandell &lt;robert.sandell@sonyericsson.com&gt;
  * @author Mauro Durante Junior (Mauro.Durantejunior@sonyericsson.com)
  */
-public class VectorCASTLoadDataHudsonTest extends JenkinsRule {
+public class VectorCASTLoadDataHudsonTest  {
+
+    @Rule
+    public JenkinsRule j = new JenkinsRule();
 
     /**
      * This method tests loadChartDataWithinRange() when it has positive number of days.
@@ -37,6 +45,7 @@ public class VectorCASTLoadDataHudsonTest extends JenkinsRule {
      *
      * @throws Exception if so.
      */
+    @Test
     public void testLoadChartDataWithinRangePositiveNumberOfDays() throws Exception {
 
         final float expectedStatementCoverage = 41.6f;
@@ -45,7 +54,7 @@ public class VectorCASTLoadDataHudsonTest extends JenkinsRule {
         final int summaryMapSize = 1;
 
         //Create the project
-        FreeStyleProject job1 = createFreeStyleProject("job1");
+        FreeStyleProject job1 = j.createFreeStyleProject("job1");
 
         //Make it do something, in this case it writes a coverage report to the workspace.
         job1.getBuildersList().add(
@@ -53,7 +62,7 @@ public class VectorCASTLoadDataHudsonTest extends JenkinsRule {
                         "reports/coverage/portlet.xml"));
         //Add a VectorCAST publisher
         VectorCASTPublisher vcPublisher = new VectorCASTPublisher();
-        vcPublisher.includes = "reports/coverage/portlet.xml";
+        vcPublisher.setIncludes("reports/coverage/portlet.xml");
         job1.getPublishersList().add(vcPublisher);
         //Build it
         job1.scheduleBuild2(0).get();
@@ -81,6 +90,7 @@ public class VectorCASTLoadDataHudsonTest extends JenkinsRule {
      *
      * @throws Exception if so.
      */
+    @Test
     public void testLoadChartDataWithinRangeMultJobsSingleBuild() throws Exception {
 
         final float expectedStatementCoverage = 41.6f;
@@ -89,7 +99,7 @@ public class VectorCASTLoadDataHudsonTest extends JenkinsRule {
         final int summaryMapSize = 1;
 
         //Create the project
-        FreeStyleProject job1 = createFreeStyleProject("job1");
+        FreeStyleProject job1 = j.createFreeStyleProject("job1");
 
         //Make it do something, in this case it writes a coverage report to the workspace.
         job1.getBuildersList().add(
@@ -98,7 +108,7 @@ public class VectorCASTLoadDataHudsonTest extends JenkinsRule {
         
         //Add a VectorCAST publisher
         VectorCASTPublisher vcPublisher = new VectorCASTPublisher();
-        vcPublisher.includes = "reports/coverage/portlet.xml";
+        vcPublisher.setIncludes("reports/coverage/portlet.xml");
         job1.getPublishersList().add(vcPublisher);
         //Build it
         job1.scheduleBuild2(0).get();
@@ -106,7 +116,7 @@ public class VectorCASTLoadDataHudsonTest extends JenkinsRule {
         //Do the test
         List<Job> jobs = new LinkedList<Job>();
 
-        FreeStyleProject job2 = createFreeStyleProject("job2");
+        FreeStyleProject job2 = j.createFreeStyleProject("job2");
         jobs.add(job1);
         jobs.add(job2);
 
@@ -128,6 +138,7 @@ public class VectorCASTLoadDataHudsonTest extends JenkinsRule {
      * Tests {@link com.vectorcast.plugins.vectorcastcoverage.portlet.VectorCASTLoadData#getResultSummary(java.util.Collection)}.
      * @throws Exception if any
      */
+    @Test
     public void testGetResultSummary() throws Exception {
 
         float basisPathCoverage = 12.0f;
@@ -174,13 +185,13 @@ public class VectorCASTLoadDataHudsonTest extends JenkinsRule {
         summary.addCoverageResult(coverageResultSummary2);
 
         // assert the sum has occurred correctly
-        assertEquals(basisPathCoverage + basisPathCoverage2, summary.getBasisPathCoverage());
-        assertEquals(MCDCCoverage + MCDCCoverage2, summary.getMCDCCoverage());
-        assertEquals(branchCoverage + branchCoverage2, summary.getBranchCoverage());
-        assertEquals(statementCoverage + statementCoverage2, summary.getStatementCoverage());
-        assertEquals(functionCoverage + functionCoverage2, summary.getFunctionCoverage());
-        assertEquals(functionCallCoverage + functionCallCoverage2, summary.getFunctionCallCoverage());
-        assertEquals(complexity + complexity2, summary.getComplexity());
+        assertEquals(basisPathCoverage + basisPathCoverage2, summary.getBasisPathCoverage(), 0.1f);
+        assertEquals(MCDCCoverage + MCDCCoverage2, summary.getMCDCCoverage(), 0.1f);
+        assertEquals(branchCoverage + branchCoverage2, summary.getBranchCoverage(), 0.1f);
+        assertEquals(statementCoverage + statementCoverage2, summary.getStatementCoverage() ,0.1f);
+        assertEquals(functionCoverage + functionCoverage2, summary.getFunctionCoverage(), 0.1f);
+        assertEquals(functionCallCoverage + functionCallCoverage2, summary.getFunctionCallCoverage(),0.1f);
+        assertEquals(complexity + complexity2, summary.getComplexity(), 0.1f);
     }
 
     /**

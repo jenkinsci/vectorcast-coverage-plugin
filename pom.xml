@@ -26,8 +26,8 @@
         </license>
     </licenses>
     <organization>
-        <name>Vector Software</name>
-        <url>http://www.vectorcast.com/</url>
+        <name>Vector Informatik, GmbH</name>
+        <url>https://www.vector.com/</url>
     </organization>
     <developers>
         <developer>
@@ -79,6 +79,12 @@
             <version>3.2</version>
         </dependency>
         
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-core</artifactId>
+            <scope>test</scope>
+        </dependency>
+
         <dependency>
             <groupId>org.jenkins-ci.plugins</groupId>
             <artifactId>dashboard-view</artifactId>

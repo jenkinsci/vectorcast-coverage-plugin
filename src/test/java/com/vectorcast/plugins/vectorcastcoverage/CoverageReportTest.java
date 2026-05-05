@@ -1,5 +1,7 @@
 package com.vectorcast.plugins.vectorcastcoverage;
 
+import static org.junit.Assert.*;
+
 /**
  * @author Kohsuke Kawaguchi
  */
@@ -44,13 +46,13 @@ public class CoverageReportTest extends AbstractVectorCASTTestBase {
         CoverageReport r = new CoverageReport(null,getClass().getResourceAsStream("coverage.xml"));
 
         EnvironmentReport env = r.getChildren().get("EmptyEnvironment");
-        assertTrue(env != null);
+        assertNotNull(env);
         assertRatio(env.getStatementCoverage(), 0, 0);
         assertFalse(env.hasChildren());
         assertFalse(env.hasChildrenStatementCoverage());
 
         env = r.getChildren().get("EnvironmentWithoutStatements");
-        assertTrue(env != null);
+        assertNotNull(env);
         assertRatio(env.getStatementCoverage(), 0, 0);
         assertTrue(env.hasChildren());
         assertFalse(env.hasChildrenStatementCoverage());

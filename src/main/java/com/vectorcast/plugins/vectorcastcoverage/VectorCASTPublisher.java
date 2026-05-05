@@ -33,7 +33,6 @@ import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.List;
 import java.util.Map;
 
 import jenkins.tasks.SimpleBuildStep;
@@ -41,13 +40,6 @@ import hudson.model.Job;
 import java.util.logging.Logger;
 import java.util.logging.Level;
 import org.kohsuke.stapler.DataBoundSetter;
-
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.OutputStreamWriter;
-import java.io.FileWriter;
-import java.nio.charset.StandardCharsets;
 
 /**
  * {@link Publisher} that captures VectorCAST coverage reports.
@@ -78,16 +70,16 @@ public class VectorCASTPublisher extends Recorder implements SimpleBuildStep {
     public VectorCASTHealthReportThresholds healthReports = new VectorCASTHealthReportThresholds(0, 100, 0, 70, 0, 80, 0, 80, 0, 80, 0, 80 );
 
     // should not be used
-    public VectorCASTHealthReportThresholds healthyTarget;
+    public VectorCASTHealthReportThresholds healthyTarget = null;
     public VectorCASTHealthReportThresholds unhealthyTarget = null;
-    private static final Logger logger = Logger.getLogger(VectorCASTPublisher.class.getName());
+    public static final Logger logger = Logger.getLogger(VectorCASTPublisher.class.getName());
 
     public VectorCASTPublisher() {
                 
         this.includes = "xml_data/coverage_results*.xml";
         this.useThreshold = false;
         this.useCoverageHistory = false;
-        this.maxHistory = 1000000;
+        this.maxHistory = Integer.MAX_VALUE;
     }
     
     @DataBoundConstructor
@@ -110,26 +102,32 @@ public class VectorCASTPublisher extends Recorder implements SimpleBuildStep {
 			this.useCoverageHistory = useCoverageHistory;
 		}        
 		if (maxHistory == null) {
-			this.maxHistory = 1000000;
+			this.maxHistory = Integer.MAX_VALUE;
 		} else {
 			this.maxHistory = maxHistory;
 		}        
 
         // null check later
         this.unhealthyTarget = unhealthyTarget;
-        this.healthReports = healthyTarget;
-        
+        this.healthyTarget = healthyTarget;
     }
     
     @Nonnull
     public final String getIncludes() {
         return includes;
     }
-    
+    @DataBoundSetter public final void setIncludes(String inputIncludes) {
+        this.includes = inputIncludes;
+    }
     @Nonnull
     public final Boolean getUseThreshold() {
         return useThreshold;
     }
+
+    @DataBoundSetter public final void setUseThreshold(Boolean useThreshold) {
+        this.useThreshold = useThreshold;
+    }
+
     @Nonnull
     public final Boolean getUseCoverageHistory() {
         if (this.useCoverageHistory == null) {
@@ -137,52 +135,55 @@ public class VectorCASTPublisher extends Recorder implements SimpleBuildStep {
         }
         return useCoverageHistory;
     }
-    @Nonnull
-    public final Integer getMaxHistory() {
-        if (this.maxHistory == null) {
-            this.maxHistory = 1000000;
-        }
-        return this.maxHistory;
-    }
-    @Nonnull
-    public final VectorCASTHealthReportThresholds getHealthReports() {
-        return healthReports;
-    }
-    
-    @Nonnull
-    public final VectorCASTHealthReportThresholds getUnhealthReports() {
-        return unhealthyTarget;
-    }
-    
-    @Nonnull
-    public final VectorCASTHealthReportThresholds getHealthyTarget() {
-        return healthReports;
-    }
-    
-    @DataBoundSetter public final void setIncludes(String includes) {
-        this.includes = includes;
-    }
-    
-    @DataBoundSetter public final void setUseThreshold(Boolean useThreshold) {
-        this.useThreshold = useThreshold;
-    }
-    
     @DataBoundSetter public final void setUseCoverageHistory(Boolean useCoverageHistory) {
         this.useCoverageHistory = useCoverageHistory;
     }
+
+    @Nonnull
+    public final Integer getMaxHistory() {
+        if (this.maxHistory == null) {
+            this.maxHistory = Integer.MAX_VALUE;
+        }
+        return this.maxHistory;
+    }
     
+    @DataBoundSetter public final void setMaxHistory(Integer inMaxHistory) {
+        if (this.maxHistory == null) {
+            this.maxHistory = Integer.MAX_VALUE;
+        }
+        this.maxHistory = inMaxHistory;
+    }
+
+    @Nonnull
+    public final VectorCASTHealthReportThresholds getHealthReports() {
+        return this.healthReports;
+    }
     @DataBoundSetter public final void setHealthReports(VectorCASTHealthReportThresholds healthReports) {
         this.healthReports = healthReports;
     }
-    
+
+    @Nonnull
+    public final VectorCASTHealthReportThresholds getHealthyTarget() {
+        return healthyTarget;
+    }
     @DataBoundSetter public final void setHealthyTarget(VectorCASTHealthReportThresholds healthyTarget) {
         this.healthReports = healthyTarget;
     }
-    
+
+    @Nonnull
+    public final VectorCASTHealthReportThresholds getUnhealthyTarget() {
+        return unhealthyTarget;
+    }
+
     @DataBoundSetter public final void setUnhealthyTarget(VectorCASTHealthReportThresholds unhealthyTarget) {
         this.unhealthyTarget = unhealthyTarget;
     }
-    
+
+
+
+
+
+
     /**
      * look for VectorCAST reports based in the configured parameter includes. 'includes' is - an Ant-style pattern - a list
      * of files and folders separated by the characters ;:,
@@ -201,6 +202,7 @@ public class VectorCASTPublisher extends Recorder implements SimpleBuildStep {
                 return ret;
             }
         } catch (Exception e) {
+            logger.log(Level.WARNING, "Failed to find includes: " + includes, e);
         }
 
         // If it fails, do a legacy search
@@ -242,7 +244,6 @@ public class VectorCASTPublisher extends Recorder implements SimpleBuildStep {
         performImpl(run, workspace, listener);
     }
 
-    @SuppressFBWarnings(value = "DCN_NULLPOINTER_EXCEPTION", justification = "TODO needs triage")
     public boolean performImpl(Run<?, ?> run, FilePath workspace, TaskListener listener) throws InterruptedException, IOException {
         final PrintStream logger = listener.getLogger();
         
@@ -433,7 +434,7 @@ public class VectorCASTPublisher extends Recorder implements SimpleBuildStep {
             } else {
                 logger.println("[VectorCASTCoverage] [INFO]: Not checking code coverage history.");
             }
-            String covDiffHtml = generateCoverageDiffs(logger, prevStCov, currStCov, currBrCov, prevBrCov, currMCDCCov, prevMCDCCov, currFuncCov, prevFuncCov, currFuncCallCov, prevFuncCallCov, currBuildNum, histBuildNum);
+            String covDiffHtml = generateCoverageDiffs(prevStCov, currStCov, currBrCov, prevBrCov, currMCDCCov, prevMCDCCov, currFuncCov, prevFuncCov, currFuncCallCov, prevFuncCallCov, currBuildNum, histBuildNum);
 
             FilePath CovDiffFilePath = new FilePath(workspace,"coverage_diffs.html_tmp");
             CovDiffFilePath.write(covDiffHtml, "utf-8");
@@ -442,12 +443,12 @@ public class VectorCASTPublisher extends Recorder implements SimpleBuildStep {
             logger.println("[VectorCASTCoverage] [INFO]: Could not find previous non-failing build to checking code coverage history.");
         }
         
-        checkThreshold(run, logger, env, action);
+        checkThreshold(run, logger, action);
 
         return true;
     }
 
-    private String generateCoverageDiffs(final PrintStream logger,
+    private String generateCoverageDiffs(
         float prevStCov, float currStCov, 
         float currBrCov, float prevBrCov, 
         float currMCDCCov, float prevMCDCCov, 
@@ -565,13 +566,9 @@ public class VectorCASTPublisher extends Recorder implements SimpleBuildStep {
         logger.println("[VectorCASTCoverage] [FAIL]: " + coverageType + " coverage " + percent +"% < " + threshold + "% threshold.");
     }
     
-    
-	@SuppressFBWarnings(value = "DCN_NULLPOINTER_EXCEPTION", justification = "TODO needs triage")
-	private void checkThreshold(Run<?, ?> run,
-		final PrintStream logger, EnvVars env, final VectorCASTBuildAction action) {
+    private void checkThreshold(Run<?, ?> run,
+		final PrintStream logger, final VectorCASTBuildAction action) {
 			
-		Ratio ratio = null;
-
 		if (useThreshold && unhealthyTarget == null) {
 		
             if (isBranchCoverageOk(action) 
@@ -728,7 +725,7 @@ public class VectorCASTPublisher extends Recorder implements SimpleBuildStep {
             }
             loc_useThreshold = json.optBoolean("useThreshold", false);
             loc_useCoverageHistory = json.optBoolean("useCoverageHistory", false);
-            loc_maxHistory = json.optInt("maxHistory", 1000000);
+            loc_maxHistory = json.optInt("maxHistory", Integer.MAX_VALUE);
 
             maxStatement = json.optInt("maxStatement", 100);
             maxBranch = json.optInt("maxBranch", 70);
