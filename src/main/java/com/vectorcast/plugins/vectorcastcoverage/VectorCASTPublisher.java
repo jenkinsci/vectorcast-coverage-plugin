@@ -51,10 +51,10 @@ public class VectorCASTPublisher extends Recorder implements SimpleBuildStep {
     /**
      * Relative path to the VectorCAST XML file inside the workspace.
      */
-    public String includes;
-    public Boolean useThreshold;
-    public Boolean useCoverageHistory;
-    public Integer maxHistory;
+    private String includes;
+    private Boolean useThreshold;
+    private Boolean useCoverageHistory;
+    private Integer maxHistory;
     
     /**
     /**
@@ -62,17 +62,17 @@ public class VectorCASTPublisher extends Recorder implements SimpleBuildStep {
      *
      * TODO: define a configuration mechanism.
      */
-    public Rule rule;
+    private Rule rule;
 
     /**
      * {@link hudson.model.HealthReport} thresholds to apply.
      */
-    public VectorCASTHealthReportThresholds healthReports = new VectorCASTHealthReportThresholds(0, 100, 0, 70, 0, 80, 0, 80, 0, 80, 0, 80 );
+    private VectorCASTHealthReportThresholds healthReports = new VectorCASTHealthReportThresholds(0, 100, 0, 70, 0, 80, 0, 80, 0, 80, 0, 80 );
 
     // should not be used
-    public VectorCASTHealthReportThresholds healthyTarget = null;
-    public VectorCASTHealthReportThresholds unhealthyTarget = null;
-    public static final Logger logger = Logger.getLogger(VectorCASTPublisher.class.getName());
+    private VectorCASTHealthReportThresholds healthyTarget = null;
+    private VectorCASTHealthReportThresholds unhealthyTarget = null;
+    private static final Logger logger = Logger.getLogger(VectorCASTPublisher.class.getName());
 
     public VectorCASTPublisher() {
                 
