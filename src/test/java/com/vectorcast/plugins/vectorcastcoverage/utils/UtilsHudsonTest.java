@@ -53,7 +53,7 @@ public class UtilsHudsonTest {
     int scale = 1;
     RoundingMode roundingMode = RoundingMode.HALF_EVEN;
     final Float value = 9.987f;
-    final Float roundedAs = 10f;
+    final Float roundedAs = 10.0f;
 
     assertEquals(roundedAs, Utils.roundFLoat(scale, roundingMode.ordinal(), value));
   }
