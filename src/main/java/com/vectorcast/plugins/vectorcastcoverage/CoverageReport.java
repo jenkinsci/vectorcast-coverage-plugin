@@ -1,7 +1,6 @@
 package com.vectorcast.plugins.vectorcastcoverage;
 
 import hudson.model.Run;
-import hudson.util.IOException2;
 import org.apache.commons.digester3.Digester;
 import org.xml.sax.SAXException;
 
@@ -32,7 +31,7 @@ public final class CoverageReport extends AggregatedReport<CoverageReport/*dummy
             createDigester(!Boolean.getBoolean(this.getClass().getName() + ".UNSAFE")).parse(is);
             idx += 1;
           } catch (SAXException e) {
-              throw new IOException2("Failed to parse XML:" + idx,e);
+              throw new IOException("Failed to parse XML:" + idx,e);
           }
           
         }
@@ -44,7 +43,7 @@ public final class CoverageReport extends AggregatedReport<CoverageReport/*dummy
         try {
             createDigester(!Boolean.getBoolean(this.getClass().getName() + ".UNSAFE")).parse(xmlReport);
         } catch (SAXException e) {
-            throw new IOException2("Failed to parse "+xmlReport,e);
+            throw new IOException("Failed to parse "+xmlReport,e);
         }
         setParent(null);
     }
@@ -60,7 +59,7 @@ public final class CoverageReport extends AggregatedReport<CoverageReport/*dummy
 
     @Override
     public Run<?,?> getBuild() {
-        return action.owner;
+        return action.getBuild();
     }
 
     /**
@@ -93,10 +92,11 @@ public final class CoverageReport extends AggregatedReport<CoverageReport/*dummy
         digester.addSetNext(      "*/subprogram", "add");
         digester.addSetProperties("*/subprogram");
 
+        // Removing as we no longer process combined-coverage reports
         // Top-level (combined) coverage values
-        digester.addObjectCreate( "report/combined-coverage", CoverageElement.class);
-        digester.addSetProperties("report/combined-coverage");
-        digester.addSetNext(      "report/combined-coverage", "addCombinedCoverage");
+        // digester.addObjectCreate( "report/combined-coverage", CoverageElement.class);
+        // digester.addSetProperties("report/combined-coverage");
+        // digester.addSetNext(      "report/combined-coverage", "addCombinedCoverage");
 
         digester.addObjectCreate( "*/coverage", CoverageElement.class);
         digester.addSetProperties("*/coverage");

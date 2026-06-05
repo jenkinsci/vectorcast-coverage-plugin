@@ -122,8 +122,8 @@ public final class Utils {
    *          the value to be rounded
    * @return the rounded value
    */
-  public static float roundFLoat(int scale, int roundingMode, float value) {
-    BigDecimal bigDecimal = new BigDecimal(value);
+  public static Float roundFLoat(int scale, int roundingMode, Float value) {
+    BigDecimal bigDecimal = new BigDecimal(value.toString());
     bigDecimal = bigDecimal.setScale(scale, roundingMode);
     return bigDecimal.floatValue();
   }

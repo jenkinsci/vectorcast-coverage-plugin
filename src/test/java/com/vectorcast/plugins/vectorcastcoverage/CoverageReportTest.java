@@ -1,5 +1,7 @@
 package com.vectorcast.plugins.vectorcastcoverage;
 
+import static org.junit.Assert.*;
+
 /**
  * @author Kohsuke Kawaguchi
  */
@@ -7,20 +9,16 @@ public class CoverageReportTest extends AbstractVectorCASTTestBase {
 
     public void testLoad() throws Exception {
         CoverageReport r = new CoverageReport(null, 
-                                              getClass().getResourceAsStream("top-level.xml"),
                                               getClass().getResourceAsStream("coverage.xml"));
         EnvironmentReport env = r.getChildren().get("VectorCAST_MinGW_C_TestSuite_ORDER");
         assertRatio(env.getStatementCoverage(), 23, 55);
-        assertEquals(45f, r.getStatementCoverage().getNumerator());
     }
 
     public void testLoadMultipleReports() throws Exception {
       CoverageReport r = new CoverageReport(null,  
           getClass().getResourceAsStream("coverage.xml"), 
-          getClass().getResourceAsStream("top-level.xml"),
           getClass().getResourceAsStream("coverageh.xml"));
 
-      assertRatio(r.getStatementCoverage(), 45, 60);
 
       EnvironmentReport env = r.getChildren().get("VectorCAST_MinGW_C_TestSuite_ORDER");
       assertRatio(env.getStatementCoverage(), 23, 55);
@@ -32,9 +30,7 @@ public class CoverageReportTest extends AbstractVectorCASTTestBase {
 
     public void testTreeReport() throws Exception {
         CoverageReport r = new CoverageReport(null,
-                                              getClass().getResourceAsStream("top-level.xml"),
                                               getClass().getResourceAsStream("coverage.xml"));
-        assertRatio(r.getStatementCoverage(), 45, 60);
 
         EnvironmentReport env = r.getChildren().get("VectorCAST_MinGW_C_TestSuite_ORDER");
         assertRatio(env.getStatementCoverage(),23,55);
@@ -50,13 +46,13 @@ public class CoverageReportTest extends AbstractVectorCASTTestBase {
         CoverageReport r = new CoverageReport(null,getClass().getResourceAsStream("coverage.xml"));
 
         EnvironmentReport env = r.getChildren().get("EmptyEnvironment");
-        assertTrue(env != null);
+        assertNotNull(env);
         assertRatio(env.getStatementCoverage(), 0, 0);
         assertFalse(env.hasChildren());
         assertFalse(env.hasChildrenStatementCoverage());
 
         env = r.getChildren().get("EnvironmentWithoutStatements");
-        assertTrue(env != null);
+        assertNotNull(env);
         assertRatio(env.getStatementCoverage(), 0, 0);
         assertTrue(env.hasChildren());
         assertFalse(env.hasChildrenStatementCoverage());
